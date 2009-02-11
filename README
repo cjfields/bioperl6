@@ -1,0 +1,26 @@
+=BioPerl 6 (bioperl-experimental)=
+
+The experimental classes in this directory are test implementations for Perl 6.
+Most of these are similar to perl5-based BioPerl with simple Perl 6
+translations. Hear thar be dragoons.
+
+=Notes on Perl 6=
+
+Perl 6 is a specification and thus can represent multiple implementations. We
+recommend strictly following the Perl6 spec, defined in a series of synopses:
+
+http://feather.perl6.nl/syn/
+
+Note that much of the specification is still in flux or is unfinished; much of
+this is due to changes from experimenting with several preliminary Perl 6
+implementations, such as Pugs or Rakudo (Perl 6 on Parrot), and parsing Perl 6
+using Larry Wall's STD.pm grammar. 
+
+Once the Perl 6 specification is considered complete, BioPerl 6 would then be
+expected to run on any Perl 6 implementation passing the official Perl 6 test
+suite. Until then, we will recommend the latest Parrot build from subversion
+along with the latest Rakudo checkout (currently packaged with Parrot but soon
+to be located in a separate repository). 
+
+For the time being the code in this directory will be targeting Rakudo (always
+the latest build).
