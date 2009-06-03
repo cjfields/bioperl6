@@ -1,14 +1,13 @@
 use v6;
 
 use Test;
-use Bio::Root;
+use Bio::Root::Root;
 
 plan 23;
 
-my $s = Bio::Root.new;
+my $s = Bio::Root::Root.new;
 
-ok($s.isa('Bio::Root'));
-
+ok($s.isa(Bio::Root::Root));
 eval_dies_ok('$s.throw("foo")');
 eval_dies_ok('$s.throw_not_implemented()');
 lives_ok {$s.warn("foo")};
@@ -16,7 +15,7 @@ lives_ok {$s.warn_not_implemented()};
 lives_ok {$s.debug("foo")};
 
 # test strictness
-$s.verbose = 2;   # convert warn to throw
+$s.strict = 2;   # convert warn to throw
 eval_dies_ok('$s.throw("foo")');
 eval_dies_ok('$s.throw_not_implemented()');
 eval_dies_ok('$s.warn("foo")');
@@ -24,18 +23,18 @@ eval_dies_ok('$s.warn_not_implemented()');
 lives_ok {$s.debug("foo")};
 
 # check inheritance
-class Foo is Bio::Root {};
+class Foo is Bio::Root::Root {};
 
 my $n = Foo.new();
 
-ok($n.isa('Foo'));
-ok($n.isa('Bio::Root'));
+ok($n.isa(Foo));
+ok($n.isa(Bio::Root::Root));
 eval_dies_ok('$n.throw("foo")');
 eval_dies_ok('$n.throw_not_implemented()');
 lives_ok {$n.warn("foo")};
 lives_ok {$n.warn_not_implemented()};
 lives_ok {$n.debug("foo")};
-$s.verbose = 2;   # convert warn to throw
+$s.strict = 2;   # convert warn to throw
 eval_dies_ok('$n.throw("foo")');
 eval_dies_ok('$n.throw_not_implemented()');
 eval_dies_ok('$n.warn("foo")');
