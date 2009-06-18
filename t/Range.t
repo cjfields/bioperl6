@@ -50,10 +50,13 @@ r11 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 =end Range tests
 
 class MyRange does Bio::Role::Range  {
-    our Str method to_string {
-        my $str = '(' ~ self.start ~ ', ' ~ self.end ~ ')' ~ ' strand=' ~ self.strand;
+    
+    our method Str {
+        '(' ~ $.start ~ ', ' ~ $.end ~ ')' ~ ' strand=' ~ $.strand;
     }
 };
+
+# role
 
 my @spans = (1 => 100, 25 => 75, 75 => 125, 101 => 150);
 
@@ -184,8 +187,8 @@ for %geo_tests.keys.sort -> $set {
     for <ignore weak strong> -> $st {
         my $int = $primary.intersection(@rest, test => $st);
         my $union = $primary.union(@rest, test =>   $st);
-        is(($int.defined ?? $int.to_string !! ''), %geo_tests{$set}{$st}[0]);
-        is(($union.defined ?? $union.to_string !! ''), %geo_tests{$set}{$st}[1]);
+        is(($int.defined ?? $int.Str !! ''), %geo_tests{$set}{$st}[0]);
+        is(($union.defined ?? $union.Str !! ''), %geo_tests{$set}{$st}[1]);
     }
 }
 
@@ -251,7 +254,7 @@ for %subtract_tests.keys.sort -> $set {
     for <ignore weak strong> -> $st {
         my @sub1 = $r1.subtract($r2, $st);
         my @sub2 = $r2.subtract($r1, $st);
-        is(join(',', @sub1».to_string), %subtract_tests{$set}{$st}[0]);
-        is(join(',', @sub2».to_string), %subtract_tests{$set}{$st}[1]);
+        is(join(',', @sub1».Str), %subtract_tests{$set}{$st}[0]);
+        is(join(',', @sub2».Str), %subtract_tests{$set}{$st}[1]);
     }
 }

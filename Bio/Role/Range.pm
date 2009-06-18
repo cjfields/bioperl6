@@ -1,28 +1,29 @@
 # almost wonder if these can be implemented in terms of Perl6's builtin Range
 # would be simpler, but don't want to obfuscate...
 
+# possibly rename Segment in the future to disambiguate from Perl6's Range
+# built-in type (though this works for now)
+
 role Bio::Role::Range {
 
-has $.start               is rw where {$_ <= $.end  };
-has $.end                 is rw where {$_ >= $.start};
-has $.strand              is rw = 0;
+has Int $.start               is rw where {$_ <= $.end  };
+has Int $.end                 is rw where {$_ >= $.start};
+has Int $.strand              is rw = 0;
 
-enum StrandTests = <ignore weak strong>;
-
-our Int method length {
+our Int method length returns Int {
 	die "Must define both start and end" if !self.start.defined && self.end.defined;
 	die "End must be larger than start" if self.start > self.end;
 	return self.end - self.start + 1;
 }
 
-our Bool method overlaps (Bio::Role::Range :$range,
+our Bool method overlaps returns Bool (Bio::Role::Range :$range,
 						:$test  where { $test.lc eq any <ignore weak strong> } = 'ignore')
 {
     (self!teststranded($range, $test) && !((self.start() > $range.end() || self.end() < $range.start())))
     ?? True !! False;
 }
 
-our Bool method contains (Bio::Role::Range :$range,
+our Bool method contains returns Bool (Bio::Role::Range :$range,
 						:$test  where { $test.lc eq any <ignore weak strong> } = 'ignore')
 {
     (self!teststranded($range, $test) && $range.start() >= self.start() && $range.end() <= self.end())
@@ -30,17 +31,17 @@ our Bool method contains (Bio::Role::Range :$range,
 }
 
 
-our Bool method equals (Bio::Role::Range :$range,
+our Bool method equals returns Bool (Bio::Role::Range :$range,
 						:$test  where { $test.lc eq any <ignore weak strong> } = 'ignore') 
 {
 	(self!teststranded($range, $test) && self.start() == $range.start() && self.end() == $range.end())
 	?? True !! False;
 }
 
-our Bool method !teststranded ($r, $st) {
+our Bool method !teststranded returns Bool (Bio::Role::Range $r, Str $st) {
 	given $st {
 		when 'ignore' {
-			return True			
+			return True
 		}
 		when 'weak' {
 			(self.strand == 0 || $r.strand == 0 || self.strand == $r.strand)
@@ -61,7 +62,7 @@ our Bool method !teststranded ($r, $st) {
 #
 # May be rakudobug, may be the signature (and me), needs checking
 
-our Bio::Role::Range method intersection (
+our Bio::Role::Range method intersection returns Bio::Role::Range (
 	:$test where { $test.lc eq any <ignore weak strong> } = 'ignore',
 	*@ranges of Bio::Role::Range
 )
@@ -94,7 +95,7 @@ our Bio::Role::Range method intersection (
     return $intersect;
 }
 
-our Bio::Role::Range method union (
+our Bio::Role::Range method union returns Bio::Role::Range (
 	:$test where { $test.lc eq any <ignore weak strong> } = 'ignore',
 	*@ranges of Bio::Role::Range
 )
@@ -110,7 +111,8 @@ our Bio::Role::Range method union (
 					strand => $union_strand);
 }
 
-our method subtract (Bio::Role::Range :$range,
+our method subtract (
+	Bio::Role::Range :$range,
 	:$test where { $test.lc eq any <ignore weak strong> } = 'ignore')
 {
     return self if !(self!teststranded($range, $test)) || !self.overlaps($range);
@@ -127,7 +129,7 @@ our method subtract (Bio::Role::Range :$range,
     #Subtract intersection from $self
     my @outranges = ();
     if (self.start < $start) {
-        push(@outranges, 
+        @outranges.push( 
 			self.new(
                 start	=> self.start,
 			    end		=> $start - 1,
@@ -135,21 +137,15 @@ our method subtract (Bio::Role::Range :$range,
 			   ));
     }
     if (self.end > $end) {
-        push(@outranges, 
+        @outranges.push(
 			self.new(
 				start 	=> $end + 1,
 				end		=> self.end,
 			    strand	=> self.strand,
 			   ));   
     }
-    return @outranges; 
+    return @outranges;
 }
-
-# leaving as abstract for now (we probably need to define this in the
-# root class for stringifying data
-
-our Str method to_string
-{ ... }
 
 };
 
