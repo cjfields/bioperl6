@@ -5,9 +5,16 @@ grammar Bio::Grammar::Fasta {
         <description_line> <sequence> 
     }
     token description_line    {
-        \> <id> <description> 
+        ^\> <id> <.ws> <description> \n
     }
     token id           {
+        | <identifier>      {*} 
+        | <generic_id>      {*}
+    }
+    token identifier   {
+        
+    }    
+    token generic_id {
         \S+      {*}
     }
     token description  {
