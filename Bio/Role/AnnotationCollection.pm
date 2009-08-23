@@ -1,10 +1,20 @@
 role Bio::Role::AnnotationCollection;
 
-our Array of Str method get_all_Annotation_keys {...}
-our Array of Bio::Role::Annotation method get_Annotations (:@tagname? of Str) {...}
-our Array of Bio::Role::Annotation method get_nested_Annotations (:@tagname? of Str) {...}
-our Array of Bio::Role::Annotation method get_all_Annotations (:@tagname? of Str) {...}
-our Array method get_num_Annotations (Str :$tagname?) {...}
-our Bool method add_Annotation (Str :$tagname?, Bio::Role::Annotation *@annotations) {...}
-our Bio::Role::Annotation method remove_Annotations (:@tagname of Str) {...}
-our Array of Bio::Role::Annotation method flatten_Annotations (:@tagname of Str) {...}
+# rakudo doesn't handle typed arrays yet for return values, this can be done in the
+# 
+
+our method get_all_Annotation_keys returns Array of Str  {...}
+
+our method get_Annotations returns Array of Bio::Role::Annotation  (:@tagname? of Str) {...}
+
+our method get_nested_Annotations returns Array of Bio::Role::Annotation  (:@tagname? of Str) {...}
+
+our method get_all_Annotations returns Array of Bio::Role::Annotation  (:@tagname? of Str) {...}
+
+our method get_num_Annotations returns Array  (Str :$tagname?) {...}
+
+our method add_Annotation returns Bool  (Str :$tagname?, Bio::Role::Annotation *@annotations) {...}
+
+our method remove_Annotations returns Bio::Role::Annotation  (:@tagname of Str) {...}
+
+our method flatten_Annotations returns Array of Bio::Role::Annotation  (:@tagname of Str) {...}

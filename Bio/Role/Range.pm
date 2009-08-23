@@ -4,26 +4,28 @@
 # possibly rename Segment in the future to disambiguate from Perl6's Range
 # built-in type (though this works for now)
 
+use Bio::Types;
+
 role Bio::Role::Range {
 
 has Int $.start               is rw where {$_ <= $.end  };
 has Int $.end                 is rw where {$_ >= $.start};
-has Int $.strand              is rw = 0;
+has SeqStrand $.strand        is rw = 0;
 
-our Int method length returns Int {
-	die "Must define both start and end" if !self.start.defined && self.end.defined;
-	die "End must be larger than start" if self.start > self.end;
+our method length returns Int {
+	die "Must define both start and end" if !self.start.defined | !self.end.defined;
+	die "End must be larger than start" if $.start > $.end;
 	return self.end - self.start + 1;
 }
 
-our Bool method overlaps returns Bool (Bio::Role::Range :$range,
+our method overlaps returns Bool (Bio::Role::Range :$range,
 						:$test  where { $test.lc eq any <ignore weak strong> } = 'ignore')
 {
     (self!teststranded($range, $test) && !((self.start() > $range.end() || self.end() < $range.start())))
     ?? True !! False;
 }
 
-our Bool method contains returns Bool (Bio::Role::Range :$range,
+our method contains returns Bool (Bio::Role::Range :$range,
 						:$test  where { $test.lc eq any <ignore weak strong> } = 'ignore')
 {
     (self!teststranded($range, $test) && $range.start() >= self.start() && $range.end() <= self.end())
@@ -31,14 +33,14 @@ our Bool method contains returns Bool (Bio::Role::Range :$range,
 }
 
 
-our Bool method equals returns Bool (Bio::Role::Range :$range,
+our method equals returns Bool (Bio::Role::Range :$range,
 						:$test  where { $test.lc eq any <ignore weak strong> } = 'ignore') 
 {
 	(self!teststranded($range, $test) && self.start() == $range.start() && self.end() == $range.end())
 	?? True !! False;
 }
 
-our Bool method !teststranded returns Bool (Bio::Role::Range $r, Str $st) {
+our method !teststranded returns Bool (Bio::Role::Range $r, Str $st) {
 	given $st {
 		when 'ignore' {
 			return True
@@ -56,13 +58,13 @@ our Bool method !teststranded returns Bool (Bio::Role::Range $r, Str $st) {
 
 # TODO:
 # seeing an error when not using the named parameter version for test in
-# .union() and .intersect:
+# .union() and .intersection:
 #
 # Method '!teststranded' not found for invocant of class 'Str'
 #
 # May be rakudobug, may be the signature (and me), needs checking
 
-our Bio::Role::Range method intersection returns Bio::Role::Range (
+our method intersection returns Bio::Role::Range (
 	:$test where { $test.lc eq any <ignore weak strong> } = 'ignore',
 	*@ranges of Bio::Role::Range
 )
@@ -95,7 +97,7 @@ our Bio::Role::Range method intersection returns Bio::Role::Range (
     return $intersect;
 }
 
-our Bio::Role::Range method union returns Bio::Role::Range (
+our method union returns Bio::Role::Range (
 	:$test where { $test.lc eq any <ignore weak strong> } = 'ignore',
 	*@ranges of Bio::Role::Range
 )
@@ -111,6 +113,7 @@ our Bio::Role::Range method union returns Bio::Role::Range (
 					strand => $union_strand);
 }
 
+# this should have a return type of Array of Bio::Role::Range, but NYI
 our method subtract (
 	Bio::Role::Range :$range,
 	:$test where { $test.lc eq any <ignore weak strong> } = 'ignore')

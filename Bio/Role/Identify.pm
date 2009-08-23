@@ -7,8 +7,15 @@ role Bio::Role::Identify;
 has Str $.display_id                is rw;
 has Str $.primary_id                is rw;
 has Str $.object_id                 is rw;
-has Str $.version                   is rw;
+has $.version                   is rw; 
 has Str $.authority                 is rw;
 has Str $.namespace                 is rw;
 has Str $.accession_number          is rw;
 
+our method lsid_string returns Str {
+  return self.authority ~ ":" ~ self.namespace ~ ":" ~ self.object_id;
+}
+
+our method namespace_string returns Str {
+  return self.namespace ~ ":" ~ self.object_id ~ (defined(self.version()) ?? "." ~ self.version !! '');
+}

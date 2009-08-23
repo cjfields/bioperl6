@@ -1,9 +1,10 @@
 use v6;
 
 use Test;
-use Bio::Root::Root;
 
 plan 23;
+
+use Bio::Root::Root;
 
 my $s = Bio::Root::Root.new;
 

@@ -50,7 +50,6 @@ r11 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 =end Range tests
 
 class MyRange does Bio::Role::Range  {
-    
     our method Str {
         '(' ~ $.start ~ ', ' ~ $.end ~ ')' ~ ' strand=' ~ $.strand;
     }

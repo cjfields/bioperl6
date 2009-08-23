@@ -1,5 +1,4 @@
 # this is a stub for aliasing attributes; aliases are ro for now
-# (need to introspect and create the mutator if the attribute is rw)
 
 multi trait_mod:<is>(AttributeDeclarand $a, $names, :$aliased!) {
     my $accessor_name = $a.name.substr(2);
