@@ -1,6 +1,8 @@
-class Bio::Root;
+class Bio::Root::Root {
 
-has Int $.verbose   is rw;
+# split up strictness (exceptions) and verbosity (debugging/logging)
+has Bool    $.verbose   is rw;
+has Int     $.strict    is rw;
 
 # stub methods for a simple root class, will make these a bit more bioperl-like
 
@@ -35,3 +37,4 @@ method debug (Str :$string? = '') {
     ??? $string if self.verbose > 0;
 }
 
+}
