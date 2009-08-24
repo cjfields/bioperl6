@@ -9,7 +9,7 @@ my $seq = Bio::PrimarySeq.new(
 			       display_id       => 'new-id',
 			       alphabet         => 'dna',
 			       accession_number => 'X677667',
-			       desc             => 'Sample Bio::Seq object');
+			       description             => 'Sample Bio::Seq object');
 
 ok($seq.isa(Bio::PrimarySeq), 'Object is a Bio::PrimarySeq');
 
@@ -33,7 +33,7 @@ is(($seq.namespace()="t"), "t",'namespace is implemented');
 is(($seq.version()=0), 0,'version is implemented');
 is($seq.lsid_string(), "bioperl.org:t:X677667",'lsid_string construct id correctly');
 is($seq.namespace_string(), "t:X677667.0",'namespace_string construct string correctly');
-is($seq.description(), 'Sample Bio::Seq object','description is implemented');
+is($seq.desc(), 'Sample Bio::Seq object','description is implemented');
 
 #display_name method given by perl6 cannot override
 #need to discuss with folks at #perl6
