@@ -10,7 +10,7 @@ has Int     $.strict    is rw;
 
 # Note: Bio::Root::IO is to be a Role, IO-related methods not included here.
 
-method throw (Str :$string) {
+method throw (Str $string) {
     my $title = "------------- EXCEPTION -------------";
     my $footer = ('-' x $title.chars) ~ "\n";
     !!! ??? "\n$title\n" ~ "MSG: $string\n" ~ "$footer\n";
@@ -20,7 +20,7 @@ method throw_not_implemented (Str :$string) {
     self.throw("Method not implemented");
 }
 
-method warn (Str :$string) {
+method warn (Str $string) {
     return self.throw($string) if self.verbose == 2;
     my $title = "------------- WARNING -------------";
     my $footer = ('-' x $title.chars) ~ "\n";
@@ -29,11 +29,11 @@ method warn (Str :$string) {
     }
 }
 
-method warn_not_implemented (Str :$string) {
+method warn_not_implemented () {
     self.warn("Method not implemented");
 }
 
-method debug (Str :$string? = '') {
+method debug (Str $string? = '') {
     ??? $string if self.verbose > 0;
 }
 
