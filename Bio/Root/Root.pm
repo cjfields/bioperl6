@@ -21,7 +21,9 @@ method throw_not_implemented (Str :$string) {
 }
 
 method warn (Str $string) {
-    return self.throw($string) if self.verbose == 2;
+    if self.verbose == 2 {
+        return self.throw($string)
+    }
     my $title = "------------- WARNING -------------";
     my $footer = ('-' x $title.chars) ~ "\n";
     if 0 <= self.verbose {
