@@ -1,4 +1,5 @@
 # this is a stub for aliasing attributes; aliases are ro for now
+# based on a simple aliasing trait by Jonathan Worthington
 
 multi trait_mod:<is>(AttributeDeclarand $a, $names, :$aliased!) {
     my $accessor_name = $a.name.substr(2);
