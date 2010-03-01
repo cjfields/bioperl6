@@ -1,20 +1,19 @@
-PERL6=<PERL6>
+PERL6=perl6
 RAKUDO_DIR=<RAKUDO_DIR>
 PERL6LIB='<PERL6LIB>:$(RAKUDO_DIR)'
 
-SOURCES=lib/Bio/Root/Root.pm \
-        lib/Bio/RangeI.pm \
-        lib/Bio/Range.pm
+SOURCES= ./Test.pm \
+lib/Bio/Root/Root.pm 
 
 PIRS=$(SOURCES:.pm=.pir)
 
 all: $(PIRS)
 
 %.pir: %.pm
-	env PERL6LIB=$(PERL6LIB) $(PERL6) --target=pir --output=$@ $<
+	$(PERL6) --target=pir --output=$@ $<
 
 clean:
 	rm -f $(PIRS)
 
 test: all
-	env PERL6LIB=$(PERL6LIB) prove -e '$(PERL6)' -r --nocolor t/
+	prove -e '$(PERL6)' -r --nocolor t/

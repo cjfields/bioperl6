@@ -1,0 +1,2 @@
+role Bio::Role::Sequence;
+
