@@ -1,14 +1,13 @@
 use v6;
 
-use Test;
+BEGIN {@*INC.push('./lib')}; @*INC.join(',').say;
 
-plan 23;
+#use Test;
+#
+#plan 23;
 
-BEGIN {
-    push @*INC, '.';
-}
 
-use Bio::Root::Root;
+#use Bio::Root::Root;
 
 #my $s = Bio::Root::Root.new;
 #
