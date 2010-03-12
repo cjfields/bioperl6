@@ -1,59 +1,50 @@
-# almost wonder if these can be implemented in terms of Perl6's builtin Range
-# would be simpler, but don't want to obfuscate...
-
-# possibly rename Segment in the future to disambiguate from Perl6's Range
-# built-in type (though this works for now)
-
-use Bio::Types;
-
 role Bio::Role::Range {
 
-has Int $.start               is rw where {$_ <= $.end  };
-has Int $.end                 is rw where {$_ >= $.start};
-has SeqStrand $.strand        is rw = 0;
+has Int $.start               is rw;
+has Int $.end                 is rw;
+has Int $.strand              is rw;
 
-our method length returns Int {
-	die "Must define both start and end" if !self.start.defined | !self.end.defined;
-	die "End must be larger than start" if $.start > $.end;
-	return self.end - self.start + 1;
+our Int method length {
+    die "Must define both start and end" if !self.start.defined | !self.end.defined;
+    die "End must be larger than start" if $.start > $.end;
+    return self.end - self.start + 1;
 }
 
-our method overlaps returns Bool (Bio::Role::Range :$range,
-						:$test  where { $test.lc eq any <ignore weak strong> } = 'ignore')
+our Bool method overlaps (Bio::Role::Range $range, $test where { $test.lc eq any <ignore weak strong> } = 'ignore')
 {
     (self!teststranded($range, $test) && !((self.start() > $range.end() || self.end() < $range.start())))
     ?? True !! False;
 }
 
-our method contains returns Bool (Bio::Role::Range :$range,
-						:$test  where { $test.lc eq any <ignore weak strong> } = 'ignore')
+our Bool method contains (Bio::Role::Range $range, $test where { $test.lc eq any <ignore weak strong> } = 'ignore')
 {
     (self!teststranded($range, $test) && $range.start() >= self.start() && $range.end() <= self.end())
     ?? True !! False;
 }
 
 
-our method equals returns Bool (Bio::Role::Range :$range,
-						:$test  where { $test.lc eq any <ignore weak strong> } = 'ignore') 
+our Bool method equals (Bio::Role::Range $range, $test  where { $test.lc eq any <ignore weak strong> } = 'ignore') 
 {
-	(self!teststranded($range, $test) && self.start() == $range.start() && self.end() == $range.end())
-	?? True !! False;
+    (self!teststranded($range, $test) && self.start() == $range.start() && self.end() == $range.end())
+    ?? True !! False;
 }
 
-our method !teststranded returns Bool (Bio::Role::Range $r, Str $st) {
-	given $st {
-		when 'ignore' {
-			return True
-		}
-		when 'weak' {
-			(self.strand == 0 || $r.strand == 0 || self.strand == $r.strand)
-				?? return True !! return False;
-		}
-		when 'strong' {
-			(self.strand != 0 && self.strand == $r.strand)
-				?? return True !! return False;
-		}
-	}
+our Bool method !teststranded (Bio::Role::Range $r, Str $st) {
+    my Bool $val;
+    given $st {
+        when 'ignore' {
+            $val = True
+        }
+        when 'weak' {
+            $val = (self.strand == 0 || $r.strand == 0 || self.strand == $r.strand)
+                ?? True !! False;
+        }
+        when 'strong' {
+            $val = (self.strand != 0 && self.strand == $r.strand)
+                ?? True !! False;
+        }
+    }
+    return $val;
 }
 
 # TODO:
@@ -64,15 +55,15 @@ our method !teststranded returns Bool (Bio::Role::Range $r, Str $st) {
 #
 # May be rakudobug, may be the signature (and me), needs checking
 
-our method intersection returns Bio::Role::Range (
-	:$test where { $test.lc eq any <ignore weak strong> } = 'ignore',
-	*@ranges of Bio::Role::Range
+our Bio::Role::Range method intersection (
+    $test where { $test.lc eq any <ignore weak strong> } = 'ignore',
+    *@ranges of Bio::Role::Range
 )
 {
     my $intersect;
     while @ranges > 0 {
-		$intersect //= self;
-		
+        $intersect //= self;
+        
         my $compare = @ranges.shift;
         
         last if !$compare.defined;
@@ -83,8 +74,8 @@ our method intersection returns Bio::Role::Range (
 
         my $start = ($intersect.start(), $compare.start()).max; # larger of the 2 starts
         my $end = ($intersect.end(), $compare.end()).min;   # smaller of the 2 ends
-		my $intersect_strand = ($intersect.strand == $compare.strand) ??
-			$compare.strand !! 0;
+        my $intersect_strand = ($intersect.strand == $compare.strand) ??
+            $compare.strand !! 0;
 
         if $start > $end {
             return; # this returns a Failure (via the signature)
@@ -97,55 +88,58 @@ our method intersection returns Bio::Role::Range (
     return $intersect;
 }
 
-our method union returns Bio::Role::Range (
-	:$test where { $test.lc eq any <ignore weak strong> } = 'ignore',
-	*@ranges of Bio::Role::Range
+our Bio::Role::Range method union (
+    :$test where { $test.lc eq any <ignore weak strong> } = 'ignore',
+    *@ranges of Bio::Role::Range
 )
 {
     my $union_strand = self.strand;  # Strand for the union range object.
-	
-	# beware the hyperoperator!
-	$union_strand = 0 if any(@ranges».strand) != $union_strand;
-	
-	# what if the end is undef...
+    
+    # beware the hyperoperator!
+    $union_strand = 0 if any(@ranges».strand) != $union_strand;
+    
+    # what if the end is undef...
     return self.new(start  => (self, @ranges).min({$_.start}).start,
-					end    => (self, @ranges).max({$_.end}).end,
-					strand => $union_strand);
+                    end    => (self, @ranges).max({$_.end}).end,
+                    strand => $union_strand);
 }
 
 # this should have a return type of Array of Bio::Role::Range, but NYI
 our method subtract (
-	Bio::Role::Range :$range,
-	:$test where { $test.lc eq any <ignore weak strong> } = 'ignore')
+    Bio::Role::Range $range,
+    $test where { $test.lc eq any <ignore weak strong> } = 'ignore')
 {
-    return self if !(self!teststranded($range, $test)) || !self.overlaps($range);
+    if !(self!teststranded($range, $test)) || !self.overlaps($range) {
+        return self 
+    }
 
     # Subtracts everything (empty Range of length = 0 and strand = 0 
     if (self.equals($range) || $range.contains(self)) {
         return self.new(start => 0, end => 0, strand => 0);
     }
-	
-	# TODO: oddity with named parameters, see note above
-    my $int = self.intersection($range, test => $test);
+    
+    # TODO: oddity with named parameters, see note above
+    my $int = self.intersection($range, $test);
+    
     my ($start, $end, $strand) = ($int.start, $int.end, $int.strand);
     
     #Subtract intersection from $self
     my @outranges = ();
     if (self.start < $start) {
         @outranges.push( 
-			self.new(
-                start	=> self.start,
-			    end		=> $start - 1,
-			    strand	=> self.strand,
-			   ));
+            self.new(
+                start   => self.start,
+                end     => $start - 1,
+                strand  => self.strand,
+               ));
     }
     if (self.end > $end) {
         @outranges.push(
-			self.new(
-				start 	=> $end + 1,
-				end		=> self.end,
-			    strand	=> self.strand,
-			   ));   
+            self.new(
+                start   => $end + 1,
+                end     => self.end,
+                strand  => self.strand,
+               ));   
     }
     return @outranges;
 }

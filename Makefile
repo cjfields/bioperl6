@@ -2,8 +2,8 @@ PERL6=perl6
 RAKUDO_DIR=<RAKUDO_DIR>
 PERL6LIB='<PERL6LIB>:$(RAKUDO_DIR)'
 
-SOURCES= ./Test.pm \
-lib/Bio/Root/Root.pm 
+SOURCES= ./lib/Bio/Root/Root.pm \
+./lib/Bio/Role/Range.pm 
 
 PIRS=$(SOURCES:.pm=.pir)
 

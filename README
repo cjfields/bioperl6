@@ -24,3 +24,12 @@ to be located in a separate repository).
 
 For the time being the code in this directory will be targeting Rakudo (always
 the latest build).
+
+= Testing = 
+
+For now I'm using a simple makefile to build and cleanup *.pir files.  So:
+
+make
+make test
+
+No install target just yet...
