@@ -6,8 +6,6 @@ BEGIN {
 
 use Test;
 
-plan 85;
-
 use Bio::Role::Range;
 
 =begin Range tests
@@ -87,7 +85,8 @@ is(@ranges[11].end, 150);
 is(@ranges[11].strand, -1);
 is(@ranges[11].length, 50);
 
-# see above for logic table 
+# test overlaps, contains, equals, cover all variations
+
 my %map = (
 r0  => '111111111111111000111000000110110110110110000110000000100100100100100000100000000000000000000000000000000000',
 r1  => '111111000111111000110110000110110000110110000100100000100100000100100000000000000000000000000000000',
@@ -103,12 +102,9 @@ r10 => '111111000111111000',
 r11 => '111111111',  
 );
 
-# cover all variations
-
- 
 for 0..@ranges.end -> $i {
     my $test_data = %map{'r' ~ $i};
-    my @tests = $test_data.split('');
+    my @tests = $test_data.comb(/\d/);
     for $i..@ranges.end -> $j {
         my $r1 = @ranges[$i];
         my $r2 = @ranges[$j];
@@ -118,7 +114,6 @@ for 0..@ranges.end -> $i {
             is($r1.equals($r2, $test), @tests.shift, ~$r1 ~ ' equals ' ~ $r2 ~ ": $test");
         }
     }
-    #is(sprintf("%s%s", ('x' x $i * 9), $string),%map{'r' ~ $i});
 }
 
 =begin Geometric tests
@@ -264,3 +259,5 @@ my %subtract_tests = ( # rx->subtract(ry)               ry->subtract(rx)
 #        is(join(',', @sub2».Str), %subtract_tests{$set}{$st}[1]);
 #    }
 #}
+
+done_testing();

@@ -10,41 +10,53 @@ our Int method length {
     return self.end - self.start + 1;
 }
 
-our Bool method overlaps (Bio::Role::Range $range, $test where { $test.lc eq any <ignore weak strong> } = 'ignore')
+our Bool method overlaps (Bio::Role::Range $range,
+    $test where { $test eq any <ignore weak strong> } = 'ignore')
 {
     (self!teststranded($range, $test) && !((self.start() > $range.end() || self.end() < $range.start())))
     ?? True !! False;
 }
 
-our Bool method contains (Bio::Role::Range $range, $test where { $test.lc eq any <ignore weak strong> } = 'ignore')
+our Bool method contains (Bio::Role::Range $range,
+    $test where { $test eq any <ignore weak strong> } = 'ignore')
 {
     (self!teststranded($range, $test) && $range.start() >= self.start() && $range.end() <= self.end())
     ?? True !! False;
 }
 
 
-our Bool method equals (Bio::Role::Range $range, $test  where { $test.lc eq any <ignore weak strong> } = 'ignore') 
+our Bool method equals (Bio::Role::Range $range,
+    $test where { $test eq any <ignore weak strong> } = 'ignore') 
 {
     (self!teststranded($range, $test) && self.start() == $range.start() && self.end() == $range.end())
     ?? True !! False;
 }
 
 our Bool method !teststranded (Bio::Role::Range $r, Str $st) {
-    my Bool $val;
     given $st {
         when 'ignore' {
-            $val = True
+            return True
         }
         when 'weak' {
-            $val = (self.strand == 0 || $r.strand == 0 || self.strand == $r.strand)
-                ?? True !! False;
+            # Chained OR not working yet: RT 73774
+            #if self.strand == 0 || $r.strand == 0 || self.strand == $r.strand {
+            #    return True;
+            #}
+            #return False;
+            given self.strand {
+                when 0 { return True }
+                when $r.strand == 0 { return True }
+                when $r.strand { return True }
+                default {return False}
+            }
         }
         when 'strong' {
-            $val = (self.strand != 0 && self.strand == $r.strand)
-                ?? True !! False;
+            if self.strand != 0 && self.strand == $r.strand {
+                return True
+            }
+            return False;
         }
     }
-    return $val;
 }
 
 # TODO:
@@ -56,7 +68,7 @@ our Bool method !teststranded (Bio::Role::Range $r, Str $st) {
 # May be rakudobug, may be the signature (and me), needs checking
 
 our Bio::Role::Range method intersection (
-    :$test where { $test.lc eq any <ignore weak strong> } = 'ignore',
+    :$test where { $test eq any <ignore weak strong> } = 'ignore',
     *@ranges of Bio::Role::Range
 )
 {
@@ -89,7 +101,7 @@ our Bio::Role::Range method intersection (
 }
 
 our Bio::Role::Range method union (
-    :$test where { $test.lc eq any <ignore weak strong> } = 'ignore',
+    :$test where { $test eq any <ignore weak strong> } = 'ignore',
     *@ranges of Bio::Role::Range
 )
 {
@@ -107,7 +119,7 @@ our Bio::Role::Range method union (
 # this should have a return type of Array of Bio::Role::Range, but NYI
 our method subtract (
     Bio::Role::Range $range,
-    $test where { $test.lc eq any <ignore weak strong> } = 'ignore')
+    $test where { $test eq any <ignore weak strong> } = 'ignore')
 {
     if !(self!teststranded($range, $test)) || !self.overlaps($range) {
         return self 
