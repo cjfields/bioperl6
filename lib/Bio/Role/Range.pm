@@ -56,7 +56,7 @@ our Bool method !teststranded (Bio::Role::Range $r, Str $st) {
 # May be rakudobug, may be the signature (and me), needs checking
 
 our Bio::Role::Range method intersection (
-    $test where { $test.lc eq any <ignore weak strong> } = 'ignore',
+    :$test where { $test.lc eq any <ignore weak strong> } = 'ignore',
     *@ranges of Bio::Role::Range
 )
 {
