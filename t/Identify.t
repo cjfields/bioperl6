@@ -30,7 +30,7 @@ $s = Id.new(object_id   => 'Foo',
 
 is($s.object_id, 'Foo');
 is($s.authority, 'BioPerl6');
-is($s.version, undef);
+is($s.version, Any);
 is($s.namespace, 'GenBank');
 
 is($s.lsid_string, 'BioPerl6:GenBank:Foo');
