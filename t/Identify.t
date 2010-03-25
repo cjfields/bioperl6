@@ -1,5 +1,9 @@
 use v6;
 
+BEGIN {
+    @*INC.push('./lib');
+}
+
 use Test;
 use Bio::Role::Identify;
 
