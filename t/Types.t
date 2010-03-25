@@ -1,10 +1,16 @@
 use v6;
 
+BEGIN {
+    @*INC.push('./lib');
+}
+
 use Test;
 
-plan 25;
-
-use Bio::Types;
+# TODO: these should probably become enums
+subset SeqAlphabet where .lc ~~ any <dna rna protein>;
+subset SeqStrandInt where any <-1 0 1>;
+subset SeqStrandChar where any <- . +>;
+subset SeqStrand where { $_ ~~ SeqStrandChar || $_ ~~ SeqStrandInt};
 
 for -2..2 -> $a {
     if -1 <= $a <= 1 {
@@ -26,9 +32,10 @@ for <! - . + z> -> $a {
     }
 }
 
-ok('dna'      ~~ SeqAlphabet);
+ok('dna'      ~~ SeqAlphabet, 'some alphabet tests');
 ok('DNA'      ~~ SeqAlphabet);
 ok('rna'      ~~ SeqAlphabet);
 ok('protein'  ~~ SeqAlphabet);
 ok('foo'     !~~ SeqAlphabet);
 
+done_testing;
