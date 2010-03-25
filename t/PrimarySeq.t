@@ -5,6 +5,9 @@ BEGIN {
 }
 
 use Test;
+
+plan 16;
+
 use Bio::PrimarySeq;
 
 my $seq = Bio::PrimarySeq.new(
