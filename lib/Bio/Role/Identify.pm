@@ -6,8 +6,8 @@ role Bio::Role::Identify;
 
 has Str $.display_id                is rw;
 has Str $.primary_id                is rw;
-has Str $.object_id                 is rw;
-has $.version                   is rw; 
+has Str $.object_id                 is rw = self.accession_number;
+has Int $.version                   is rw; 
 has Str $.authority                 is rw;
 has Str $.namespace                 is rw;
 has Str $.accession_number          is rw;

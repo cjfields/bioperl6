@@ -1,8 +1,11 @@
 use v6;
 
+BEGIN {
+    @*INC.push('./lib');
+}
+
 use Test;
 use Bio::PrimarySeq;
-
 
 my $seq = Bio::PrimarySeq.new(
 					 seq            => 'TTGGTGGCGTCAACT',
@@ -33,9 +36,9 @@ is(($seq.namespace()="t"), "t",'namespace is implemented');
 is(($seq.version()=0), 0,'version is implemented');
 is($seq.lsid_string(), "bioperl.org:t:X677667",'lsid_string construct id correctly');
 is($seq.namespace_string(), "t:X677667.0",'namespace_string construct string correctly');
-is($seq.desc(), 'Sample Bio::Seq object','description is implemented');
+is($seq.description, 'Sample Bio::Seq object','description is implemented');
 
 #display_name method given by perl6 cannot override
 #need to discuss with folks at #perl6
-#is($seq.display_name(), "new-id",'display_name is implemented');
+is($seq.display_name(), "new-id",'display_name is implemented');
 
