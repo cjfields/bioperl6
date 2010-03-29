@@ -6,8 +6,6 @@ BEGIN {
 
 use Test;
 
-plan 16;
-
 use Bio::PrimarySeq;
 
 my $seq = Bio::PrimarySeq.new(
@@ -29,14 +27,14 @@ is($seq.alphabet(), 'dna','Object has correct alphabet');
 #I think it's a bug in rakudo where undef is not assigned to attribute with a type
 #is($seq.is_circular(), undef,'is_circular has not been set');
 
-$seq.is_circular()= True;
+$seq.is_circular = True;
 is($seq.is_circular,True,'is_circular has been set to true');
-is(($seq.is_circular()=False), False,'is_circular has been set to false');
+is(($seq.is_circular = False), False,'is_circular has been set to false');
 
 # make sure all methods are implemented
-is(($seq.authority()="bioperl.org"), "bioperl.org",'authority is implemented');
-is(($seq.namespace()="t"), "t",'namespace is implemented');
-is(($seq.version()=0), 0,'version is implemented');
+is(($seq.authority = "bioperl.org"), "bioperl.org",'authority is implemented');
+is(($seq.namespace = "t"), "t",'namespace is implemented');
+is(($seq.version = 0), 0,'version is implemented');
 is($seq.lsid_string(), "bioperl.org:t:X677667",'lsid_string construct id correctly');
 is($seq.namespace_string(), "t:X677667.0",'namespace_string construct string correctly');
 is($seq.description, 'Sample Bio::Seq object','description is implemented');
@@ -45,3 +43,4 @@ is($seq.description, 'Sample Bio::Seq object','description is implemented');
 #need to discuss with folks at #perl6
 is($seq.display_name(), "new-id",'display_name is implemented');
 
+done_testing;

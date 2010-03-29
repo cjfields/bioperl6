@@ -6,11 +6,18 @@ role Bio::Role::Identify;
 
 has Str $.display_id                is rw;
 has Str $.primary_id                is rw;
-has Str $.object_id                 is rw = self.accession_number;
 has Int $.version                   is rw; 
 has Str $.authority                 is rw;
 has Str $.namespace                 is rw;
 has Str $.accession_number          is rw;
+has Str $object_id;
+
+our method object_id ($id?) {
+    if (defined $id) {
+        $object_id = $id;
+    }
+    $object_id || self.accession_number || self.WHAT
+}
 
 our method lsid_string returns Str {
   return self.authority ~ ":" ~ self.namespace ~ ":" ~ self.object_id;

@@ -5,6 +5,7 @@ BEGIN {
 }
 
 use Test;
+
 use Bio::Role::Describe;
 
 class Desc does Bio::Role::Describe {  };
