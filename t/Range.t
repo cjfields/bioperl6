@@ -102,19 +102,19 @@ r10 => '111111000111111000',
 r11 => '111111111',  
 );
 
-for 0..@ranges.end -> $i {
-    my $test_data = %map{'r' ~ $i};
-    my @tests = $test_data.comb(/\d/);
-    for $i..@ranges.end -> $j {
-        my $r1 = @ranges[$i];
-        my $r2 = @ranges[$j];
-        for <ignore weak strong> -> $test {
-            is($r1.overlaps($r2, $test), @tests.shift, ~$r1 ~ ' overlaps ' ~ $r2 ~ ": $test");
-            is($r1.contains($r2, $test), @tests.shift, ~$r1 ~ ' contains ' ~ $r2 ~ ": $test");
-            is($r1.equals($r2, $test), @tests.shift, ~$r1 ~ ' equals ' ~ $r2 ~ ": $test");
-        }
-    }
-}
+#for 0..@ranges.end -> $i {
+#    my $test_data = %map{'r' ~ $i};
+#    my @tests = $test_data.comb(/\d/);
+#    for $i..@ranges.end -> $j {
+#        my $r1 = @ranges[$i];
+#        my $r2 = @ranges[$j];
+#        for <ignore weak strong> -> $test {
+#            is($r1.overlaps($r2, $test), @tests.shift, ~$r1 ~ ' overlaps ' ~ $r2 ~ ": $test");
+#            is($r1.contains($r2, $test), @tests.shift, ~$r1 ~ ' contains ' ~ $r2 ~ ": $test");
+#            is($r1.equals($r2, $test), @tests.shift, ~$r1 ~ ' equals ' ~ $r2 ~ ": $test");
+#        }
+#    }
+#}
 
 =begin Geometric tests
 
@@ -183,15 +183,17 @@ my %geo_tests =
 # Method '!teststranded' not found for invocant of class 'Str'
 # May be rakudobug, needs checking
 
-#for %geo_tests.keys.sort -> $set {
-#    my ($primary, @rest) = @ranges[$set.split(',')];
-#    for <ignore weak strong> -> $st {
-#        my $int = $primary.intersection(@rest, test => $st);
-#        my $union = $primary.union(@rest, test =>   $st);
-#        is(($int.defined ?? $int.Str !! ''), %geo_tests{$set}{$st}[0]);
-#        is(($union.defined ?? $union.Str !! ''), %geo_tests{$set}{$st}[1]);
-#    }
-#}
+for %geo_tests.keys.sort -> $set {
+    my @vals = $set.split(',');
+    my ($primary, @rest) = @ranges[@vals];
+    say @rest.perl;
+    #for <ignore weak strong> -> $st {
+    #    my $int = $primary.intersection(@rest, test => $st);
+    #    my $union = $primary.union(@rest, test =>   $st);
+    #    is(($int.defined ?? $int.Str !! ''), %geo_tests{$set}{$st}[0]);
+    #    is(($union.defined ?? $union.Str !! ''), %geo_tests{$set}{$st}[1]);
+    #}
+}
 
 =begin Subtraction
 

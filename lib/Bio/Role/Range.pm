@@ -1,3 +1,5 @@
+subset RangeTest where .lc eq any <ignore weak strong>;
+
 role Bio::Role::Range {
 
 has Int $.start               is rw;
@@ -10,53 +12,38 @@ our Int method length {
     return self.end - self.start + 1;
 }
 
-our Bool method overlaps (Bio::Role::Range $range,
-    $test where { $test eq any <ignore weak strong> } = 'ignore')
-{
+our Bool method overlaps (Bio::Role::Range $range, RangeTest $test = 'ignore') {
     (self!teststranded($range, $test) && !((self.start() > $range.end() || self.end() < $range.start())))
     ?? True !! False;
 }
 
-our Bool method contains (Bio::Role::Range $range,
-    $test where { $test eq any <ignore weak strong> } = 'ignore')
-{
+our Bool method contains (Bio::Role::Range $range, RangeTest $test = 'ignore') {
     (self!teststranded($range, $test) && $range.start() >= self.start() && $range.end() <= self.end())
     ?? True !! False;
 }
 
-
-our Bool method equals (Bio::Role::Range $range,
-    $test where { $test eq any <ignore weak strong> } = 'ignore') 
-{
+our Bool method equals (Bio::Role::Range $range, RangeTest $test = 'ignore')  {
     (self!teststranded($range, $test) && self.start() == $range.start() && self.end() == $range.end())
     ?? True !! False;
 }
 
-our Bool method !teststranded (Bio::Role::Range $r, Str $st) {
+our Bool method !teststranded (Bio::Role::Range $r, RangeTest $st) {
     given $st {
         when 'ignore' {
             return True
         }
         when 'weak' {
-            # Chained OR not working yet: RT 73774
-            #if self.strand == 0 || $r.strand == 0 || self.strand == $r.strand {
-            #    return True;
-            #}
-            #return False;
-            given self.strand {
-                when 0 { return True }
-                when $r.strand == 0 { return True }
-                when $r.strand { return True }
-                default {return False}
+            if self.strand == 0 || $r.strand == 0 || self.strand == $r.strand {
+                return True
             }
         }
         when 'strong' {
             if self.strand != 0 && self.strand == $r.strand {
                 return True
             }
-            return False;
         }
     }
+    return False;
 }
 
 # TODO:
@@ -67,11 +54,7 @@ our Bool method !teststranded (Bio::Role::Range $r, Str $st) {
 #
 # May be rakudobug, may be the signature (and me), needs checking
 
-our Bio::Role::Range method intersection (
-    :$test where { $test eq any <ignore weak strong> } = 'ignore',
-    *@ranges of Bio::Role::Range
-)
-{
+our Bio::Role::Range method intersection ( RangeTest :$test = 'ignore', *@ranges of Bio::Role::Range) {
     my $intersect;
     while @ranges > 0 {
         $intersect //= self;
@@ -80,7 +63,9 @@ our Bio::Role::Range method intersection (
         
         last if !$compare.defined;
         
-        if !$compare!teststranded($intersect, $test) {
+        say $compare.WHAT;
+        
+        if !$compare!teststranded($intersect, test => $test) {
             return; # this returns a Failure (via the signature)
         }
 
@@ -100,11 +85,7 @@ our Bio::Role::Range method intersection (
     return $intersect;
 }
 
-our Bio::Role::Range method union (
-    :$test where { $test eq any <ignore weak strong> } = 'ignore',
-    *@ranges of Bio::Role::Range
-)
-{
+our Bio::Role::Range method union ( RangeTest :$test = 'ignore', *@ranges of Bio::Role::Range ) {
     my $union_strand = self.strand;  # Strand for the union range object.
     
     # beware the hyperoperator!
@@ -117,11 +98,8 @@ our Bio::Role::Range method union (
 }
 
 # this should have a return type of Array of Bio::Role::Range, but NYI
-our method subtract (
-    Bio::Role::Range $range,
-    $test where { $test eq any <ignore weak strong> } = 'ignore')
-{
-    if !(self!teststranded($range, $test)) || !self.overlaps($range) {
+our method subtract ( Bio::Role::Range $range, RangeTest $test = 'ignore') {
+    if !(self!teststranded($range, test => $test)) || !self.overlaps($range) {
         return self 
     }
 
