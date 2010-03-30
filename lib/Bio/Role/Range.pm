@@ -12,23 +12,23 @@ our Int method length {
     return self.end - self.start + 1;
 }
 
-our Bool method overlaps (Bio::Role::Range $range, RangeTest $test = 'ignore') {
-    (self!teststranded($range, $test) && !((self.start() > $range.end() || self.end() < $range.start())))
+our Bool method overlaps (Bio::Role::Range $range, RangeTest :$test = 'ignore') {
+    (self!teststranded($range, :$test) && !((self.start() > $range.end() || self.end() < $range.start())))
     ?? True !! False;
 }
 
-our Bool method contains (Bio::Role::Range $range, RangeTest $test = 'ignore') {
-    (self!teststranded($range, $test) && $range.start() >= self.start() && $range.end() <= self.end())
+our Bool method contains (Bio::Role::Range $range, RangeTest :$test = 'ignore') {
+    (self!teststranded($range, :$test) && $range.start() >= self.start() && $range.end() <= self.end())
     ?? True !! False;
 }
 
-our Bool method equals (Bio::Role::Range $range, RangeTest $test = 'ignore')  {
-    (self!teststranded($range, $test) && self.start() == $range.start() && self.end() == $range.end())
+our Bool method equals (Bio::Role::Range $range, RangeTest :$test = 'ignore')  {
+    (self!teststranded($range, :$test) && self.start() == $range.start() && self.end() == $range.end())
     ?? True !! False;
 }
 
-our Bool method !teststranded (Bio::Role::Range $r, RangeTest $st) {
-    given $st {
+our Bool method !teststranded (Bio::Role::Range $r, RangeTest :$test = 'ignore') {
+    given $test {
         when 'ignore' {
             return True
         }
@@ -63,8 +63,6 @@ our Bio::Role::Range method intersection ( RangeTest :$test = 'ignore', *@ranges
         
         last if !$compare.defined;
         
-        say $compare.WHAT;
-        
         if !$compare!teststranded($intersect, test => $test) {
             return; # this returns a Failure (via the signature)
         }
@@ -90,26 +88,30 @@ our Bio::Role::Range method union ( RangeTest :$test = 'ignore', *@ranges of Bio
     
     # beware the hyperoperator!
     $union_strand = 0 if any(@ranges».strand) != $union_strand;
+
+    @ranges.unshift(self);
+
+    my $max = @ranges.max: { $^a.end <=> $^b.end };
+    my $min = @ranges.min: { $^a.start <=> $^b.start };
     
     # what if the end is undef...
-    return self.new(start  => (self, @ranges).min({$_.start}).start,
-                    end    => (self, @ranges).max({$_.end}).end,
+    return self.new(start  => $min.start,
+                    end    => $max.end,
                     strand => $union_strand);
 }
 
 # this should have a return type of Array of Bio::Role::Range, but NYI
-our method subtract ( Bio::Role::Range $range, RangeTest $test = 'ignore') {
-    if !(self!teststranded($range, test => $test)) || !self.overlaps($range) {
+our method subtract (Bio::Role::Range $range, RangeTest :$test = 'ignore') {
+    if !(self!teststranded($range, :$test)) || !self.overlaps($range, :$test) {
         return self 
     }
-
     # Subtracts everything (empty Range of length = 0 and strand = 0 
-    if (self.equals($range) || $range.contains(self)) {
+    if (self.equals($range, :$test) || $range.contains(self, :$test)) {
         return self.new(start => 0, end => 0, strand => 0);
     }
     
     # TODO: oddity with named parameters, see note above
-    my $int = self.intersection($range, $test);
+    my $int = self.intersection($range, :$test);
     
     my ($start, $end, $strand) = ($int.start, $int.end, $int.strand);
     

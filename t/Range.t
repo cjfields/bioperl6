@@ -102,19 +102,19 @@ r10 => '111111000111111000',
 r11 => '111111111',  
 );
 
-#for 0..@ranges.end -> $i {
-#    my $test_data = %map{'r' ~ $i};
-#    my @tests = $test_data.comb(/\d/);
-#    for $i..@ranges.end -> $j {
-#        my $r1 = @ranges[$i];
-#        my $r2 = @ranges[$j];
-#        for <ignore weak strong> -> $test {
-#            is($r1.overlaps($r2, $test), @tests.shift, ~$r1 ~ ' overlaps ' ~ $r2 ~ ": $test");
-#            is($r1.contains($r2, $test), @tests.shift, ~$r1 ~ ' contains ' ~ $r2 ~ ": $test");
-#            is($r1.equals($r2, $test), @tests.shift, ~$r1 ~ ' equals ' ~ $r2 ~ ": $test");
-#        }
-#    }
-#}
+for 0..@ranges.end -> $i {
+    my $test_data = %map{'r' ~ $i};
+    my @tests = $test_data.comb(/\d/);
+    for $i..@ranges.end -> $j {
+        my $r1 = @ranges[$i];
+        my $r2 = @ranges[$j];
+        for <ignore weak strong> -> $test {
+            is($r1.overlaps($r2, :$test), @tests.shift, ~$r1 ~ ' overlaps ' ~ $r2 ~ ": $test");
+            is($r1.contains($r2, :$test), @tests.shift, ~$r1 ~ ' contains ' ~ $r2 ~ ": $test");
+            is($r1.equals($r2, :$test), @tests.shift, ~$r1 ~ ' equals ' ~ $r2 ~ ": $test");
+        }
+    }
+}
 
 =begin Geometric tests
 
@@ -178,21 +178,15 @@ my %geo_tests =
             },
 );
 
-# TODO:
-# seeing an error when not using the named parameter version for test:
-# Method '!teststranded' not found for invocant of class 'Str'
-# May be rakudobug, needs checking
-
 for %geo_tests.keys.sort -> $set {
-    my @vals = $set.split(',');
-    my ($primary, @rest) = @ranges[@vals];
-    say @rest.perl;
-    #for <ignore weak strong> -> $st {
-    #    my $int = $primary.intersection(@rest, test => $st);
-    #    my $union = $primary.union(@rest, test =>   $st);
-    #    is(($int.defined ?? $int.Str !! ''), %geo_tests{$set}{$st}[0]);
-    #    is(($union.defined ?? $union.Str !! ''), %geo_tests{$set}{$st}[1]);
-    #}
+    my @rest = @ranges[$set.split(',')];
+    my $primary = @rest.shift;
+    for <ignore weak strong> -> $test {
+        my $int = $primary.intersection(@rest, :$test);
+        my $union = $primary.union(@rest, :$test);
+        is(($int.defined ?? $int.Str !! ''), %geo_tests{$set}{$test}[0], "intersection of $set, $test");
+        is(($union.defined ?? $union.Str !! ''), %geo_tests{$set}{$test}[1], "union of $set, $test");
+    }
 }
 
 =begin Subtraction
@@ -252,14 +246,14 @@ my %subtract_tests = ( # rx->subtract(ry)               ry->subtract(rx)
             },
 );
 
-#for %subtract_tests.keys.sort -> $set {
-#    my ($r1, $r2) = @ranges[split(',',$set)];
-#    for <ignore weak strong> -> $st {
-#        my @sub1 = $r1.subtract($r2, $st);
-#        my @sub2 = $r2.subtract($r1, $st);
-#        is(join(',', @sub1».Str), %subtract_tests{$set}{$st}[0]);
-#        is(join(',', @sub2».Str), %subtract_tests{$set}{$st}[1]);
-#    }
-#}
+for %subtract_tests.keys.sort -> $set {
+    my ($r1, $r2) = @ranges[split(',',$set)];
+    for <ignore weak strong> -> $st {
+        my @sub1 = $r1.subtract($r2, test => $st);
+        my @sub2 = $r2.subtract($r1, test => $st);
+        is(join(',', @sub1».Str), %subtract_tests{$set}{$st}[0], "subtract" );
+        is(join(',', @sub2».Str), %subtract_tests{$set}{$st}[1], "subtract");
+    }
+}
 
 done_testing();
