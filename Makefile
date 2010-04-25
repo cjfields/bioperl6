@@ -6,7 +6,8 @@ SOURCES= \
     ./lib/Bio/Role/Range.pm \
     ./lib/Bio/Role/Describe.pm \
     ./lib/Bio/Role/Identify.pm \
-    ./lib/Bio/PrimarySeq.pm 
+    ./lib/Bio/PrimarySeq.pm \
+    ./lib/Bio/SeqIO.pm 
 
 PIRS=$(SOURCES:.pm=.pir)
 
