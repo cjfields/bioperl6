@@ -24,11 +24,8 @@ for @methods -> $method {
 }
 
 
-#currently only can return all the matches, rakudo bug RT #74078
 #normally would return next Bio::Seq object
-my @seq_obj = $seqio_obj.next_seq();
-
-my $seq_obj = 	@seq_obj[0];
+my $seq_obj = $seqio_obj.next_seq();
 
 # checking the first sequence object
 #Currently all we have are Bio::PrimarySeq for now, will return to Bio::Seq soon
@@ -60,8 +57,7 @@ is($seq_obj.length(),      %expected{'length'},      'length');
 #like ($seq_obj.description(), %expected{'description'}, 'description');
 #ok($seq_obj.description() ~~ /'Rea guano receptor type III >> 0.1'/, 'description');
 
-
-my $seq_obj2 = 	@seq_obj[1];
+my $seq_obj2 = 	$seqio_obj.next_seq();
 
 # checking the first sequence object
 #Currently all we have are Bio::PrimarySeq for now, will return to Bio::Seq soon
