@@ -1,27 +1,31 @@
-use v6;
-
 grammar Bio::Grammar::Fasta {
-    token TOP  {
+     token TOP  {
+        ^<fasta>+ $
+        
+    }
+    token fasta {
         <description_line> <sequence> 
     }
+    
     token description_line    {
-        ^\> <id> <.ws> <description> \n
+        ^^\> <id> <.ws> <description> \n
     }
     token id           {
-        | <identifier>      {*} 
-        | <generic_id>      {*}
+        | <identifier>     
+        | <generic_id>    
     }
     token identifier   {
-        
+        #assume we going to parse NCIB specific id for reference number and gi numbers
+        \S+ 
     }    
     token generic_id {
-        \S+      {*}
-    }
+        \S+
+    }    
+    
     token description  {
-        \N+      {*}
+        \N+      
     }
     token sequence     {
-        <-[>]>+  {*}
+        <-[>]>+  
     }
 }
-

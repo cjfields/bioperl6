@@ -6,7 +6,7 @@ use Bio::Grammar::Fasta;
 use Bio::Grammar::Actions::Fasta;
  
  method next_seq() {
-  #rakudo bug, cannot use pop or say in roles
+  #rakudo bug, cannot use pop or say in roles RT #74078
   #return pop @!results;
          @!results;
 }

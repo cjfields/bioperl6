@@ -16,8 +16,10 @@ class Bio::Grammar::Actions::Fasta {
 		
 		my $id =$/<description_line>.ast<id>;
 		my $desc = $/<description_line>.ast<description>;
+		
 		#very basic, does the bare bones for now
-		make Bio::PrimarySeq.new(display_id=>$id,description=>$desc,seq=>$/<sequence>.ast);
+		my $obj = Bio::PrimarySeq.new(display_id=>$id,description=>$desc,seq=>$/<sequence>.ast);
+		make $obj;
 	}
 	
 	method description_line($/){

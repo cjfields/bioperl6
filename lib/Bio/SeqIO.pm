@@ -14,13 +14,11 @@ method new(Str $format,Str $file){
 		$obj.initial();
 	}
 	else {
-		self.throw_not_implemented("Cannot accept $format yet");
+		#need to use Bio::Root::Root
+		say ("Cannot accept $format yet");
 	}
 	
 	return $obj;	
 }
 
-method next_seq() {
-     self.throw_not_implemented("Method not implemented");
-}
 
