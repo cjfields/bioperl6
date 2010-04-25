@@ -23,6 +23,11 @@ is($seq.accession_number(), 'X677667','Object has correct accession_number');
 is($seq.seq(), 'TTGGTGGCGTCAACT','Object has correct seq');
 is($seq.display_id(), 'new-id','Object has correct display_id');
 is($seq.alphabet(), 'dna','Object has correct alphabet');
+is($seq.length(),15,'Correct length of 15');
+dies_ok { $seq.length(25) }, 'Cannot lie about a sequence length';
+
+#need test where we send 'undef' to length when the sequence is empty
+
 
 #I think it's a bug in rakudo where undef is not assigned to attribute with a type
 #is($seq.is_circular(), undef,'is_circular has not been set');
