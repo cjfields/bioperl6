@@ -2,13 +2,14 @@
 our &shiftt = &shift;
 our &op = &open;
 our &s = &say;
+use Bio::Grammar::Fasta;
+use Bio::Grammar::Actions::Fasta;
 role Bio::Role::FastaIO[$file]{
 
 has @!results;
+has Int $!width=80;
 has $!fh;
-use Bio::Grammar::Fasta;
-use Bio::Grammar::Actions::Fasta;
- 
+
 method next_seq() {
   #rakudo bug, cannot use builtin functions in roles RT #74078
   return &shiftt(@!results);
@@ -31,11 +32,13 @@ method write_seq(*@seq){
    #need to ensure we have Bio::PrimarySeqI
    
    #most raw way to print out fasta files with no options whatsoever
-   #no width of the sequence even!
    my $header = ">$seq.display_id() $seq.description()";
-   my $sequence = $seq.seq();
 
-   $!fh.say($header ~ "\n" ~ $seq.seq());   
+   #no variable interploation yet! 
+   #my $sequence = $seq.seq().comb( /. ** {1..$width}/).join("\n");
+
+   my $sequence = $seq.seq().comb( /. ** 1..80/).join("\n");
+   $!fh.say($header ~ "\n" ~ $sequence);   
    
  }
  
