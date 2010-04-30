@@ -17,13 +17,29 @@ method next_seq() {
 
 #method will not be private and/or put in new buildmethod
 method initial_read() {    
- 	@!results = @(Bio::Grammar::Fasta.parsefile($file, :actions(Bio::Grammar::Actions::Fasta)).ast);	
+	#need to deal with stdin 
+	#just need to replace $file with $*IN.slurp()
+	#perhaps a different role.... this should be in a ROOT::IO module and not here
+	if $file.WHAT ~~ IO {
+ 		@!results = @(Bio::Grammar::Fasta.parse($file.slurp(), :actions(Bio::Grammar::Actions::Fasta)).ast);	
+	}
+	else {
+		#assuming this is a path to a file
+		@!results = @(Bio::Grammar::Fasta.parsefile($file, :actions(Bio::Grammar::Actions::Fasta)).ast);	
+	}
+
 }
 
 method initial_write() {    
  	#rakudo bug RT #74078
  	#need error checking to ensure that we did indeed open a new file
- 	$!fh = &op($file,:w);
+
+	if $file.WHAT ~~ IO {
+ 		$!fh = $file;
+	}
+	else {
+		$!fh = &op($file,:w);
+	}
 }
 
 method write_seq(*@seq){

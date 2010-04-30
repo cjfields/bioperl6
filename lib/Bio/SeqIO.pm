@@ -2,7 +2,7 @@ class Bio::SeqIO;
 
 has $!format;
 
-method new(Str $format,Str $file,:$write?){
+method new(Str $format, $file,:$write?){
 	my Junction $formats = any ('fasta'|'genbank');
 	
 	my $obj;
