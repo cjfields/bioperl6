@@ -53,9 +53,9 @@ is($seq_obj.display_id(),  %expected{'display_id'},  'display_id');
 #is($seq_obj.primary_id(),  %expected{'primary_id'},  'primary_id');
 is($seq_obj.length(),      %expected{'length'},      'length');
 
-#like is not implemented in Test.pm so hardcoding for now but no idea why it is not working...
+#like is not implemented in Test.pm so using  simple is for now
 #like ($seq_obj.description(), %expected{'description'}, 'description');
-#ok($seq_obj.description() ~~ /'Rea guano receptor type III >> 0.1'/, 'description');
+is($seq_obj.description(), "Rea guano receptor type III >> 0.1", 'description');
 
 my $seq_obj2 = 	$seqio_obj.next_seq();
 
