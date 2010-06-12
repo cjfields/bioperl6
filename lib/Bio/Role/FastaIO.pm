@@ -50,10 +50,8 @@ method write_seq(*@seq){
    #most raw way to print out fasta files with no options whatsoever
    my $header = ">$seq.display_id() $seq.description()";
 
-   #no variable interploation yet! 
-   #my $sequence = $seq.seq().comb( /. ** {1..$width}/).join("\n");
-
-   my $sequence = $seq.seq().comb( /. ** 1..80/).join("\n");
+   my $sequence = $seq.seq().comb( /. ** {1..$!width}/).join("\n");
+   
    $!fh.say($header ~ "\n" ~ $sequence);   
    
  }
