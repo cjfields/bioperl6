@@ -19,8 +19,7 @@ is($seqio_obj ~~ Bio::SeqIO,1,"Is a Bio::SeqIO object");
 
 my @methods = ("next_seq" , "write_seq");
 for @methods -> $method {
-    #not implemented in current master, waiting for S12-introspection/can.t to be passed
-    #is($seqio_obj.can($method),1,"Can do method $method for format: $format");
+    ok $seqio_obj.can($method),"Can do method '$method' for format: $format";
 }
 
 
@@ -53,6 +52,7 @@ is($seq_obj.display_id(),  %expected{'display_id'},  'display_id');
 #currently do not set
 #is($seq_obj.primary_id(),  %expected{'primary_id'},  'primary_id');
 is($seq_obj.length(),      %expected{'length'},      'length');
+
 #like is not implemented in Test.pm so hardcoding for now but no idea why it is not working...
 #like ($seq_obj.description(), %expected{'description'}, 'description');
 #ok($seq_obj.description() ~~ /'Rea guano receptor type III >> 0.1'/, 'description');
