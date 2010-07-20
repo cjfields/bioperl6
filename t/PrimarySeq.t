@@ -30,26 +30,25 @@ is($seq.seq(),'TTGGTGGCGTCAACT','Retrieving sequence');
 is($seq.display_id(),'new-id','Retrieving display_id');
 is($seq.alphabet(),'dna','Retrieving alphabet');
 is($seq.is_circular(),Any,'Determing if circular');
+is(($seq.is_circular=True),True,'Setting circular to True');
+is(($seq.is_circular=False), False,'Setting circular to False');
 
-# ok $seq->is_circular(1);
-# is $seq->is_circular(0), 0;
+# check IdentifiableI and DescribableI interfaces
+ok($seq ~~ Bio::Role::Identify,'Has a Bio::Role::Identify');
+ok($seq ~~ Bio::Role::Describe,'Has a Bio::Role::Describe');
 
-# # check IdentifiableI and DescribableI interfaces
-# isa_ok $seq, 'Bio::IdentifiableI';
-# isa_ok $seq, 'Bio::DescribableI';
-
-# # make sure all methods are implemented
-#is( $seq.authority("bioperl.org") , "bioperl.org");
-# is($seq.namespace("t"),           "t");
-# is($seq.namespace, "t");
-# is($seq.version(0), 0);
-# is($seq.lsid_string(),      "bioperl.org:t:X677667");
-# is($seq.namespace_string(), "t:X677667.0");
-#$seq.version(47);
-#is($seq.version(), 47,'Retrieving version number');
-# is($seq.namespace_string(), "t:X677667.47");
-# is($seq.description(),      'Sample Bio::Seq object');
-# is($seq.display_name(),     "new-id");
+# make sure all methods are implemented
+is(($seq.authority="bioperl.org") , "bioperl.org",'Setting authority');
+is(($seq.namespace='t'),'t','Setting namespace');
+is($seq.namespace, "t",'Retrieving namespace');
+is(($seq.version=0), 0,'Setting version number');
+is($seq.lsid_string(), "bioperl.org:t:X677667",'Retrieving lsid_string');
+is($seq.namespace_string(), "t:X677667.0",'Retrieving namespace_string');
+$seq.version=47;
+is($seq.version(), 47,'Retrieving version number');
+is($seq.namespace_string(), "t:X677667.47",'Retrieving namespace_string');
+is($seq.description(), 'Sample Bio::Seq object','Has correct description');
+is($seq.display_name(), "new-id",'Has correct display_name');
 
 # my $location = Bio::Location::Simple->new(
 #     '-start'  => 2,
