@@ -224,3 +224,5 @@ is($seq.display_name(), "new-id",'Has correct display_name');
 # $seq = Bio::PrimarySeq->new( -display_id => 0, -seq => 'GATC' );
 
 # is $seq->display_id, 0, "Bug #2864";
+
+done_testing();
