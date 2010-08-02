@@ -20,7 +20,7 @@ our method warn (Str $string) {
     if self.verbose >= 0 {
         my $msg = "\n$title\n" ~ "MSG: $string\n" ~ "$footer\n";
         # TODO: change to warn(), which is a bit buggy ATM
-        warn($msg);
+        $*ERR.say($msg);
     }
 }
 
