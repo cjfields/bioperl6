@@ -15,3 +15,4 @@ pod2htm*.tmp
 blib*
 *.bak
 MYMETA.yml
+*.pir
