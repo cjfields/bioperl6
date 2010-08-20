@@ -5,7 +5,7 @@ class Bio::Grammar::Actions::Fasta {
 	method TOP($/){
 		#lazy list implementation
 		#reason 'for' loops are NOT lazy yet!
-		my @matches = gather for $/<fasta> -> $m {
+		my @matches = gather for @($/<fasta>) -> $m {
 			take $m.ast;
 		};
 
