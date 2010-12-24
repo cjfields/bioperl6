@@ -109,9 +109,9 @@ for 0..@ranges.end -> $i {
         my $r1 = @ranges[$i];
         my $r2 = @ranges[$j];
         for <ignore weak strong> -> $test {
-            is($r1.overlaps($r2, :$test), @tests.shift, ~$r1 ~ ' overlaps ' ~ $r2 ~ ": $test");
-            is($r1.contains($r2, :$test), @tests.shift, ~$r1 ~ ' contains ' ~ $r2 ~ ": $test");
-            is($r1.equals($r2, :$test), @tests.shift, ~$r1 ~ ' equals ' ~ $r2 ~ ": $test");
+            is($r1.overlaps($r2, :$test), ?@tests.shift, ~$r1 ~ ' overlaps ' ~ $r2 ~ ": $test");
+            is($r1.contains($r2, :$test), ?@tests.shift, ~$r1 ~ ' contains ' ~ $r2 ~ ": $test");
+            is($r1.equals($r2, :$test), ?@tests.shift, ~$r1 ~ ' equals ' ~ $r2 ~ ": $test");
         }
     }
 }
