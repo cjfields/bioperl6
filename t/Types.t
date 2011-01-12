@@ -38,4 +38,4 @@ ok('rna'      ~~ SeqAlphabet);
 ok('protein'  ~~ SeqAlphabet);
 ok('foo'     !~~ SeqAlphabet);
 
-done_testing;
+done();

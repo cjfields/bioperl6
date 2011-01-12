@@ -28,4 +28,4 @@ is($s.description, 'Goodbye, Mr. Bond');
 #$s.desc     = 'Frankly, my dear...'; # TODO: set via alias
 #is($s.description, 'Frankly, my dear...');
 
-done_testing;
+done();

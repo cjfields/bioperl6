@@ -220,7 +220,7 @@ use v6;
 # $fuzzy->end(12);
 # throws_ok { $fuzzy->start(10); } $error, 'Exception:IN-BETWEEN locations should be contiguous';
 
-# done_testing;
+# done();
 
 # __END__
 

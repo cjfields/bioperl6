@@ -90,5 +90,5 @@ is($seq_obj2.description(),'Rea guano ligand', 'description');
 
 #need testing for reading/writing fasta file using $*IN and $*OUT
 
-done_testing();
+done();
 

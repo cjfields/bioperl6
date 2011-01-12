@@ -36,3 +36,4 @@ is($s.namespace, 'GenBank');
 is($s.lsid_string, 'BioPerl6:GenBank:Foo');
 is($s.namespace_string, 'GenBank:Foo');
 
+done();

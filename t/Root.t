@@ -39,4 +39,4 @@ eval_dies_ok('$n.throw("foo")');
 eval_dies_ok('$n.warn("foo")');
 lives_ok {$n.debug("foo")};
 
-done_testing();
+done();

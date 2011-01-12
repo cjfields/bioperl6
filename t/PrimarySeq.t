@@ -225,4 +225,4 @@ is($seq.display_name(), "new-id",'Has correct display_name');
 
 # is $seq->display_id, 0, "Bug #2864";
 
-done_testing();
+done();
