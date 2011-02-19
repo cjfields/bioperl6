@@ -15,7 +15,7 @@ my $file = "t/data/test.fasta";
 my $seqio_obj = Bio::SeqIO.new(file=> $file,format => $format);
 
 #type of Object seem to disappear right now 
-is($seqio_obj ~~ Bio::SeqIO,1,"Is a Bio::SeqIO object");
+is($seqio_obj ~~ Bio::SeqIO,Bool::True,"Is a Bio::SeqIO object");
 
 my @methods = ("next_seq" , "write_seq");
 for @methods -> $method {
