@@ -1,10 +1,11 @@
 use v6;
 
- BEGIN {
-	 @*INC.push('./lib');
- }
+BEGIN {
+    @*INC.push('./lib');
+}
+use Bio::Location::Simple;
 
- my $simple = Bio::Location::Simple.new(
+my $simple = Bio::Location::Simple.new(
      start  => 10,
      end    => 20,
      strand => 1,
