@@ -84,26 +84,25 @@ is($seq.display_name(), "new-id",'Has correct display_name');
 
 # is( $seq->subseq($fuzzy), 'GGTGGC' );
 
-# my $trunc = $seq->trunc( 1, 4 );
+my $trunc = $seq.trunc( 1, 4 );
 # isa_ok $trunc, 'Bio::PrimarySeqI';
-# is $trunc->seq(), 'TTGG' or diag( "Expecting TTGG. Got " . $trunc->seq() );
+is($trunc.seq(),'TTGG',"Expecting TTGG. Got " ~ $trunc.seq());
 
 # $trunc = $seq->trunc($splitlocation);
 # isa_ok( $trunc, 'Bio::PrimarySeqI' );
-# is( $trunc->seq(), 'TTGGTGACGC' );
+# is( $trunc.seq(), 'TTGGTGACGC' );
 
 # $trunc = $seq->trunc($fuzzy);
 # isa_ok( $trunc, 'Bio::PrimarySeqI' );
-# is( $trunc->seq(), 'GGTGGC' );
+# is( $trunc.seq(), 'GGTGGC' );
 
-# my $rev = $seq->revcom();
+my $rev = $seq.revcom();
 # isa_ok( $rev, 'Bio::PrimarySeqI' );
 
-# is $rev->seq(), 'AGTTGACGCCACCAA'
-#   or diag( 'revcom() failed, was ' . $rev->seq() );
+is($rev.seq(), 'AGTTGACGCCACCAA', 'revcom() failed, was ' ~ $rev.seq());
 
-# is $rev->display_id, 'new-id';
-# is( $rev->alphabet(),    'dna', 'alphabet copied through revcom' );
+is($rev.display_id, 'new-id');
+is( $rev.alphabet(),    'dna', 'alphabet copied through revcom' );
 # TODO: {
 #     local $TODO =
 #       'all attributes of primaryseqs are not currently copied through revcoms';
@@ -113,116 +112,116 @@ is($seq.display_name(), "new-id",'Has correct display_name');
 #     is( $rev->is_circular(), 0,     'is_circular copied through revcom' );
 # }
 
-# #
-# # Translate
-# #
+#
+# Translate
+#
 
-# my $aa = $seq->translate();    # TTG GTG GCG TCA ACT
-# is $aa->seq, 'LVAST', "Translation: " . $aa->seq;
+my $aa = $seq.translate();    # TTG GTG GCG TCA ACT
+is($aa.seq, 'LVAST', "Translation: " ~ $aa.seq);
 
-# # tests for non-standard initiator codon coding for
-# # M by making translate() look for an initiator codon and
-# # terminator codon ("complete", the 5th argument below)
-# $seq->seq('TTGGTGGCGTCAACTTAA');    # TTG GTG GCG TCA ACT TAA
-# $aa = $seq->translate( undef, undef, undef, undef, 1 );
-# is $aa->seq, 'MVAST', "Translation: " . $aa->seq;
+# tests for non-standard initiator codon coding for
+# M by making translate() look for an initiator codon and
+# terminator codon ("complete", the 5th argument below)
+$seq.seq ='TTGGTGGCGTCAACTTAA';    # TTG GTG GCG TCA ACT TAA
+$aa = $seq.translate( Any, Any, Any, Any, 1 );
+is($aa.seq, 'MVAST', "Translation: " ~ $aa.seq);
 
-# # same test as previous, but using named parameter
-# $aa = $seq->translate( -complete => 1 );
-# is $aa->seq, 'MVAST', "Translation: " . $aa->seq;
+# same test as previous, but using named parameter
+$aa = $seq.translate( complete => 1 );
+is($aa.seq, 'MVAST', "Translation: " ~ $aa.seq);
 
-# # find ORF, ignore codons outside the ORF or CDS
-# $seq->seq('TTTTATGGTGGCGTCAACTTAATTT');    # ATG GTG GCG TCA ACT
-# $aa = $seq->translate( -orf => 1 );
-# is $aa->seq, 'MVAST*', "Translation: " . $aa->seq;
+# find ORF, ignore codons outside the ORF or CDS
+$seq.seq ='TTTTATGGTGGCGTCAACTTAATTT';    # ATG GTG GCG TCA ACT
+$aa = $seq.translate( orf => 1 );
+is($aa.seq, 'MVAST*', "Translation: " ~ $aa.seq);
 
-# # smallest possible ORF
-# $seq->seq("ggggggatgtagcccc");             # atg tga
-# $aa = $seq->translate( -orf => 1 );
-# is $aa->seq, 'M*', "Translation: " . $aa->seq;
+# smallest possible ORF
+$seq.seq ="ggggggatgtagcccc";             # atg tga
+$aa = $seq.translate( orf => 1 );
+is($aa.seq, 'M*', "Translation: " ~ $aa.seq);
 
-# # same as previous but complete, so * is removed
-# $aa = $seq->translate(
-#     -orf      => 1,
-#     -complete => 1
-# );
-# is $aa->seq, 'M', "Translation: " . $aa->seq;
+# same as previous but complete, so * is removed
+$aa = $seq.translate(
+    orf      => 1,
+    complete => 1
+);
+is($aa.seq, 'M', "Translation: " ~ $aa.seq);
 
-# # ORF without termination codon
-# # should warn, let's change it into throw for testing
-# $seq->verbose(2);
-# $seq->seq("ggggggatgtggcccc");    # atg tgg ccc
-# eval { $seq->translate( -orf => 1 ); };
+# ORF without termination codon
+# should warn, let's change it into throw for testing
+# $seq.verbose(2);
+# $seq.seq("ggggggatgtggcccc");    # atg tgg ccc
+# eval { $seq.translate( orf => 1 ); };
 # if ($@) {
 #     like( $@, qr/atgtggcccc\n/ );
-#     $seq->verbose(-1);
-#     $aa = $seq->translate( -orf => 1 );
-#     is $aa->seq, 'MWP', "Translation: " . $aa->seq;
+#     $seq.verbose(-1);
+#     $aa = $seq.translate( orf => 1 );
+#     is($aa.seq, 'MWP', "Translation: " ~ $aa.seq;
 # }
-# $seq->verbose(0);
+# $seq.verbose(0);
 
-# # use non-standard codon table where terminator is read as Q
-# $seq->seq('ATGGTGGCGTCAACTTAG');    # ATG GTG GCG TCA ACT TAG
-# $aa = $seq->translate( -codontable_id => 6 );
-# is $aa->seq, 'MVASTQ' or diag( "Translation: " . $aa->seq );
+# use non-standard codon table where terminator is read as Q
+$seq.seq = 'ATGGTGGCGTCAACTTAG';    # ATG GTG GCG TCA ACT TAG
+$aa = $seq.translate( codontable_id => 6 );
+is($aa.seq, 'MVASTQ' , "Translation: " ~ $aa.seq );
 
-# # insert an odd character instead of terminating with *
-# $aa = $seq->translate( -terminator => 'X' );
-# is $aa->seq, 'MVASTX' or diag( "Translation: " . $aa->seq );
+# insert an odd character instead of terminating with *
+$aa = $seq.translate( terminator => 'X' );
+is($aa.seq, 'MVASTX' , "Translation: " ~ $aa.seq );
 
-# # change frame from default
-# $aa = $seq->translate( -frame => 1 );    # TGG TGG CGT CAA CTT AG
-# is $aa->seq, 'WWRQL' or diag( "Translation: " . $aa->seq );
+# change frame from default
+$aa = $seq.translate( frame => 1 );    # TGG TGG CGT CAA CTT AG
+is($aa.seq, 'WWRQL' , "Translation: " ~ $aa.seq );
 
-# $aa = $seq->translate( -frame => 2 );    # GGT GGC GTC AAC TTA G
-# is $aa->seq, 'GGVNL' or diag( "Translation: " . $aa->seq );
+$aa = $seq.translate( frame => 2 );    # GGT GGC GTC AAC TTA G
+is($aa.seq, 'GGVNL' , "Translation: " ~ $aa.seq );
 
-# # TTG is initiator in Standard codon table? Afraid so.
-# $seq->seq("ggggggttgtagcccc");           # ttg tag
-# $aa = $seq->translate( -orf => 1 );
-# is $aa->seq, 'L*' or diag( "Translation: " . $aa->seq );
+# TTG is initiator in Standard codon table? Afraid so.
+$seq.seq ="ggggggttgtagcccc";           # ttg tag
+$aa = $seq.translate( orf => 1 );
+is($aa.seq, 'L*' , "Translation: " ~ $aa.seq );
 
-# # Replace L at 1st position with M by setting complete to 1
-# $seq->seq("ggggggttgtagcccc");           # ttg tag
-# $aa = $seq->translate(
-#     -orf      => 1,
-#     -complete => 1
-# );
-# is $aa->seq, 'M' or diag( "Translation: " . $aa->seq );
+# Replace L at 1st position with M by setting complete to 1
+$seq.seq = "ggggggttgtagcccc";           # ttg tag
+$aa = $seq.translate(
+    orf      => 1,
+    complete => 1
+);
+is($aa.seq, 'M' , "Translation: " ~ $aa.seq );
 
-# # Ignore non-ATG initiators (e.g. TTG) in codon table
-# $seq->seq("ggggggttgatgtagcccc");        # atg tag
-# $aa = $seq->translate(
-#     -orf      => 1,
-#     -start    => "atg",
-#     -complete => 1
-# );
-# is $aa->seq, 'M' or diag( "Translation: " . $aa->seq );
+# Ignore non-ATG initiators (e.g. TTG) in codon table
+$seq.seq ="ggggggttgatgtagcccc";        # atg tag
+$aa = $seq.translate(
+    orf      => 1,
+    start    => "atg",
+    complete => 1
+);
+is($aa.seq, 'M' , "Translation: " ~ $aa.seq );
 
-# # test for character '?' in the sequence string
-# is $seq->seq('TTGGTGGCG?CAACT'), 'TTGGTGGCG?CAACT';
+# test for character '?' in the sequence string
+#is($seq.seq('TTGGTGGCG?CAACT'), 'TTGGTGGCG?CAACT');
 
-# # test for some aliases
-# $seq = Bio::PrimarySeq->new(
-#     -id          => 'aliasid',
-#     -description => 'Alias desc'
-# );
-# is( $seq->description, 'Alias desc' );
-# is( $seq->display_id,  'aliasid' );
+# test for some aliases
+$seq = Bio::PrimarySeq.new(
+    id          => 'aliasid',
+    description => 'Alias desc'
+);
+is( $seq.description, 'Alias desc' );
+is( $seq.display_id,  'aliasid' );
 
-# # test that x's are ignored and n's are assumed to be 'dna' no longer true!
-# # See Bug 2438. There are protein sequences floating about which are all 'X'
-# # (unknown aa)
+# test that x's are ignored and n's are assumed to be 'dna' no longer true!
+# See Bug 2438. There are protein sequences floating about which are all 'X'
+# (unknown aa)
 
-# $seq->seq('atgxxxxxx');
-# is( $seq->alphabet, 'protein' );
-# $seq->seq('atgnnnnnn');
-# is( $seq->alphabet, 'dna' );
+$seq.seq ='atgxxxxxx';
+is( $seq.alphabet, 'protein' );
+$seq.seq ='atgnnnnnn';
+is( $seq.alphabet, 'dna' );
 
-# # Bug #2864:
+# Bug #2864:
 
-# $seq = Bio::PrimarySeq->new( -display_id => 0, -seq => 'GATC' );
+$seq = Bio::PrimarySeq.new( display_id => 0, seq => 'GATC' );
 
-# is $seq->display_id, 0, "Bug #2864";
+is($seq.display_id, 0, "Bug #2864");
 
 done();

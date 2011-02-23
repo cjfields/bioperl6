@@ -10,29 +10,29 @@ has Bool $.is_circular is rw;
 
 =begin length
 
- Title   : length
- Usage   : $len = $seq.length();
- Function: Get the length of the sequence in number of symbols (bases
-           or amino acids).
+Title   : length
+Usage   : $len = $seq.length();
+Function: Get the length of the sequence in number of symbols (bases
+          or amino acids).
 
-           You can also set this attribute, even to a number that does
-           not match the length of the sequence string. This is useful
-           if you don''t want to set the sequence too, or if you want
-           to free up memory by unsetting the sequence. In the latter
-           case you could do e.g.
+          You can also set this attribute, even to a number that does
+          not match the length of the sequence string. This is useful
+          if you don''t want to set the sequence too, or if you want
+          to free up memory by unsetting the sequence. In the latter
+          case you could do e.g.
 
-               $seq.length($seq->length);
-               #todo will not be undef but Mu I believe
-               #$seq.seq(undef);
+              $seq.length($seq->length);
+              #todo will not be undef but Mu I believe
+              #$seq.seq(undef);
 
-           Note that if you set the sequence to a value other than
-           undef at any time, the length attribute will be
-           invalidated, and the length of the sequence string will be
-           reported again. Also, we won''t let you lie about the length.
+          Note that if you set the sequence to a value other than
+          undef at any time, the length attribute will be
+          invalidated, and the length of the sequence string will be
+          reported again. Also, we won''t let you lie about the length.
 
- Example :
- Returns : integer representing the length of the sequence.
- Args    : Optionally, the value on set
+Example :
+Returns : integer representing the length of the sequence.
+Args    : Optionally, the value on set
 
 =end length
 
@@ -63,5 +63,59 @@ multi method length(Int $val){
 	
 	return $val;
 }
+
+
+
+
+=begin trunc
+
+ Title   : trunc
+ Usage   : $subseq = $myseq->trunc(10,100);
+ Function: Provides a truncation of a sequence.
+ Returns : A fresh Bio::PrimarySeqI implementing object.
+ Args    : Two integers denoting first and last base of the sub-sequence.
+
+
+=end trunc 
+
+
+method trunc(Int $start,Int $end where {  $start < $end }) {
+    my Str $str;
+
+    $str = self.subseq($start,$end);
+    # my $seqclass;
+    # if($self->can_call_new()) {
+    #     $seqclass = ref($self);
+    # } else {
+    #     $seqclass = 'Bio::PrimarySeq';
+    #     $self->_attempt_to_load_Seq();
+    # }
+
+    # my $out = $seqclass->new( seq => $str,
+    my $out = Bio::PrimarySeq.new( seq => $str,
+                                   display_id  => self.display_id,
+                                   accession_number => self.accession_number,
+                                   alphabet => self.alphabet,
+                                   description => self.description(),
+                                   #verbose => self.verbose
+                               );
+    
+   return $out;
+}
+
+
+method subseq(Int $start,Int $end) {
+
+    return 'NYI';
+}
+
+method revcom() {
+    return Bio::PrimarySeq.new(seq => 'NYI');
+}
+
+method translate(*@parameters) {
+    return Bio::PrimarySeq.new(seq => 'NYI');
+}
+
 
 }
