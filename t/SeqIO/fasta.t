@@ -1,17 +1,22 @@
 use v6;
-
+use Test;
+plan 15;
 BEGIN {
-    @*INC.push('./lib');
+    @*INC.push('lib');
+    @*INC.push('blib');    
 }
 
-use Test;
+
+
+eval_lives_ok 'use Bio::SeqIO', 'Can use Bio::SeqIO';
+eval_lives_ok 'use Bio::Role::FastaIO', 'Can use Bio::Role::FastaIO';
 
 use Bio::SeqIO;
 use Bio::Role::FastaIO;
-
+my $data_path ='t/data';
 my $format = 'fasta';
-#yes I know it's hardcore for now. Will only work when calling make from project directory
-my $file = "t/data/test.fasta";
+my $file = "$data_path/test.fasta";
+
 my $seqio_obj = Bio::SeqIO.new(file=> $file,format => $format);
 
 #type of Object seem to disappear right now 
