@@ -12,10 +12,16 @@ class Bio::Tools::CodonTable {
 
 # has Str $.terminator is rw where {$_.chars == 1} = '*';
 
+#has $.CODONGAP = $GAP x CODONSIZE;
+has $.CODONGAP is rw = '---';
 #constant NYI    
 has Int $.CODONSIZE = 3 ;
 
 has $.id is rw = 1;
+
+has %.codons is ro;
+has %.trcol is ro;
+
 
 # thinking these could go into a simple basic data class
 #constant NYI    
@@ -87,36 +93,29 @@ has @!STARTS = <
 
 
 
-#has CODONS => (
-#    is => 'ro',
-#    isa => 'HashRef'
-#);
-#
-#has TRCOL  => (
-#    is => 'ro',    
-#    isa => 'HashRef'
-#);
 
+#default where table id is 1
+multi method new() {
+    my @nucs = <t c a g>;
+    my $x = 0;
+    my %codons;
+    my %trcol;
+    
+    for @nucs -> $i {
+        for @nucs -> $j {
+            for @nucs -> $k {
+                my $codon = "$i$j$k";
+                %codons{$codon} = $x;
+                %trcol{$x} = $codon;
+                $x++;
+            }
+        }
+    }
+    
+    my $obj= self.bless(*, id => 1,codons=>%codons,trcol=>%trcol);
 
-
-#sub BUILD {
-#    my @nucs = qw(t c a g);
-#    my $x = 0;
-#    my $codons;
-#    my $trcol;
-#    for my $i (@nucs) {
-#        for my $j (@nucs) {
-#            for my $k (@nucs) {
-#                my $codon = "$i$j$k";
-#                $codons->{$codon} = $x;
-#                $trcol->{$x} = $codon;
-#                $x++;
-#            }
-#        }
-#    }
-#    CODONS($codons);
-#    TRCOL($trcol);
-#}
+    return $obj;
+}
 
 method name() {
     #minus one since array starts at zero
@@ -124,8 +123,59 @@ method name() {
     return @!NAMES[$id];
 }
     
-multi method translate(*@params) {
-    return 'NYI';
+multi method translate($seq is copy) {
+    #    my ($self, $seq) = @_;
+    #    $self->throw("Calling translate without a seq argument!") unless defined $seq;
+    return '' unless $seq;
+
+    my $id = self.id;
+    my ($partial) = 0;
+    $partial = 2 if $seq.chars() % $.CODONSIZE == 2;
+    
+    $seq = lc $seq;
+    $seq = $seq.trans('u' => 't');
+    
+    my $protein = "";
+    if $seq ~~ /<-[actg]>/  { #ambiguous chars
+        loop (my $i = 0; $i < ($seq.chars - ($.CODONSIZE -1)); $i+=$.CODONSIZE) {
+            my $triplet = substr($seq, $i, $.CODONSIZE);
+            if $triplet eq $.CODONGAP {
+                $protein ~= $.gap;
+            }
+            if  %.codons.exists($triplet) {
+                $protein ~= substr(@!TABLES[$id-1], %.codons{$triplet}, 1);
+            } else {
+                $protein ~= self!translate_ambiguous_codon($triplet);                
+            }        
+        }
+        
+    } else { # simple, strict translation
+        loop (my $i = 0; $i < ($seq.chars - ($.CODONSIZE -1)); $i+=$.CODONSIZE) {
+            my $triplet = substr($seq, $i, $.CODONSIZE); 
+            if $triplet eq $.CODONGAP {
+                $protein ~= $.gap;
+            }
+            if  %.codons.exists($triplet) {
+                $protein ~= substr(@!TABLES[$id-1], %.codons{$triplet}, 1);
+            } else {
+                $protein ~= 'X';
+            }
+        }
+    }
+
+    if $partial == 2 { # 2 overhanging nucleotides
+        my $triplet = substr($seq, ($partial -4)) ~ "n";
+        if $triplet eq $.CODONGAP {
+            $protein ~= $.gap;
+        }
+        if  %.codons.exists($triplet) {
+            $protein ~= substr(@!TABLES[$id-1], %.codons{$triplet}, 1);
+        } else {
+            $protein ~= self!translate_ambiguous_codon($triplet,$partial);                
+        }                
+    }
+
+    return $protein;
 }
 
 method revtranslate(*@params){
@@ -156,6 +206,53 @@ method add_table(*@params) {
 method reverse_translate_all(*@params) {
     return 'NYI';
 }
+
+method !translate_ambiguous_codon($triplet, $partial? = 0) {
+    # my ($self, $triplet, $partial) = @_;
+    # $partial ||= 0;
+    my $id = self.id;
+    my $aa='';
+    my @codons = self!unambiquous_codons($triplet);
+    my %aas;
+    # foreach my $codon (@codons) {
+    #     $aas{substr($TABLES[$id-1],$CODONS->{$codon},1)} = 1;
+    # }
+    # my $count = scalar keys %aas;
+    # if ( $count == 1 ) {
+    #     $aa = (keys %aas)[0];
+    # }
+    # elsif ( $count == 2 ) {
+    #     if ($aas{'D'} and $aas{'N'}) {
+    #         $aa = 'B';
+    #     }
+    #     elsif ($aas{'E'} and $aas{'Q'}) {
+    #         $aa = 'Z';
+    #     } else {
+    #         $partial ? ($aa = '') : ($aa = 'X');
+    #     }
+    # } else {
+    #     $partial ? ($aa = '') :  ($aa = 'X');
+    # }
+    return $aa;
+}
+
+
+method !unambiquous_codons($value) {
+    # my ($value) = @_;
+    my @nts;
+    my @codons;
+    my ($i, $j, $k);
+    # @nts = map { $IUPAC_DNA{uc $_} }  split(//, $value);
+    # for my $i (@{$nts[0]}) {
+    #     for my $j (@{$nts[1]}) {
+    #         for my $k (@{$nts[2]}) {
+    #     	push @codons, lc "$i$j$k";
+    #         }
+    #     }
+    # }
+    return @codons;
+}
+
 
 
 #
