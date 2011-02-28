@@ -15,6 +15,8 @@ class Bio::Tools::CodonTable {
 #constant NYI    
 has Int $.CODONSIZE = 3 ;
 
+has $.id is rw = 1;
+
 # thinking these could go into a simple basic data class
 #constant NYI    
 has @!NAMES = (
@@ -83,7 +85,7 @@ has @!STARTS = <
     --------------------------------M--M---------------M------------
 >;
 
-has $.id is rw;
+
 
 #has CODONS => (
 #    is => 'ro',
