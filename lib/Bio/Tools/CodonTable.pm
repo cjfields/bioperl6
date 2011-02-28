@@ -8,14 +8,16 @@ class Bio::Tools::CodonTable {
 
 # first set internal values for all translation tables
 
-has Str $.gap is rw where {$_.chars == 1} = '-';
+# has Str $.gap is rw where {$_.chars == 1} = '-';
 
-has Str $.terminator is rw where {$_.chars == 1} = '*';
+# has Str $.terminator is rw where {$_.chars == 1} = '*';
 
-constant Int $.CODONSIZE = 3 ;
+#constant NYI    
+has Int $.CODONSIZE = 3 ;
 
 # thinking these could go into a simple basic data class
-constant @!NAMES = (
+#constant NYI    
+has @!NAMES = (
     'Standard',        #1
     'Vertebrate Mitochondrial',#2
     'Yeast Mitochondrial',# 3
@@ -81,6 +83,8 @@ has @!STARTS = <
     --------------------------------M--M---------------M------------
 >;
 
+has $.id is rw;
+
 #has CODONS => (
 #    is => 'ro',
 #    isa => 'HashRef'
@@ -91,7 +95,7 @@ has @!STARTS = <
 #    isa => 'HashRef'
 #);
 
-}
+
 
 #sub BUILD {
 #    my @nucs = qw(t c a g);
@@ -111,9 +115,47 @@ has @!STARTS = <
 #    CODONS($codons);
 #    TRCOL($trcol);
 #}
-#
-#sub translate {
-#}
+
+method name {
+    my ($id) = self.id;
+#    return ${$self->genetic_code()}{$id}{name};
+    return 'NYI';
+}
+    
+multi method translate(*@params) {
+    return 'NYI';
+}
+
+method revtranslate(*@params){
+    return 'NYI';
+}
+
+method is_start_codon($value) {
+    return 'NYI';
+}
+
+method is_ter_codon($value) {
+    return 'NYI';
+}
+
+
+method is_unknown_codon($value) {
+    return 'NYI';
+}
+
+method translate_strict($value) {
+    return 'NYI';
+}
+
+method add_table(*@params) {
+    return 'NYI';
+}
+
+method reverse_translate_all(*@params) {
+    return 'NYI';
+}
+
+
 #
 #BEGIN { 
 #    #%IUPAC_DNA = Bio::Tools::IUPAC->iupac_iub();    
@@ -122,3 +164,5 @@ has @!STARTS = <
 #    #$VALID_PROTEIN = '['.join('',Bio::SeqUtils->valid_aa(0)).']';
 #}
 #
+    
+}
