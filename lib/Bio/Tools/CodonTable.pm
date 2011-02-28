@@ -118,10 +118,10 @@ has @!STARTS = <
 #    TRCOL($trcol);
 #}
 
-method name {
-    my ($id) = self.id;
-#    return ${$self->genetic_code()}{$id}{name};
-    return 'NYI';
+method name() {
+    #missing one since array starts at zero
+    my ($id) = self.id - 1;
+    return @!NAMES[$id];
 }
     
 multi method translate(*@params) {
