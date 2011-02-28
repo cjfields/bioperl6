@@ -119,7 +119,7 @@ has @!STARTS = <
 #}
 
 method name() {
-    #missing one since array starts at zero
+    #minus one since array starts at zero
     my ($id) = self.id - 1;
     return @!NAMES[$id];
 }
