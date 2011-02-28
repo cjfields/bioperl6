@@ -44,7 +44,7 @@ $myCodonTable.id =1;
 # };
 # ok ($@ =~ /EX/) ;
 
-is $myCodonTable.translate(''), '';
+is $myCodonTable.translate(''), '', 'Empty sequence translate';
 
 my @ii  = <ACT acu ATN gt ytr sar>;
 my @res = <T   T   X   V  L   Z  >;
