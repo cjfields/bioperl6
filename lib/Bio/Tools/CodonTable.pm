@@ -23,6 +23,26 @@ has %.codons is ro;
 has %.trcol is ro;
 
 
+has %!IUB = ( 'A' => [< A >],
+              'C' => [< C >],
+              'G' => [< G >],
+              'T' => [< T >],
+              'U' => [< U >],
+              'M' => [<A C>],
+              'R' => [<A G>],
+              'W' => [<A T>],
+              'S' => [<C G>],
+              'Y' => [<C T>],
+              'K' => [<G T>],
+              'V' => [<A C G>],
+              'H' => [<A C T>],
+              'D' => [<A G T>],
+              'B' => [<C G T>],
+              'X' => [<G A T C>],
+              'N' => [<G A T C>]
+          );
+
+
 # thinking these could go into a simple basic data class
 #constant NYI    
 has @!NAMES = (
@@ -208,31 +228,30 @@ method reverse_translate_all(*@params) {
 }
 
 method !translate_ambiguous_codon($triplet, $partial? = 0) {
-    # my ($self, $triplet, $partial) = @_;
-    # $partial ||= 0;
     my $id = self.id;
     my $aa='';
     my @codons = self!unambiquous_codons($triplet);
     my %aas;
-    # foreach my $codon (@codons) {
-    #     $aas{substr($TABLES[$id-1],$CODONS->{$codon},1)} = 1;
-    # }
-    # my $count = scalar keys %aas;
-    # if ( $count == 1 ) {
-    #     $aa = (keys %aas)[0];
-    # }
-    # elsif ( $count == 2 ) {
-    #     if ($aas{'D'} and $aas{'N'}) {
-    #         $aa = 'B';
-    #     }
-    #     elsif ($aas{'E'} and $aas{'Q'}) {
-    #         $aa = 'Z';
-    #     } else {
-    #         $partial ? ($aa = '') : ($aa = 'X');
-    #     }
-    # } else {
-    #     $partial ? ($aa = '') :  ($aa = 'X');
-    # }
+    
+    for @codons -> $codon {
+        %aas{substr(@!TABLES[$id-1],%.codons{$codon},1)} = 1;
+    }
+    my $count =  %aas.keys.elems;
+    if $count == 1  {
+        $aa = (%aas.keys)[0];
+    }
+    elsif $count == 2 {
+        if (%aas{'D'} and %aas{'N'}) {
+            $aa = 'B';
+         }
+        elsif (%aas{'E'} and %aas{'Q'}) {
+            $aa = 'Z';
+        } else {
+            $partial ?? ($aa = '') !! ($aa = 'X');
+        }
+    } else {
+        $partial ?? ($aa = '') !!  ($aa = 'X');
+    }
     return $aa;
 }
 
@@ -242,14 +261,16 @@ method !unambiquous_codons($value) {
     my @nts;
     my @codons;
     my ($i, $j, $k);
-    # @nts = map { $IUPAC_DNA{uc $_} }  split(//, $value);
-    # for my $i (@{$nts[0]}) {
-    #     for my $j (@{$nts[1]}) {
-    #         for my $k (@{$nts[2]}) {
-    #     	push @codons, lc "$i$j$k";
-    #         }
-    #     }
-    # }
+    @nts = map { %!IUB{uc $_}} , $value.comb();
+        for @(@nts[0]) ->  $i {
+            #hack for now, since @nts has Any() values. Normally in p5 code you would have undef which would not loop at all
+            last if !defined $i;
+            for @(@nts[1]) -> $j {
+                for @(@nts[2]) -> $k {
+                    @codons.push(lc "$i$j$k");
+                }
+            }
+        }
     return @codons;
 }
 
