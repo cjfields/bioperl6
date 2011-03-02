@@ -306,8 +306,16 @@ method translate_strict($value is copy) {
    }    
 }
 
-method add_table(*@params) {
-    return 'NYI';
+method add_table($table,$name? = 'Custom' ~ @!NAMES.elems +1 ,$starts? = @!STARTS[0]) {
+    #need to throw this lovely warning out... cjfields!
+    # $self->throw('Suspect input!')
+    #     unless length($table) == 64 and length($starts) == 64;
+
+     push @!NAMES, $name;
+     push @!TABLES, $table;
+     push @!STARTS, $starts;
+
+    return @!NAMES.elems;    
 }
 
 method reverse_translate_all(*@params) {

@@ -161,11 +161,14 @@ is $myCodonTable.translate_strict('ATG'), 'M';
 #
 
 my @custom_table =
-    ( 'test1',
-      'FFLLSSSSYY**CC*WLLLL**PPHHQQR*RRIIIMT*TT*NKKSSRRV*VVAA*ADDEE*GGG'
+    ( 
+      'FFLLSSSSYY**CC*WLLLL**PPHHQQR*RRIIIMT*TT*NKKSSRRV*VVAA*ADDEE*GGG',
+      'test1'
     );
 
-ok my $custct = $myCodonTable.add_table(@custom_table);
+#changed inferface from p5 version. Since cannot have require parameter after optional, going to have pass the table first,
+#so we can have optional table name and starts
+ok my $custct = $myCodonTable.add_table(@custom_table[0],@custom_table[1]);
 is $custct, 24;
 is $myCodonTable.translate('atgaaraayacmacracwacka'), 'MKNTTTT';
 ok ($myCodonTable.id= $custct);
@@ -176,7 +179,7 @@ ok ($myCodonTable.id= $custct);
 
 use Bio::PrimarySeq;
 ok $seq = Bio::PrimarySeq.new(seq=>'atgaaraayacmacracwacka', alphabet=>'dna');
-is $seq.translate().seq, 'MKNTTTT';
+is $seq.translate().seq, 'MKNTTTT','Bio::PrimarySeq translate';
 is $seq.translate(Any, Any, Any, Any, Any, Any, $myCodonTable).seq, 'MKXXTTT';
 
 # test gapped translated
