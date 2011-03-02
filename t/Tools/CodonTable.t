@@ -27,14 +27,15 @@ is $myCodonTable.id, 10;
 is $myCodonTable.name(), 'Euplotid Nuclear';
 
 # enumerate tables as object method
-#my $table = $myCodonTable.tables();
-# cmp_ok (keys %{$table}, '>=', 17); # currently 17 known tables
-# is $table.{11}, q{"Bacterial"};
+my %table = $myCodonTable.tables();
+is %table.keys.elems, 17; # currently 17 known tables
+is %table{11}, qw<"Bacterial">;
 
-# # enumerate tables as class method
-# $table = Bio::Tools::CodonTable.tables;
-# cmp_ok (values %{$table}, '>=', 17); # currently 17 known tables
-# is $table.{23}, 'Thraustochytrium Mitochondrial';
+# enumerate tables as class method
+#todo need to implement as class method in the future
+# %table = Bio::Tools::CodonTable.tables;
+# is %table.keys.elems, 17; # currently 17 known tables
+# is %table{23}, 'Thraustochytrium Mitochondrial';
 
 # translate codons
 $myCodonTable.id =1;
@@ -119,7 +120,6 @@ is $myCodonTable.revtranslate('I'), 3;
 	);
 
 $test = 1;
-#TESTING: {
 for 0..@ii.end() -> $i {
  	 my @codonres = $myCodonTable.revtranslate(@ii[$i]);
          for 0..@codonres.end() -> $j {
@@ -131,7 +131,6 @@ for 0..@ii.end() -> $i {
  	     }
  	 }
       }
-#}
 ok $test;
 
 #  boolean tests

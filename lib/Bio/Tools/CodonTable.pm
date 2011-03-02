@@ -143,7 +143,17 @@ method name() {
     my ($id) = self.id - 1;
     return @!NAMES[$id];
 }
-    
+
+method tables() {
+  my %tables;
+  for  1 .. @!NAMES ->  $id {
+    my $name = @!NAMES[$id-1];
+    %tables{$id} = $name if $name;
+  }
+  return %tables;
+}
+
+
 multi method translate($seq is copy) {
     #    my ($self, $seq) = @_;
     #    $self->throw("Calling translate without a seq argument!") unless defined $seq;
