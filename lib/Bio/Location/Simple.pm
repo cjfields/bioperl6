@@ -34,14 +34,17 @@ method is_fuzzy() {
 }
 
 method length() {
-    # given ($self->location_type) {
-    #     when ([qw(EXACT WITHIN)]) {
-    #         return $self->end - $self->start + 1;
-    #     }
-    #     default {
-    #         return 0
-    #     }
-    # }
+    given (self.location_type) {
+        when 'EXACT' {
+            return self.end - self.start + 1;
+        }
+        when 'WITHIN' {
+            return self.end - self.start + 1;
+        }        
+        default {
+            return 0
+        }
+    }
     return 'NYI';
 }
 

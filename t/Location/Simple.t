@@ -86,7 +86,7 @@ is($exact.start, 10);
 is($exact.end, 20);
 is($exact.strand, 1, 'strand coerced');
 is($exact.seq_id, Any);
-# is($exact->length, 11);
+is($exact.length, 11);
 
 # this doesn't seem correct, shouldn't it be 'FUZZY' or 'UNCERTAIN'?
 is($exact.location_type, 'EXACT');
