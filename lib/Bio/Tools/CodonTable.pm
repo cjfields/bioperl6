@@ -10,7 +10,8 @@ class Bio::Tools::CodonTable {
 
 # has Str $.gap is rw where {$_.chars == 1} = '-';
 
-# has Str $.terminator is rw where {$_.chars == 1} = '*';
+#has Str $.terminator is rw where { $_.chars == 1 } = '*';
+has Str $.terminator is rw = '*';    
 
 #has $.CODONGAP = $GAP x CODONSIZE;
 has $.CODONGAP is rw = '---';
@@ -198,21 +199,94 @@ multi method translate($seq is copy) {
     return $protein;
 }
 
-method revtranslate(*@params){
-    return 'NYI';
+method revtranslate($value is copy,$coding?){
+    my ($id) = self.id;
+    my (@aas,  $p);
+    my (@codons) = ();
+
+    if ($value.chars == 3 ) {
+        $value = lc $value;
+        $value = ucfirst $value;
+        #hash comes from SeqUtil.pm crap!
+#         $value = %THREELETTERSYMBOLS{$value};
+     }
+   # if ( defined $value and $value ~~ /$VALID_PROTEIN/ 
+   #        and $value.chars == 1 ) {
+   #      $value = uc $value;
+   #      @aas = @{$IUPAC_AA{$value}};    
+   #      foreach my $aa (@aas) {
+   #          #print $aa, " -2\n";
+   #          $aa = '\*' if $aa eq '*';
+   #        while ($TABLES[$id-1] =~ m/$aa/g) {
+   #            $p = pos $TABLES[$id-1];
+   #            push (@codons, $TRCOL->{--$p});
+   #        }
+   #      }
+   #  }
+
+   # if ($coding and uc ($coding) eq 'RNA') {
+   #     for my $i (0..$#codons)  {
+   #        $codons[$i] =~ tr/t/u/;
+   #     }
+   # }
+    
+   return @codons;    
 }
 
-method is_start_codon($value) {
-    return 'NYI';
+method is_start_codon($value is copy) {
+   my $id = self.id;
+
+   $value  = lc $value;
+   $value =$value.trans('u'=>'t');
+
+   if ( $value.chars != 3  )  {
+       return 0;
+   }
+   else {
+       my $result = 1;
+       my @ms = map { substr(@!STARTS[$id-1],%.codons{$_},1) }, self!unambiquous_codons($value);
+       for @ms -> $c {
+           $result = 0 if $c ne 'M';
+       }
+       return $result;
+   }    
 }
 
-method is_ter_codon($value) {
-    return 'NYI';
+method is_ter_codon($value is copy) {
+    my $id = self.id;
+
+    $value  = lc $value;
+    $value  =$value.trans('u' =>'t');
+
+    if ( $value.chars != 3  )  {
+        return 0;
+    }
+    else {
+        my $result = 1;
+        my @ms = map { substr(@!TABLES[$id-1],%.codons{$_},1) }, self!unambiquous_codons($value);
+        for @ms -> $c {
+            $result = 0 if $c ne $.terminator;
+        }
+        return $result;
+    }    
 }
 
 
-method is_unknown_codon($value) {
-    return 'NYI';
+method is_unknown_codon($value is copy) {
+   my $id = self.id;
+
+   $value  = lc $value;
+   $value  = $value.trans('u' => 't');
+
+   if ( $value.chars != 3  )  {
+       return 1;
+   }
+   else {
+       my $result = 0;
+       my @cs = map { substr(@!TABLES[$id-1],%.codons{$_},1) }, self!unambiquous_codons($value);
+       $result = 1 if @cs.elems == 0;
+       return $result;
+   }    
 }
 
 method translate_strict($value) {
@@ -257,7 +331,6 @@ method !translate_ambiguous_codon($triplet, $partial? = 0) {
 
 
 method !unambiquous_codons($value) {
-    # my ($value) = @_;
     my @nts;
     my @codons;
     my ($i, $j, $k);
