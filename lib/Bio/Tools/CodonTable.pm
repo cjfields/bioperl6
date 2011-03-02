@@ -289,8 +289,21 @@ method is_unknown_codon($value is copy) {
    }    
 }
 
-method translate_strict($value) {
-    return 'NYI';
+method translate_strict($value is copy) {
+   my ($id) = self.id;
+
+   $value  = lc $value;
+   $value  = $value.trans('u' => 't');
+
+   if ($value.chars != 3 ) {
+       return '';
+   }
+   elsif (!(defined %.codons{$value}))  {
+       return 'X';
+   }
+   else {
+       return substr(@!TABLES[$id-1],%.codons{$value},1);
+   }    
 }
 
 method add_table(*@params) {
