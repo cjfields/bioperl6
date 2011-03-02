@@ -4,6 +4,7 @@ BEGIN {
     @*INC.push('./lib');
 }
 use Test;
+eval_lives_ok 'use Bio::Location::Simple', 'Can use Bio::Location::Simple';
 use Bio::Location::Simple;
 
 my $simple = Bio::Location::Simple.new(
