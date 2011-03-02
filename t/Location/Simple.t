@@ -25,9 +25,9 @@ is($simple.start_pos_type, 'EXACT', 'pos_type is EXACT for start');
 is($simple.end_pos_type, 'EXACT', 'pos_type is EXACT for end');
 ok($simple.valid_Location);
 is($simple.location_type, 'EXACT',  'has a default location type');
-#ok(!$simple.is_fuzzy);
+ok(!$simple.is_fuzzy);
 
-#is ($simple.to_string, 'my1:10..20', 'full FT string');
+is($simple.to_string, 'my1:10..20', 'full FT string');
 
 # test that even when end < start that length is always positive
 my $f = Bio::Location::Simple.new(
@@ -36,10 +36,10 @@ my $f = Bio::Location::Simple.new(
         end     => 20, 
         strand  => 1);
 
-#is($f.length(), 81, 'Positive length');
-#is($f.strand(),-1,  'Negative strand' );
+is($f.length(), 81, 'Positive length');
+is($f.strand(),-1,  'Negative strand' );
 
-# is ($f->to_string, 'complement(20..100)','full FT string');
+is($f.to_string, 'complement(20..100)','full FT string');
 
 my $exact = Bio::Location::Simple.new(
                     start         => 10,
@@ -51,11 +51,11 @@ my $exact = Bio::Location::Simple.new(
 is($exact.start, 10, 'Biome::Location::Simple IN-BETWEEN');
 is($exact.end, 11);
 is($exact.seq_id, 'my2');
-# is($exact->length, 0);
-# is($exact->location_type, 'IN-BETWEEN');
-# ok(!$exact->is_fuzzy);
+is($exact.length, 0);
+is($exact.location_type, 'IN-BETWEEN');
+ok(!$exact.is_fuzzy);
 
-#is ($exact->to_string, '10^11','full FT string');
+is($exact.to_string, '10^11','full FT string');
 
 # check coercions with location_type and strand
 $exact = Bio::Location::Simple.new(
@@ -68,12 +68,12 @@ is($exact.start, 10, 'Bio::Location::Simple IN-BETWEEN');
 is($exact.end, 11);
 is($exact.strand, 1, 'strand coerced');
 is($exact.seq_id, Any);
-# is($exact->length, 0);
+is($exact.length, 0);
 is($exact.location_type, 'IN-BETWEEN');
 is($exact.start_pos_type, 'EXACT');
 is($exact.end_pos_type, 'EXACT');
 
-# is($exact->to_string, '10^11', 'full FT string');
+is($exact.to_string, '10^11', 'full FT string');
 
 $exact = Bio::Location::Simple.new(
                     start          => 10, 
@@ -93,9 +93,9 @@ is($exact.location_type, 'EXACT');
 
 is($exact.start_pos_type, 'BEFORE');
 is($exact.end_pos_type, 'AFTER');
-#ok($exact.is_fuzzy);
+ok($exact.is_fuzzy);
 
-# is($exact->to_string, '<10..>20', 'full FT string');
+is($exact.to_string, '<10..>20', 'full FT string');
 
 # check coercions with start/end_pos_type, and length determination
 $exact = Bio::Location::Simple.new(
@@ -108,12 +108,12 @@ is($exact.start, 10);
 is($exact.end, 20);
 is($exact.strand, 1, 'strand coerced');
 is($exact.seq_id, Any);
-# is($exact->length, 11);
+is($exact.length, 11);
 is($exact.location_type, 'EXACT');
 is($exact.start_pos_type, 'BEFORE');
 is($exact.end_pos_type, 'EXACT');
 
-# is($exact->to_string, '<10..20', 'full FT string');
+is($exact.to_string, '<10..20', 'full FT string');
 
 # check exception handling
 # throws_ok { $exact = $exact = Bio::Location::Simple->new(
@@ -166,7 +166,7 @@ $f = Bio::Location::Simple.new(
                                end     => 20, 
                                strand  => 1);
 
-# is($f->length, 81, 'Positive length');
+is($f.length, 81, 'Positive length');
 is($f.strand,-1);
 
 # Test Bio::Location::Simple
@@ -180,7 +180,7 @@ ok($exact = Bio::Location::Simple.new(start    => 10,
 is( $exact.start, 10, 'Bio::Location::Simple EXACT');
 is( $exact.end, 20);
 is( $exact.seq_id, 'my1');
-# is( $exact->length, 11);
+is( $exact.length, 11);
 is( $exact.location_type, 'EXACT');
 
 ok ($exact = Bio::Location::Simple.new(start         => 10, 
@@ -192,7 +192,7 @@ ok ($exact = Bio::Location::Simple.new(start         => 10,
 is($exact.start, 10, 'Bio::Location::Simple BETWEEN');
 is($exact.end, 11);
 is($exact.seq_id, 'my2');
-# is($exact->length, 0);
+is($exact.length, 0);
 is($exact.location_type, 'IN-BETWEEN');
 
 # 'fuzzy' locations are combined with simple ones in Bio

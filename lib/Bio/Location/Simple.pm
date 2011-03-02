@@ -23,6 +23,29 @@ has Str $.strand is rw = 0;
 has Int $.start_offset is rw = 0;
 has Int $.end_offset is rw = 0;
 
+method to_string() {
+    return 'NYI';
+}
+
+method is_fuzzy() {
+#    ( %IS_FUZZY.exists(self.start_pos_type) ||
+#         %IS_FUZZY.exists(self.end_pos_type)) ?? True !! False;
+    return 'NYI';
+}
+
+method length() {
+    # given ($self->location_type) {
+    #     when ([qw(EXACT WITHIN)]) {
+    #         return $self->end - $self->start + 1;
+    #     }
+    #     default {
+    #         return 0
+    #     }
+    # }
+    return 'NYI';
+}
+
+
 
 method valid_Location() {
     return defined($.start) && defined($.end) ?? True !! False;
