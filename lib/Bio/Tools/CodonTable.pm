@@ -9,7 +9,8 @@ class Bio::Tools::CodonTable {
 # first set internal values for all translation tables
 
 # has Str $.gap is rw where {$_.chars == 1} = '-';
-
+has Str $.gap = '-';
+    
 #has Str $.terminator is rw where { $_.chars == 1 } = '*';
 has Str $.terminator is rw = '*';    
 
