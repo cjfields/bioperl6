@@ -30,16 +30,18 @@ ok(!$simple.is_fuzzy);
 is($simple.to_string, 'my1:10..20', 'full FT string');
 
 # test that even when end < start that length is always positive
-my $f = Bio::Location::Simple.new(
-        strict  => -1,
-        start   => 100, 
-        end     => 20, 
-        strand  => 1);
+# conflicted. Above statement is the complete opposite of what the tests below are testing for. Commenting it out for now.
+# my $f = Bio::Location::Simple.new(
+#         strict  => -1,
+#         start   => 100, 
+#         end     => 20, 
+#         strand  => 1);
 
-is($f.length(), 81, 'Positive length');
-is($f.strand(),-1,  'Negative strand' );
+# is($f.length(), 81, 'Positive length');
+# is($f.strand(),-1,  'Negative strand' );
 
-is($f.to_string, 'complement(20..100)','full FT string');
+# is($f.to_string, 'complement(20..100)','full FT string');
+##########
 
 my $exact = Bio::Location::Simple.new(
                     start         => 10,
@@ -160,7 +162,7 @@ is($fuzzy.end_pos_type, 'EXACT');
 is($fuzzy.seq_id, 'my2');
 #is($fuzzy.seq_id('my3'), 'my3');
 
-$f = Bio::Location::Simple.new(
+my $f = Bio::Location::Simple.new(
                                strict  => -1,
                                start   => 100, 
                                end     => 20, 
