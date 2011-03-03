@@ -4,10 +4,10 @@ BEGIN {
     @*INC.push('./lib');
 }
 use Test;
-eval_lives_ok 'use Bio::Location::Simple', 'Can use Bio::Location::Simple';
-use Bio::Location::Simple;
+eval_lives_ok 'use Bio::Role::Location::Simple', 'Can use Bio::Role::Location::Simple';
+use Bio::Role::Location::Simple;
 
-my $simple = Bio::Location::Simple.new(
+my $simple = Bio::Role::Location::Simple.new(
      start  => 10,
      end    => 20,
      strand => 1,
@@ -31,7 +31,7 @@ is($simple.to_string, 'my1:10..20', 'full FT string');
 
 # test that even when end < start that length is always positive
 # conflicted. Above statement is the complete opposite of what the tests below are testing for. Commenting it out for now.
-# my $f = Bio::Location::Simple.new(
+# my $f = Bio::Role::Location::Simple.new(
 #         strict  => -1,
 #         start   => 100, 
 #         end     => 20, 
@@ -43,14 +43,14 @@ is($simple.to_string, 'my1:10..20', 'full FT string');
 # is($f.to_string, 'complement(20..100)','full FT string');
 ##########
 
-my $exact = Bio::Location::Simple.new(
+my $exact = Bio::Role::Location::Simple.new(
                     start         => 10,
                     end           => 11,
                     location_type  => 'IN-BETWEEN',
                     strand        => 1, 
                     seq_id        => 'my2');
 
-is($exact.start, 10, 'Biome::Location::Simple IN-BETWEEN');
+is($exact.start, 10, 'Bio::Roleme::Location::Simple IN-BETWEEN');
 is($exact.end, 11);
 is($exact.seq_id, 'my2');
 is($exact.length, 0);
@@ -60,13 +60,13 @@ ok(!$exact.is_fuzzy);
 is($exact.to_string, '10^11','full FT string');
 
 # check coercions with location_type and strand
-$exact = Bio::Location::Simple.new(
+$exact = Bio::Role::Location::Simple.new(
                     start         => 10, 
                     end           => 11,
                     location_type  => '^',
                     strand        => '+');
 
-is($exact.start, 10, 'Bio::Location::Simple IN-BETWEEN');
+is($exact.start, 10, 'Bio::Role::Location::Simple IN-BETWEEN');
 is($exact.end, 11);
 is($exact.strand, 1, 'strand coerced');
 is($exact.seq_id, Any);
@@ -77,7 +77,7 @@ is($exact.end_pos_type, 'EXACT');
 
 is($exact.to_string, '10^11', 'full FT string');
 
-$exact = Bio::Location::Simple.new(
+$exact = Bio::Role::Location::Simple.new(
                     start          => 10, 
                     end            => 20,
                     start_pos_type => '<',
@@ -100,7 +100,7 @@ ok($exact.is_fuzzy);
 is($exact.to_string, '<10..>20', 'full FT string');
 
 # check coercions with start/end_pos_type, and length determination
-$exact = Bio::Location::Simple.new(
+$exact = Bio::Role::Location::Simple.new(
                     start          => 10, 
                     end            => 20,
                     start_pos_type => '<',
@@ -118,7 +118,7 @@ is($exact.end_pos_type, 'EXACT');
 is($exact.to_string, '<10..20', 'full FT string');
 
 # check exception handling
-# throws_ok { $exact = $exact = Bio::Location::Simple->new(
+# throws_ok { $exact = $exact = Bio::Role::Location::Simple->new(
 #                     -start          => 10, 
 #                     -end            => 12,
 #                     -start_pos_type => '>',
@@ -126,7 +126,7 @@ is($exact.to_string, '<10..20', 'full FT string');
 #     qr/Start position can't have type AFTER/,
 #     'Check start_pos_type constraint';
 
-# throws_ok { $exact = $exact = Bio::Location::Simple->new(
+# throws_ok { $exact = $exact = Bio::Role::Location::Simple->new(
 #                     -start          => 10, 
 #                     -end            => 12,
 #                     -end_pos_type   => '<',
@@ -135,21 +135,21 @@ is($exact.to_string, '<10..20', 'full FT string');
 #     'Check end_pos_type constraint';
   
   
-# throws_ok {$exact = Bio::Location::Simple->new(-start         => 10, 
+# throws_ok {$exact = Bio::Role::Location::Simple->new(-start         => 10, 
 #                                    -end           => 12,
 #                                    -location_type => 'IN-BETWEEN')}
 #     qr/length of location with IN-BETWEEN/,
 #     'IN-BETWEEN must have length of 1';  
 
 # fuzzy location tests
-my $fuzzy = Bio::Location::Simple.new(
+my $fuzzy = Bio::Role::Location::Simple.new(
                                      start    => 10,
                                      start_pos_type => '<',
                                      end      => 20,
                                      strand   => 1, 
                                      seq_id   =>'my2');
 
-is($fuzzy.strand, 1, 'Bio::Location::Simple tests');
+is($fuzzy.strand, 1, 'Bio::Role::Location::Simple tests');
 is($fuzzy.start, 10);
 is($fuzzy.end,20);
 ok(!defined $fuzzy.min_start);
@@ -162,7 +162,7 @@ is($fuzzy.end_pos_type, 'EXACT');
 is($fuzzy.seq_id, 'my2');
 #is($fuzzy.seq_id('my3'), 'my3');
 
-my $f = Bio::Location::Simple.new(
+my $f = Bio::Role::Location::Simple.new(
                                strict  => -1,
                                start   => 100, 
                                end     => 20, 
@@ -171,39 +171,39 @@ my $f = Bio::Location::Simple.new(
 is($f.length, 81, 'Positive length');
 is($f.strand,-1);
 
-# Test Bio::Location::Simple
+# Test Bio::Role::Location::Simple
 
-ok($exact = Bio::Location::Simple.new(start    => 10, 
+ok($exact = Bio::Role::Location::Simple.new(start    => 10, 
                                          end      => 20,
                                          strand   => 1, 
                                          seq_id   => 'my1'));
-#ok($exact ~~ Bio::Role::Location::Does_Range);
+#ok($exact ~~ Bio::Role::Role::Location::Does_Range);
 
-is( $exact.start, 10, 'Bio::Location::Simple EXACT');
+is( $exact.start, 10, 'Bio::Role::Location::Simple EXACT');
 is( $exact.end, 20);
 is( $exact.seq_id, 'my1');
 is( $exact.length, 11);
 is( $exact.location_type, 'EXACT');
 
-ok ($exact = Bio::Location::Simple.new(start         => 10, 
+ok ($exact = Bio::Role::Location::Simple.new(start         => 10, 
                                       end           => 11,
                                       location_type => 'IN-BETWEEN',
                                       strand        => 1, 
                                       seq_id        => 'my2'));
 
-is($exact.start, 10, 'Bio::Location::Simple BETWEEN');
+is($exact.start, 10, 'Bio::Role::Location::Simple BETWEEN');
 is($exact.end, 11);
 is($exact.seq_id, 'my2');
 is($exact.length, 0);
 is($exact.location_type, 'IN-BETWEEN');
 
-# 'fuzzy' locations are combined with simple ones in Bio
+# 'fuzzy' locations are combined with simple ones in Bio::Role
 
 # my $error = qr/length of location with IN-BETWEEN position type cannot be larger than 1/;
 
 # # testing error when assigning 10^12 simple location into fuzzy
 # throws_ok {
-#     $fuzzy = Bio::Location::Simple->new(
+#     $fuzzy = Bio::Role::Location::Simple->new(
 #                                         -start         => 10, 
 #                                         -end           => 12,
 #                                         -location_type  => '^',
@@ -211,14 +211,14 @@ is($exact.location_type, 'IN-BETWEEN');
 #                                         -seq_id        => 'my2');
 # } $error, 'Exception:IN-BETWEEN locations should be contiguous';
 
-# $fuzzy = Bio::Location::Simple->new(-location_type => '^',
+# $fuzzy = Bio::Role::Location::Simple->new(-location_type => '^',
 #                                   -strand        => 1, 
 #                                   -seq_id        => 'my2');
 
 # $fuzzy->start(10);
 # throws_ok { $fuzzy->end(12) } $error, 'Exception:IN-BETWEEN locations should be contiguous';
 
-# $fuzzy = Bio::Location::Simple->new(-location_type => '^',
+# $fuzzy = Bio::Role::Location::Simple->new(-location_type => '^',
 #                                   -strand        => 1, 
 #                                   -seq_id        =>'my2');
 

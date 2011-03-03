@@ -1,5 +1,5 @@
 use v6;
-role Bio::Location::Simple {
+role Bio::Role::Location::Simple {
 
 
 has Int $.start is rw = 0;
