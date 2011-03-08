@@ -6,12 +6,13 @@ BEGIN {
 
 use Test;
 eval_lives_ok 'use Bio::PrimarySeq', 'Can use Bio::PrimarySeq';
+eval_lives_ok 'use Bio::Role::Location::Simple';
 
-#    use_ok('Bio::Location::Simple');
 #    use_ok('Bio::Location::Fuzzy');
 #    use_ok('Bio::Location::Split');
 
 use Bio::PrimarySeq;
+use Bio::Role::Location::Simple;
 
 my $seq = Bio::PrimarySeq.new(
     seq              => 'TTGGTGGCGTCAACT',
@@ -50,12 +51,12 @@ is($seq.namespace_string(), "t:X677667.47",'Retrieving namespace_string');
 is($seq.description(), 'Sample Bio::Seq object','Has correct description');
 is($seq.display_name(), "new-id",'Has correct display_name');
 
-# my $location = Bio::Location::Simple->new(
-#     '-start'  => 2,
-#     '-end'    => 5,
-#     '-strand' => -1
-# );
-# is( $seq->subseq($location), 'ACCA' );
+my $location = Bio::Role::Location::Simple.new(
+    start  => 2,
+    end    => 5,
+    strand => -1
+);
+is( $seq.subseq($location), 'ACCA' );
 
 # my $splitlocation = Bio::Location::Split->new();
 # $splitlocation->add_sub_Location(

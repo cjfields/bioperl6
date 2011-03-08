@@ -1,6 +1,7 @@
 use Bio::Role::Describe;
 use Bio::Role::Identify;
-use Bio::Tools::CodonTable; 
+use Bio::Tools::CodonTable;
+use Bio::Role::Location::Simple;
 class Bio::PrimarySeq does Bio::Role::Describe does Bio::Role::Identify {
 
 has Str $.seq is rw;
@@ -122,27 +123,22 @@ method trunc(Int $start,Int $end where {  $start < $end }) {
 #            with $new_subseq in the sequence object
 # cut
 
-
-
-#multi method subseq(Bio::LocationI $start) {
-   # if( ref($start) && $start->isa('Bio::LocationI') ) {
-   #     my $loc = $start;
+multi method subseq(Bio::Role::Location::Simple $loc, Bool :$nogap?,Str :$replace_with?) {
    #     my $seq = "";
-   #     foreach my $subloc ($loc->each_Location()) {
-   #         my $piece = $self->subseq(-START=>$subloc->start(),
-   #      			     '-END'=>$subloc->end(), 
+   #     for  $loc.each_Location() -> $subloc {
+   #         my $piece = self.subseq(-START=>$subloc.start(),
+   #      			     '-END'=>$subloc.end(), 
    #      			     -REPLACE_WITH=>$replace,
    #                                   -NOGAP=>$nogap);
    #         $piece =~ s/[$GAP_SYMBOLS]//g if $nogap;
-   #         if($subloc->strand() < 0) {
-   #             $piece = Bio::PrimarySeq->new('-seq' => $piece)->revcom()->seq();
+   #         if($subloc.strand() < 0) {
+   #             $piece = Bio::PrimarySeq.new(seq => $piece).revcom().seq();
    #         }
-   #         $seq .= $piece;
+   #         $seq ~= $piece;
    #     }
    #     return $seq;
-   #}
-#    return 'NYI'
-#}
+   return 'NYI'
+}
 
 
 multi method subseq(Int :$start is copy,Int :$end,  Bool :$nogap?,Str :$replace_with?
@@ -265,7 +261,7 @@ method revcom() {
 
 
 
-method translate(:$terminator? is copy, :$unknown? is copy, :$frame? is copy, :$codonTableId? is copy, :$complete? is copy,
+method translate(:$terminator? is copy, :$unknown? is copy, :$frame? is copy, :codontable_id($codonTableId)? is copy, :$complete? is copy,
                        :$throw? is copy, :$codonTable? is copy, :$orf? is copy, :start($start_codon)? is copy, :$offset? is copy) {
     
 
