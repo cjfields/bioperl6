@@ -124,20 +124,21 @@ method trunc(Int $start,Int $end where {  $start < $end }) {
 # cut
 
 multi method subseq(Bio::Role::Location::Simple $loc, Bool :$nogap?,Str :$replace_with?) {
-   #     my $seq = "";
-   #     for  $loc.each_Location() -> $subloc {
-   #         my $piece = self.subseq(-START=>$subloc.start(),
-   #      			     '-END'=>$subloc.end(), 
-   #      			     -REPLACE_WITH=>$replace,
-   #                                   -NOGAP=>$nogap);
-   #         $piece =~ s/[$GAP_SYMBOLS]//g if $nogap;
-   #         if($subloc.strand() < 0) {
-   #             $piece = Bio::PrimarySeq.new(seq => $piece).revcom().seq();
-   #         }
-   #         $seq ~= $piece;
-   #     }
-   #     return $seq;
-   return 'NYI'
+       my $seq = "";
+       for  $loc.each_Location() -> $subloc {
+           my $piece = self.subseq(start=>$subloc.start(),
+        			     end=>$subloc.end(), 
+        			     replace_with=>$replace_with,
+                                     nogap=>$nogap);
+           #todo please add uncomment this line one day.
+   #        $piece ~~ s:g/$GAP_SYMBOLS// if $nogap;
+           
+           if ($subloc.strand() < 0) {
+               $piece = Bio::PrimarySeq.new(seq => $piece).revcom().seq();
+           }
+           $seq ~= $piece;
+       }
+   return $seq;
 }
 
 

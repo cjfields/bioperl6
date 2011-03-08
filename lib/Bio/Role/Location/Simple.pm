@@ -157,6 +157,10 @@ method min_end() {
     return unless $end;
 }
 
+method each_Location() {
+    return self;
+}
+
 
     
 }
