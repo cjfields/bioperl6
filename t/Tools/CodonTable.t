@@ -15,6 +15,7 @@ use Bio::Tools::CodonTable;
 # my $DEBUG = test_debug();
 my $myCodonTable = Bio::Tools::CodonTable.new( id => 16);
 ok  $myCodonTable;
+is $myCodonTable.id(), 16;
 ok($myCodonTable ~~ Bio::Tools::CodonTable, 'Bio::Tools::CodonTable object');
 
 # defaults to ID 1 "Standard"

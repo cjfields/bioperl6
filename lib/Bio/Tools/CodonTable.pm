@@ -117,7 +117,7 @@ has @!STARTS = <
 
 
 #default where table id is 1
-multi method new() {
+multi method new(Int :$id = 1) {
     my @nucs = <t c a g>;
     my $x = 0;
     my %codons;
@@ -134,10 +134,11 @@ multi method new() {
         }
     }
     
-    my $obj= self.bless(*, id => 1,codons=>%codons,trcol=>%trcol);
+    my $obj= self.bless(*, id => $id,codons=>%codons,trcol=>%trcol);
 
     return $obj;
 }
+
 
 method name() {
     #minus one since array starts at zero
