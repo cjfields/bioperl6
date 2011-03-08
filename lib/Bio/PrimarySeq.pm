@@ -81,7 +81,7 @@ multi method length(Int $val){
 method trunc(Int $start,Int $end where {  $start < $end }) {
     my Str $str;
 
-    $str = self.subseq($start,$end);
+    $str = self.subseq(start => $start,end => $end);
     # my $seqclass;
     # if($self->can_call_new()) {
     #     $seqclass = ref($self);
@@ -103,8 +103,72 @@ method trunc(Int $start,Int $end where {  $start < $end }) {
 }
 
 
-method subseq(Int $start,Int $end) {
-    return 'NYI';
+# head2 subseq
+
+#  Title   : subseq
+#  Usage   : $substring = $obj->subseq(10,40);
+#            $substring = $obj->subseq(10,40,NOGAP)
+#            $substring = $obj->subseq(-START=>10,-END=>40,-REPLACE_WITH=>'tga')
+#  Function: returns the subseq from start to end, where the first sequence
+#            character has coordinate 1 number is inclusive, ie 1-2 are the 
+#            first two characters of the sequence
+#  Returns : a string
+#  Args    : integer for start position
+#            integer for end position
+#                  OR
+#            Bio::LocationI location for subseq (strand honored)
+#            Specify -NOGAP=>1 to return subseq with gap characters removed
+#            Specify -REPLACE_WITH=>$new_subseq to replace the subseq returned
+#            with $new_subseq in the sequence object
+# cut
+
+
+
+#multi method subseq(Bio::LocationI $start) {
+   # if( ref($start) && $start->isa('Bio::LocationI') ) {
+   #     my $loc = $start;
+   #     my $seq = "";
+   #     foreach my $subloc ($loc->each_Location()) {
+   #         my $piece = $self->subseq(-START=>$subloc->start(),
+   #      			     '-END'=>$subloc->end(), 
+   #      			     -REPLACE_WITH=>$replace,
+   #                                   -NOGAP=>$nogap);
+   #         $piece =~ s/[$GAP_SYMBOLS]//g if $nogap;
+   #         if($subloc->strand() < 0) {
+   #             $piece = Bio::PrimarySeq->new('-seq' => $piece)->revcom()->seq();
+   #         }
+   #         $seq .= $piece;
+   #     }
+   #     return $seq;
+   #}
+#    return 'NYI'
+#}
+
+
+multi method subseq(Int :$start is copy,Int :$end,  Bool :$nogap?,Str :$replace_with?
+where { defined $start && defined $end && $end < self.length && $start < $end }
+) {
+   
+   # if $replace_wtih is specified, have the constructor validate it as seq
+   my $dummy =  Bio::PrimarySeq.new(seq=>$replace_with, alphabet=>self.alphabet) if defined($replace_with);
+
+
+   # remove one from start, and then length is end-start
+   $start--;
+   
+   my $seqstr =  substr(self.seq,$start, ($end-$start));
+   
+   #       $seqstr ~~ s:g/$GAP_SYMBOLS//g if ($nogap);
+   # :g :g remove later, added so I can have emacs syntax highlighting and indents
+           
+   #no idea why they did it this way in p5 code.....
+   #probably a good reason why
+   #     my @ss_args = map { eval "defined $_"  ? $_ : () } qw( $self->{seq} $start $end-$start $replace);
+   #     my $seqstr = eval join( '', "substr(", join(',',@ss_args), ")");
+   #     $seqstr =~ s/[$GAP_SYMBOLS]//g if ($nogap);
+
+   
+   return $seqstr;
 }
 
 # begin revcom
