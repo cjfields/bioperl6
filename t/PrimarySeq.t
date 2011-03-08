@@ -119,12 +119,13 @@ is( $rev.alphabet(),    'dna', 'alphabet copied through revcom' );
 my $aa = $seq.translate();    # TTG GTG GCG TCA ACT
 is($aa.seq, 'LVAST', "Translation: " ~ $aa.seq);
 
+#believe we are not going to support the old non named parameter format
 # tests for non-standard initiator codon coding for
 # M by making translate() look for an initiator codon and
 # terminator codon ("complete", the 5th argument below)
-$seq.seq ='TTGGTGGCGTCAACTTAA';    # TTG GTG GCG TCA ACT TAA
-$aa = $seq.translate( Any, Any, Any, Any, 1 );
-is($aa.seq, 'MVAST', "Translation: " ~ $aa.seq);
+#$seq.seq ='TTGGTGGCGTCAACTTAA';    # TTG GTG GCG TCA ACT TAA
+#$aa = $seq.translate( Any, Any, Any, Any, 1 );
+#is($aa.seq, 'MVAST', "Translation: " ~ $aa.seq);
 
 # same test as previous, but using named parameter
 $aa = $seq.translate( complete => 1 );
