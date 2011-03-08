@@ -179,7 +179,7 @@ ok ($myCodonTable.id= $custct);
 use Bio::PrimarySeq;
 ok $seq = Bio::PrimarySeq.new(seq=>'atgaaraayacmacracwacka', alphabet=>'dna');
 is $seq.translate().seq, 'MKNTTTT','Bio::PrimarySeq translate';
-is $seq.translate(Any, Any, Any, Any, Any, Any, $myCodonTable).seq, 'MKXXTTT';
+is $seq.translate(codonTable => $myCodonTable).seq, 'MKXXTTT';
 
 # test gapped translated
 
