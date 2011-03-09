@@ -1,7 +1,7 @@
 class Bio::Tools::CodonTable {
 
 ## Object preamble - inherits from Bio::Root::Root
-#use Bio::Tools::IUPAC;
+use Bio::Tools::IUPAC;
 #use Bio::SeqUtils;
 #
 #use base qw(Bio::Root::Root);
@@ -24,26 +24,7 @@ has $.id is rw = 1;
 has %.codons is ro;
 has %.trcol is ro;
 
-
-has %!IUB = ( 'A' => [< A >],
-              'C' => [< C >],
-              'G' => [< G >],
-              'T' => [< T >],
-              'U' => [< U >],
-              'M' => [<A C>],
-              'R' => [<A G>],
-              'W' => [<A T>],
-              'S' => [<C G>],
-              'Y' => [<C T>],
-              'K' => [<G T>],
-              'V' => [<A C G>],
-              'H' => [<A C T>],
-              'D' => [<A G T>],
-              'B' => [<C G T>],
-              'X' => [<G A T C>],
-              'N' => [<G A T C>]
-          );
-
+has %!IUB = %Bio::Tools::IUPAC::IUB;
 
 # thinking these could go into a simple basic data class
 #constant NYI    
