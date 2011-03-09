@@ -175,11 +175,11 @@ multi method translate($seq is copy) {
             if $triplet eq $.CODONGAP {
                 $protein ~= $.gap;
             }
-            if  %.codons.exists($triplet) {
+            elsif  %.codons.exists($triplet) {
                 $protein ~= substr(@!TABLES[$id-1], %.codons{$triplet}, 1);
             } else {
                 $protein ~= self!translate_ambiguous_codon($triplet);                
-            }        
+            }
         }
         
     } else { # simple, strict translation
