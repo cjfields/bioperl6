@@ -104,10 +104,11 @@ ok $test;
 
 # reverse translate amino acids 
 
-is $myCodonTable.revtranslate('U'), 0;
-is $myCodonTable.revtranslate('O'), 0;
-is $myCodonTable.revtranslate('J'), 9;
-is $myCodonTable.revtranslate('I'), 3;
+is $myCodonTable.revtranslate('U'), ();
+is $myCodonTable.revtranslate('O'), ();
+is $myCodonTable.revtranslate('J'), ('att','atc','ata','tta','ttg','ctt','ctc','cta','ctg');
+is $myCodonTable.revtranslate('I'), ('att','atc','ata');
+
 
 @ii = <A l ACN Thr sER ter Glx>;
 @res = (
