@@ -5,7 +5,7 @@ BEGIN {
 }
 
 use Test;
-plan 56;
+plan 51;
 eval_lives_ok 'use Bio::Tools::CodonTable', 'Can use Bio::Tools::CodonTable';
 
 use Bio::Tools::CodonTable; 
@@ -40,11 +40,6 @@ is %table{11}, qw<"Bacterial">;
 
 # translate codons
 $myCodonTable.id =1;
-
-# eval {
-#     $myCodonTable.translate();
-# };
-# ok ($@ =~ /EX/) ;
 
 is $myCodonTable.translate(''), '', 'Empty sequence translate';
 
@@ -91,7 +86,6 @@ $prot ~~ s:g/\s//;
 
 # print join (' ', @res), "\n" if( $DEBUG );
 $test = 1;
-# for my $i (0..$#ii) {
 for @ii Z @res -> $dna,$aa {
     if $aa ne $myCodonTable.translate($dna) {
 	$test = 0; 
@@ -173,7 +167,6 @@ ok my $custct = $myCodonTable.add_table(@custom_table[0],@custom_table[1]);
 is $custct, 24;
 is $myCodonTable.translate('atgaaraayacmacracwacka'), 'MKNTTTT';
 ok ($myCodonTable.id= $custct);
-#todo cannot run the next test since we have not really append to the codon table. It will kill the rest of the tests
 is $myCodonTable.translate('atgaaraayacmacracwacka'), 'MKXXTTT';
 
 # test doing this via Bio::PrimarySeq object

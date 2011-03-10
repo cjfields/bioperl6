@@ -32,12 +32,6 @@ INIT {
     our %iub = %Bio::Tools::IUPAC::IUB;
 }
 
-## Object preamble - inherits from Bio::Root::Root
-
-#use Bio::SeqUtils;
-#
-#use base qw(Bio::Root::Root);
-
 # first set internal values for all translation tables
 
 # has Str $.gap is rw where {$_.chars == 1} = '-';
@@ -52,8 +46,6 @@ has $.CODONGAP is rw = '---';
 has Int $.CODONSIZE = 3 ;
 
 has $.id is rw = 1;
-
-
 
 # thinking these could go into a simple basic data class
 #constant NYI    
@@ -123,14 +115,6 @@ has @!STARTS = <
     --------------------------------M--M---------------M------------
 >;
 
-
-
-
-#default where table id is 1
-multi method new(Int :$id = 1) {
-    my $obj= self.bless(*, id => $id);
-    return $obj;
-}
 
 
 method name() {
@@ -312,9 +296,8 @@ method translate_strict($value is copy) {
 }
 
 method add_table($table,$name? = 'Custom' ~ @!NAMES.elems +1 ,$starts? = @!STARTS[0]) {
-    #need to throw this lovely warning out... cjfields!
-    # $self->throw('Suspect input!')
-    #     unless length($table) == 64 and length($starts) == 64;
+    #where { $table.chars == 64 and $starts.length == 64   } 
+    #some reason getting a syntax error when adding where clause
 
      push @!NAMES, $name;
      push @!TABLES, $table;
@@ -372,9 +355,6 @@ method !unambiquous_codons($value) {
         }
     return @codons;
 }
-
-
-
 
     
 }
