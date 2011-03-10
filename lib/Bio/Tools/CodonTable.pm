@@ -1,4 +1,27 @@
 class Bio::Tools::CodonTable {
+our %codons;
+our %trcol;
+
+INIT {
+    my @nucs = <t c a g>;
+    my $x = 0;
+    our %codons;
+    our %trcol;
+    
+    for @nucs -> $i {
+        for @nucs -> $j {
+            for @nucs -> $k {
+                my $codon = "$i$j$k";
+                %codons{$codon} = $x;
+                %trcol{$x} = $codon;
+                $x++;
+            }
+        }
+    }
+    
+    
+
+}
 
 ## Object preamble - inherits from Bio::Root::Root
 use Bio::Tools::IUPAC;
@@ -20,9 +43,6 @@ has $.CODONGAP is rw = '---';
 has Int $.CODONSIZE = 3 ;
 
 has $.id is rw = 1;
-
-has %.codons is ro;
-has %.trcol is ro;
 
 has %!IUB = %Bio::Tools::IUPAC::IUB;
 
@@ -99,24 +119,7 @@ has @!STARTS = <
 
 #default where table id is 1
 multi method new(Int :$id = 1) {
-    my @nucs = <t c a g>;
-    my $x = 0;
-    my %codons;
-    my %trcol;
-    
-    for @nucs -> $i {
-        for @nucs -> $j {
-            for @nucs -> $k {
-                my $codon = "$i$j$k";
-                %codons{$codon} = $x;
-                %trcol{$x} = $codon;
-                $x++;
-            }
-        }
-    }
-    
-    my $obj= self.bless(*, id => $id,codons=>%codons,trcol=>%trcol);
-
+    my $obj= self.bless(*, id => $id);
     return $obj;
 }
 
@@ -156,8 +159,8 @@ multi method translate($seq is copy) {
             if $triplet eq $.CODONGAP {
                 $protein ~= $.gap;
             }
-            elsif  %.codons.exists($triplet) {
-                $protein ~= substr(@!TABLES[$id-1], %.codons{$triplet}, 1);
+            elsif  %codons.exists($triplet) {
+                $protein ~= substr(@!TABLES[$id-1], %codons{$triplet}, 1);
             } else {
                 $protein ~= self!translate_ambiguous_codon($triplet);                
             }
@@ -169,8 +172,8 @@ multi method translate($seq is copy) {
             if $triplet eq $.CODONGAP {
                 $protein ~= $.gap;
             }
-            if  %.codons.exists($triplet) {
-                $protein ~= substr(@!TABLES[$id-1], %.codons{$triplet}, 1);
+            if  %codons.exists($triplet) {
+                $protein ~= substr(@!TABLES[$id-1], %codons{$triplet}, 1);
             } else {
                 $protein ~= 'X';
             }
@@ -182,8 +185,8 @@ multi method translate($seq is copy) {
         if $triplet eq $.CODONGAP {
             $protein ~= $.gap;
         }
-        if  %.codons.exists($triplet) {
-            $protein ~= substr(@!TABLES[$id-1], %.codons{$triplet}, 1);
+        if  %codons.exists($triplet) {
+            $protein ~= substr(@!TABLES[$id-1], %codons{$triplet}, 1);
         } else {
             $protein ~= self!translate_ambiguous_codon($triplet,$partial);                
         }                
@@ -237,7 +240,7 @@ method is_start_codon($value is copy) {
    }
    else {
        my $result = 1;
-       my @ms = map { substr(@!STARTS[$id-1],%.codons{$_},1) }, self!unambiquous_codons($value);
+       my @ms = map { substr(@!STARTS[$id-1],%codons{$_},1) }, self!unambiquous_codons($value);
        for @ms -> $c {
            $result = 0 if $c ne 'M';
        }
@@ -256,7 +259,7 @@ method is_ter_codon($value is copy) {
     }
     else {
         my $result = 1;
-        my @ms = map { substr(@!TABLES[$id-1],%.codons{$_},1) }, self!unambiquous_codons($value);
+        my @ms = map { substr(@!TABLES[$id-1],%codons{$_},1) }, self!unambiquous_codons($value);
         for @ms -> $c {
             $result = 0 if $c ne $.terminator;
         }
@@ -276,7 +279,7 @@ method is_unknown_codon($value is copy) {
    }
    else {
        my $result = 0;
-       my @cs = map { substr(@!TABLES[$id-1],%.codons{$_},1) }, self!unambiquous_codons($value);
+       my @cs = map { substr(@!TABLES[$id-1],%codons{$_},1) }, self!unambiquous_codons($value);
        $result = 1 if @cs.elems == 0;
        return $result;
    }    
@@ -291,11 +294,11 @@ method translate_strict($value is copy) {
    if ($value.chars != 3 ) {
        return '';
    }
-   elsif (!(defined %.codons{$value}))  {
+   elsif (!(defined %codons{$value}))  {
        return 'X';
    }
    else {
-       return substr(@!TABLES[$id-1],%.codons{$value},1);
+       return substr(@!TABLES[$id-1],%codons{$value},1);
    }    
 }
 
@@ -322,7 +325,7 @@ method !translate_ambiguous_codon($triplet, $partial? = 0) {
     my %aas;
     
     for @codons -> $codon {
-        %aas{substr(@!TABLES[$id-1],%.codons{$codon},1)} = 1;
+        %aas{substr(@!TABLES[$id-1],%codons{$codon},1)} = 1;
     }
     my $count =  %aas.keys.elems;
     if $count == 1  {
