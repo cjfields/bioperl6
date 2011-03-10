@@ -5,7 +5,7 @@ BEGIN {
 }
 
 use Test;
-plan 4;
+plan 10;
 eval_lives_ok 'use Bio::Tools::IUPAC', 'Can use Bio::Tools::IUPAC';
 eval_lives_ok 'use Bio::PrimarySeq', 'Can use Bio::PrimarySeq';
 

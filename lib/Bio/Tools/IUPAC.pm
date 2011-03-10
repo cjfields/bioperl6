@@ -144,12 +144,11 @@
 # Let the code begin...
 
 class Bio::Tools::IUPAC {
-
-    has $!seq;
+    our %IUB;
+    our %REV_IUB;
+    our %IUP;
     
-#probably want to load them in a BEGIN statement in time    
-#BEGIN { ... }
-     
+INIT {     
     our %IUB = ( 'A' => [< A >],
               'C' => [< C >],
               'G' => [< G >],
@@ -216,6 +215,7 @@ class Bio::Tools::IUPAC {
 	    'Z' => [<E Q>],
 	    '*' => ['*']
 	    );
+}
 
 
 #begin new
@@ -229,36 +229,43 @@ class Bio::Tools::IUPAC {
 
 
 #end
+    
+has $!seqobj;
+has @!alpha;    
+has @!string;
 
 
-#method new {
-    # my($class,@args) = @_;
-    # my $self = $class->SUPER::new(@args);
+#getting the following error: Illegal redeclaration of symbol 'Bio::Tools::IUPAC'
+#Bio::PrimarySeq uses Codontable.pm which in turns uses IUPAC.pm . Thought it would load it once and not try it twice
+#use Bio::PrimarySeq;
+#should be method new(Bio::PrimarySeq $seq ) {
+    
+method new( $seq ){
+    
+    my @alpha;
+    my @string;
+    
+    if ($seq.alphabet() ~~ /^<[dr]>na$/) {
+        #nucleotide seq obj
+        @alpha =  map { %IUB{uc($_)} } , split('', $seq.seq);        
+    }
+    elsif ($seq.alphabet() ~~ /^protein$/) {
+        # amino acid seq object
+        @alpha =  map { %IUP{uc($_)} } , split('', $seq.seq);        
+    }
+    else {
+        #throw here
+        die "No alphabet can be determine from seq object";
+    }
+    @string = 0 xx $seq.seq.chars;
 
-    # my ($seq) = $self->_rearrange([qw(SEQ)],@args);
-    # if((! defined($seq)) && @args && ref($args[0])) {
-    #     # parameter not passed as named parameter?
-    #     $seq = $args[0];
-    # }
-    # $seq->isa('Bio::Seq') or
-    #     $self->throw("Must supply a Seq.pm object to IUPAC!");
-    # $self->{'_SeqObj'} = $seq;
-    # if ($self->{'_SeqObj'}->alphabet() =~ m/^[dr]na$/i ) {
-    #     # nucleotide seq object
-    #     $self->{'_alpha'} = [ map { $IUB{uc($_)} }
-    #     		      split('', $self->{'_SeqObj'}->seq()) ];
-    # } elsif ($self->{'_SeqObj'}->alphabet() =~ m/^protein$/i ) {
-    #     # amino acid seq object
-    #     $self->{'_alpha'} = [ map { $IUP{uc($_)} }
-    #     		       split('', $self->{'_SeqObj'}->seq()) ];
-    # } else { # unknown type: we could make a guess, but let's not.
-    #     $self->throw("You must specify the 'type' of sequence provided to IUPAC");
-    # }
-    # $self->{'_string'} = [(0) x length($self->{'_SeqObj'}->seq())];
-    # scalar @{$self->{'_string'}} or $self->throw("Sequence has zero-length!");
-    # $self->{'_string'}->[0] = -1;
-    # return $self;
-#}
+    @string.elems == 0 && die "Sequence is length 0";
+    @string[0] = -1;
+    
+    my $obj= self.bless(*, seqobj => $seq, alpha => @alpha , string => @string);
+    
+    return $obj;
+}
 
 #being next_seq
 
@@ -273,30 +280,33 @@ class Bio::Tools::IUPAC {
 
 method next_seq {
 
-    # for my $i ( 0 .. $#{$self->{'_string'}} ) {
-    #     next unless $self->{'_string'}->[$i] || @{$self->{'_alpha'}->[$i]} > 1;
-    #     if ( $self->{'_string'}->[$i] == $#{$self->{'_alpha'}->[$i]} ) { # rollover
-    #         if ( $i == $#{$self->{'_string'}} ) { # end of possibilities
-    #     	return;
-    #         } else {
-    #     	$self->{'_string'}->[$i] = 0;
-    #     	next;
-    #         }
-    #     } else {
-    #         $self->{'_string'}->[$i]++;
-    #         my $j = -1;
-    #         $self->{'_SeqObj'}->seq(join('', map { $j++; $self->{'_alpha'}->[$j]->[$_]; } @{$self->{'_string'}}));
-    #         my $desc = $self->{'_SeqObj'}->desc();
-    #         if ( !defined $desc ) { $desc = ""; }
+    for 0..@!string.end() -> $i {
+        next unless @!string[$i] || @!alpha[$i] > 1;
+        if ( @!string[$i] == @!alpha[$i].end ) { # rollover
+            if ( $i == @!string.end ) { # end of possibilities
+                return;
+            } else {
+                @!string[$i] = 0;
+                next;
+            }
+        }
+        else {
+            @!string[$i]++;
+            my $j = -1;
+            $!seqobj.seq = join('', map { $j++; @!alpha[$j][$_]; } ,@!string);
+            my $desc = $!seqobj.description();
+            if ( !defined $desc ) { $desc = ""; }
 
-    #         $self->{'_num'}++;
-    #         1 while $self->{'_num'} =~ s/(\d)(\d\d\d)(?!\d)/$1,$2/;
-    #         $desc =~ s/( \[Bio::Tools::IUPAC-generated\sunique sequence # [^\]]*\])|$/ \[Bio::Tools::IUPAC-generated unique sequence # $self->{'_num'}\]/;
-    #         $self->{'_SeqObj'}->desc($desc);
-    #         $self->{'_num'} =~ s/,//g;
-    #         return $self->{'_SeqObj'};
-    #     }
-    # }
+            # no idea why this is needed. No tests are depend on it and seems to have no value to convert
+            # leaving it commented for now
+            # $self->{'_num'}++;
+            # 1 while $self->{'_num'} =~ s/(\d)(\d\d\d)(?!\d)/$1,$2/;
+            # $desc =~ s/( \[Bio::Tools::IUPAC-generated\sunique sequence # [^\]]*\])|$/ \[Bio::Tools::IUPAC-generated unique sequence # $self->{'_num'}\]/;
+            # $self->{'_SeqObj'}->desc($desc);
+            # $self->{'_num'} =~ s/,//g;
+            return $!seqobj;
+        }
+    }
 }
 
 #begin iupac_iup
@@ -355,8 +365,8 @@ method iupac_rev_iub {
 
 method count {
     my $count = 1;
-    # $count *= scalar(@$_) for (@{$self->{'_alpha'}});
-    # return $count;
+    $count *= $_.elems() for (@!alpha);
+    return $count;
 }
 
 
