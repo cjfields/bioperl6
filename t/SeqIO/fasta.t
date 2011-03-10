@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 15;
+plan 23;
 BEGIN {
     @*INC.push('lib');
     @*INC.push('blib');    
@@ -92,6 +92,15 @@ is($seq_obj2.display_id(),  %expected2{'display_id'},  'display_id');
 is($seq_obj2.length(),      %expected2{'length'},      'length');
 is($seq_obj2.description(),'Rea guano ligand', 'description');
 
+#taking multiple fasta file
+my $in = Bio::SeqIO.new(file => "$data_path/multi_1.fa" , format => 'fasta');
+is($in ~~ Bio::SeqIO,Bool::True,"Is a Bio::SeqIO object");
+my $c=0;
+while ( my $seq = $in.next_seq() ) {
+    ok($seq);
+    $c++;
+}
+is $c,6, "all sequences in the file";
 
 #need testing for reading/writing fasta file using $*IN and $*OUT
 
