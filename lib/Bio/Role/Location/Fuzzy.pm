@@ -1,28 +1,21 @@
 use v6;
-role Bio::Role::Location::Split {
+role Bio::Role::Location::Fuzzy {
 
 #probably move to a general Role    
 has Int $.start is rw;
 has Int $.end is rw;
 has Str $.seq_id is rw;
 has Str $.strand is rw;
+has Str $.location_type is rw;
+has Str $.start_pos_type is rw = 'EXACT';
+has Str $.end_pos_type is rw = 'EXACT';
 ###
 
-
-method sub_Location(*@params){
-    return 'NYI';
+method each_Location() {
+    return self;
 }
 
-
-method add_sub_Location(*@params){
-    return 'NYI';
-}
-
-method each_Location(*@params){
-    return 'NYI';
-}
-
-method to_FTstring(){
+method to_FTstring() {
     return 'NYI';
 }
 

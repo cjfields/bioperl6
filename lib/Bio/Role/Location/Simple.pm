@@ -161,6 +161,10 @@ method each_Location() {
     return self;
 }
 
+method to_FTstring() {
+    return 'NYI';
+}
+
 
     
 }
