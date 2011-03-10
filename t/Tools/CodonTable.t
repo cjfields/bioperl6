@@ -174,7 +174,7 @@ is $custct, 24;
 is $myCodonTable.translate('atgaaraayacmacracwacka'), 'MKNTTTT';
 ok ($myCodonTable.id= $custct);
 #todo cannot run the next test since we have not really append to the codon table. It will kill the rest of the tests
-#is $myCodonTable.translate('atgaaraayacmacracwacka'), 'MKXXTTT';
+is $myCodonTable.translate('atgaaraayacmacracwacka'), 'MKXXTTT';
 
 # test doing this via Bio::PrimarySeq object
 
