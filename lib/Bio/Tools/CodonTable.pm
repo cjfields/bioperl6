@@ -1,8 +1,18 @@
 class Bio::Tools::CodonTable {
 our %codons;
 our %trcol;
+our %iub;
+
+
+#BEGIN { 
+#    #%IUPAC_DNA = Bio::Tools::IUPAC->iupac_iub();    
+#    #%IUPAC_AA = Bio::Tools::IUPAC->iupac_iup();
+#    #%THREELETTERSYMBOLS = Bio::SeqUtils->valid_aa(2);
+#    #$VALID_PROTEIN = '['.join('',Bio::SeqUtils->valid_aa(0)).']';
+#}
 
 INIT {
+
     my @nucs = <t c a g>;
     my $x = 0;
     our %codons;
@@ -18,13 +28,12 @@ INIT {
             }
         }
     }
-    
-    
-
+    use Bio::Tools::IUPAC;    
+    our %iub = %Bio::Tools::IUPAC::IUB;
 }
 
 ## Object preamble - inherits from Bio::Root::Root
-use Bio::Tools::IUPAC;
+
 #use Bio::SeqUtils;
 #
 #use base qw(Bio::Root::Root);
@@ -44,7 +53,7 @@ has Int $.CODONSIZE = 3 ;
 
 has $.id is rw = 1;
 
-has %!IUB = %Bio::Tools::IUPAC::IUB;
+
 
 # thinking these could go into a simple basic data class
 #constant NYI    
@@ -351,7 +360,7 @@ method !unambiquous_codons($value) {
     my @nts;
     my @codons;
     my ($i, $j, $k);
-    @nts = map { %!IUB{uc $_}} , $value.comb();
+    @nts = map { %iub{uc $_}} , $value.comb();
         for @(@nts[0]) ->  $i {
             #hack for now, since @nts has Any() values. Normally in p5 code you would have undef which would not loop at all
             last if !defined $i;
@@ -366,13 +375,6 @@ method !unambiquous_codons($value) {
 
 
 
-#
-#BEGIN { 
-#    #%IUPAC_DNA = Bio::Tools::IUPAC->iupac_iub();    
-#    #%IUPAC_AA = Bio::Tools::IUPAC->iupac_iup();
-#    #%THREELETTERSYMBOLS = Bio::SeqUtils->valid_aa(2);
-#    #$VALID_PROTEIN = '['.join('',Bio::SeqUtils->valid_aa(0)).']';
-#}
-#
+
     
 }
