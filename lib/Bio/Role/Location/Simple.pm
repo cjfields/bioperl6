@@ -1,21 +1,7 @@
 use v6;
-role Bio::Role::Location::Simple {
+use Bio::Role::Location;
 
-
-has Int $.start is rw = 0;
-has Int $.end is rw = 0;
-has Str $.seq_id is rw;
-has Bool $.is_remote is rw = False;
-
-#will be type of : Location_Pos_Type
-has Str $.start_pos_type is rw = 'EXACT';
-has Str $.end_pos_type is rw = 'EXACT';
-
-#need to be Location_Type obj
-has Str $.location_type is rw = 'EXACT';
-
-#need to be Sequence_strand Obj
-has Str $.strand is rw = 0;
+role Bio::Role::Location::Simple does Bio::Role::Location {
 
 has %!IS_FUZZY = map {;$_ => 1} , qw<BEFORE AFTER WITHIN UNCERTAIN>;
 
