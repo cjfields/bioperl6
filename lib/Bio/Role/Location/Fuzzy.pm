@@ -1,15 +1,7 @@
 use v6;
-role Bio::Role::Location::Fuzzy {
+use Bio::Role::Location;
 
-#probably move to a general Role    
-has Int $.start is rw;
-has Int $.end is rw;
-has Str $.seq_id is rw;
-has Str $.strand is rw;
-has Str $.location_type is rw;
-has Str $.start_pos_type is rw = 'EXACT';
-has Str $.end_pos_type is rw = 'EXACT';
-###
+role Bio::Role::Location::Fuzzy does Bio::Role::Location {
 
 method each_Location() {
     return self;
