@@ -131,7 +131,7 @@ is($splitlocation.max_end, 90);
 is($splitlocation.min_start, 13);
 is($splitlocation.end, 90);
 is($splitlocation.start, 13);
-is($splitlocation.sub_Location(),5);
+is($splitlocation.sub_Location().elems,5);
 
 
 is($fuzzy.to_FTstring(), '<10..20');
