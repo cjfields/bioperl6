@@ -4,6 +4,7 @@ BEGIN {
     @*INC.push('./lib');
 }
 use Test;
+plan 72;
 eval_lives_ok 'use Bio::Role::Location::Simple', 'Can use Bio::Role::Location::Simple';
 use Bio::Role::Location::Simple;
 
@@ -13,8 +14,9 @@ my $simple = Bio::Role::Location::Simple.new(
      strand => 1,
      seq_id => 'my1',
      is_remote => 1);
-# isa_ok($simple, 'Biome::Location::Simple');
-# does_ok($simple, 'Biome::Role::Location::Simple',  'does Location');
+ok($simple ~~ Bio::Role::Location::Simple, 'Has Bio::Role::Location::Simple Role');
+ok($simple ~~ Bio::Role::Location, 'Has Bio::Role::Location Role');
+
 # does_ok($simple, 'Biome::Role::Location::Does_Range',  'has basic Range interface');
 # does_ok($simple, 'Biome::Role::Location::Does_Location',  'has more defined Location interface');
 
