@@ -5,54 +5,12 @@ role Bio::Role::Location::Simple does Bio::Role::Location {
 
 has %!IS_FUZZY = map {;$_ => 1} , qw<BEFORE AFTER WITHIN UNCERTAIN>;
 
-# this is for 'fuzzy' locations like WITHIN, BEFORE, AFTER
-has Int $.start_offset is rw = 0;
-has Int $.end_offset is rw = 0;
 
-#really want to get rid of all the hashes below
-#however cannot since subtype do not WORK with attributes!
-#strand switch since we allow '+' and '-'
-my %strands_switch = ('+' => 1 , '-' => -1);
-
-my %RANGEENCODE  = ('..' => 'EXACT',
+our %RANGEENCODE  = ('..' => 'EXACT',
              '^'   => 'IN-BETWEEN' );
 
-my %RANGEDECODE  = ('EXACT'      => '..',
+our %RANGEDECODE  = ('EXACT'      => '..',
              'IN-BETWEEN' => '^' );
-
-my %POSTYPEENCODE = ('<' => 'BEFORE',
-                     '>' => 'AFTER');
-
-my %POSTYPEDECODE = ('BEFORE'  => '<',
-                     'AFTER'   => '>');
-#########################################
-
-method new(*%params is copy){
-    
-    #parameter checking that should go away when subtypes work with attributes
-    #swapping out  '+' and '-' for integers in strand
-    if ( %strands_switch.exists(%params{'strand'})) {
-        %params{'strand'} = %strands_switch{%params{'strand'}};
-    }
-
-    #swapping out '..' and '^' for words in location_type
-    if ( %RANGEENCODE.exists(%params{'location_type'})) {
-        %params{'location_type'} = %RANGEENCODE{%params{'location_type'}};
-    }
-
-    #swapping out '<' and '>' for words in start/end pos type
-    if ( %POSTYPEENCODE.exists(%params{'start_pos_type'})) {
-        %params{'start_pos_type'} = %POSTYPEENCODE{%params{'start_pos_type'}};
-    }
-    if ( %POSTYPEENCODE.exists(%params{'end_pos_type'})) {
-        %params{'end_pos_type'} = %POSTYPEENCODE{%params{'end_pos_type'}};
-    }
-    
-    
-    my $x = self.bless(*,|%params);
-
-    return $x;
-}
 
 
 method to_string() {
@@ -120,28 +78,7 @@ method valid_Location() {
     return defined($.start) && defined($.end) ?? True !! False;
 }
 
-method min_start() {
-    my $start = self.start;
-    return if !$start || (self.start_pos_type eq 'BEFORE');
-    return $start;
-}
 
-method max_start() {
-    my $start = self.start;
-    return unless $start;
-    ($start + self.start_offset);
-}
-
-method max_end() {
-    my $end = self.end;
-    return if !$end || (self.end_pos_type eq 'AFTER');
-    return ($end + self.end_offset);
-}
-
-method min_end() {
-    my $end = self.end;
-    return unless $end;
-}
 
 method each_Location() {
     return self;
