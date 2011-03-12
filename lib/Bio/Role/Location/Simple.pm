@@ -80,7 +80,7 @@ method valid_Location() {
 
 
 
-method each_Location() {
+method each_Location($order?) {
     return self;
 }
 

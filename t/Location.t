@@ -123,7 +123,7 @@ is($f.start, 50);
 ok(! defined $f.min_start);
 is($f.max_start, 50);
 
-is($splitlocation.each_Location().elems(), 4);
+is($splitlocation.each_Location().elems(), 4, 'Number of locations');
 
 $splitlocation.add_sub_Location($f);
 
