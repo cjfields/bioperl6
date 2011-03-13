@@ -91,8 +91,11 @@ method to_FTstring(){
     return 'NYI';
 }
 
+
 method min_start() {
-    return 'NYI';
+    my @locs = self.sub_Location(1);
+    return @locs[0].min_start() if @locs; 
+    return;    
 }
 
 method max_start() {
