@@ -85,7 +85,20 @@ method each_Location($order?) {
 }
 
 method to_FTstring() {
-    return 'NYI';
+    my $str;
+    if ( self.start == self.end ) {
+        $str =  self.start;
+    } else {
+        $str = self.start ~ %RANGEDECODE{self.location_type} ~ self.end;
+    }
+    if (self.is_remote() && self.seq_id()) {
+        $str = self.seq_id() ~ ':' ~ $str;
+    }
+    if ( defined self.strand &&
+             self.strand == -1 ) {
+        $str = 'complement(' ~ $str ~ ')';
+    }
+    return $str;    
 }
 
 
