@@ -15,11 +15,12 @@ has Str $.end_pos_type is rw = 'EXACT';
 has Str $.location_type is rw = 'EXACT';
 
 #need to be Sequence_strand Obj
-has Str $.strand is rw = 0;
+has Str $!strand is rw = 0;
 
 # this is for 'fuzzy' locations like WITHIN, BEFORE, AFTER
 has Int $.start_offset is rw = 0;
 has Int $.end_offset is rw = 0;
+
 
 
 #really want to get rid of all the hashes below
@@ -93,6 +94,20 @@ method max_end() {
 method min_end() {
     return self.end;
 }
+
+method flip_strand() {
+    self.strand = self.strand * -1;
+}
+
+multi method strand(){
+    return $!strand;
+}
+
+multi method strand($value){
+    $!strand=$value;
+}
+
+
 
 # below should be the interface
 # # thinking the below could possibly be flattened into Location or Range

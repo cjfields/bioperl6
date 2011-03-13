@@ -4,7 +4,8 @@ use Bio::Role::Location;
 role Bio::Role::Location::Split does Bio::Role::Location {
 
 has @!subLocations;
-    
+has $.splittype is rw = 'JOIN';
+
 method add_sub_Location(*@locations){
     for @locations -> $loc {
         if ($loc !~~ Bio::Role::Location ) {
@@ -88,7 +89,49 @@ method sub_Location(Int $order = 0) {
 
 
 method to_FTstring(){
-    return 'NYI';
+    my @strs;
+    my $strand = self.strand() || 0;
+    my $stype = lc(self.splittype());
+    my $guide = self.guide_strand();
+    
+    if ( $strand < 0 ) {
+        self.flip_strand; # this will recursively set the strand
+        # to +1 for all the sub locations
+    }
+    
+    # If the split type is join, the order is important;
+    # otherwise must be 5'->3' regardless
+	
+    my @locs = ($stype eq 'join' && (!$guide && $strand == -1)) ??
+        reverse self.sub_Location() !! self.sub_Location() ;
+    
+    for ( @locs ) ->  $loc {
+#        $loc.verbose(self.verbose);
+        my $str = $loc.to_FTstring();
+        # we only append the remote seq_id if it hasn't been done already
+        # by the sub-location (which it should if it knows it's remote)
+        # (and of course only if it's necessary)
+        if ( (! $loc.is_remote) &&
+                defined(self.seq_id) && defined($loc.seq_id) &&
+                    ($loc.seq_id ne self.seq_id) ) {
+            $str = sprintf("%s:%s", $loc.seq_id, $str);
+        } 
+        push @strs, $str;
+    }
+    self.flip_strand if $strand < 0;
+    my $str;
+    if ( @strs == 1 ) {
+        ($str) = @strs;
+    } elsif ( @strs == 0 ) {
+        #		self.warn("no Sublocations for this splitloc, so not returning anything\n");
+    } else {
+        $str = sprintf('%s(%s)',lc(self.splittype), join(",", @strs));
+    }
+    if ( $strand < 0 ) {  # wrap this in a complement if it was unrolled
+        $str = sprintf('%s(%s)','complement',$str);
+    }
+
+    return $str;
 }
 
 
@@ -112,6 +155,53 @@ method max_end() {
 method min_end() {
     return 'NYI';
 }
+
+method flip_strand() {
+    for ( self.sub_Location(0) ) -> $loc {
+        $loc.flip_strand();
+        if ($loc ~~ Bio::Role::Location::Split) {
+            my $gs = (self.guide_strand == -1) ?? Mu !! -1;
+            $loc.guide_strand($gs);
+        }
+    }
+}
+
+method guide_strand($value?) {
+	return self.strand = $value if defined($value);
+	return self.strand;
+}
+
+multi method strand($value) {
+    if ( defined $value) {
+        self.strand = $value;
+        # propagate to all sublocs
+        for (self.sub_Location(0)) -> $loc {
+            $loc.strand($value);
+        }
+    }
+    else {
+        my ($strand, $lstrand);
+        for (self.sub_Location(0)) -> $loc {
+            # we give up upon any location that's remote or doesn't have
+            # the strand specified, or has a differing one set than 
+            # previously seen.
+            # calling strand() is potentially expensive if the subloc is also
+            # a split location, so we cache it
+            $lstrand = $loc.strand();
+            if ((! $lstrand) ||
+                   ($strand && ($strand != $lstrand)) ||
+                       $loc.is_remote()) {
+                $strand = Mu;
+                last;
+            } elsif (! $strand) {
+                $strand = $lstrand;
+            }
+        }
+        return $strand;
+    }
+    
+}
+
 
 
 }

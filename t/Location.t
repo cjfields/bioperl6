@@ -135,10 +135,10 @@ is($splitlocation.sub_Location().elems,5);
 
 
 is($fuzzy.to_FTstring(), '<10..20');
-$fuzzy.strand = -1;
+$fuzzy.strand(-1);
 is($fuzzy.to_FTstring(), 'complement(<10..20)');
 is($simple.to_FTstring(), '10..20');
-$simple.strand =-1;
+$simple.strand(-1);
 is($simple.to_FTstring(), 'complement(10..20)');
 is( $splitlocation.to_FTstring(), 
      'join(13..30,30..90,18..22,19..20,<50..61)');
@@ -151,7 +151,7 @@ $splitlocation.add_sub_Location($f);
 is( $splitlocation.to_FTstring(), 
     'join(13..30,30..90,18..22,19..20,<50..61,complement(5..12))',
 	'Bugfix 1074');
-$splitlocation.strand =-1;
+$splitlocation.strand(-1);
 is( $splitlocation.to_FTstring(), 
     'complement(join(13..30,30..90,18..22,19..20,<50..61,5..12))');
 
