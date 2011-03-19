@@ -142,7 +142,9 @@ method min_start() {
 }
 
 method max_start() {
-    return 'NYI';
+    my @locs = self.sub_Location(1);
+    return @locs[0].max_start() if @locs; 
+    return;        
 }
 
 method max_end() {
@@ -153,7 +155,10 @@ method max_end() {
 }
 
 method min_end() {
-    return 'NYI';
+    # reverse sort locations by largest ending to smallest ending
+    my @locs = self.sub_Location(-1);
+    return @locs[0].min_end() if @locs; 
+    return;    
 }
 
 method flip_strand() {
