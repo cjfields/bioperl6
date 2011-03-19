@@ -3,18 +3,6 @@ use Bio::Role::Location;
 
 role Bio::Role::Location::Fuzzy does Bio::Role::Location {
 
-
-our %FUZZYPOINTENCODE = ( 
-    '\>(\d+)(.{0})' => 'AFTER',
-    '\<(.{0})(\d+)' => 'BEFORE',
-    '(\d+)'         => 'EXACT',
-    '\?(\d*)'       => 'UNCERTAIN',
-    '(\d+)(.{0})\>' => 'AFTER',
-    '(.{0})(\d+)\<' => 'BEFORE',
-    '(\d+)\.(\d+)'  => 'WITHIN',
-    '(\d+)\^(\d+)'  => 'BETWEEN',
-   );
-
 our %FUZZYCODES = ( 'EXACT' => '..', # Position is 'exact
    # Exact position is unknown, but is within the range specified, ((1.2)..100)
             'WITHIN' => '.', 
@@ -27,7 +15,27 @@ our %FUZZYCODES = ( 'EXACT' => '..', # Position is 'exact
             # >10
             'AFTER'   => '>');   
 
+submethod BUILD(*%params is copy) {
+    # RAKUDO: These attributes should be auto-initialized but are not
+    $!start = %params.exists('start') ?? %params{'start'} !! 0;
+    $!end = %params.exists('end') ?? %params{'end'} !! 0 ;
+    $.seq_id = %params{'seq_id'};
+    $.is_remote = %params.exists('is_remote') ?? %params{'is_remote'} !! False;
+    $.start_pos_type = %params.exists('start_pos_type') ?? %params{'start_pos_type'} !! 'EXACT';
+    $.end_pos_type = %params.exists('end_pos_type') ?? %params{'end_pos_type'} !! 'EXACT';
+    $.location_type = %params.exists('location_type') ?? %params{'location_type'} !! 'EXACT';
+
+    $!strand = %params.exists('strand') ?? %params{'strand'} !! 0;
+    $.start_offset = %params.exists('start_offset') ?? %params{'start_offset'} !! 0;
+    $.end_offset = %params.exists('end_offset') ?? %params{'end_offset'} !! 0 ;
     
+
+#    self.start(%params{'start'});
+#    self.end(%params{'end'});
+}
+
+    
+
 method each_Location() {
     return self;
 }
@@ -122,23 +130,38 @@ multi method !fuzzypointdecode() {
     return ();
 }
 
-multi method !fuzzypointdecode($string) {
+multi method !fuzzypointdecode($string is copy) {
     
     # strip off leading and trailing space
     $string = $string.trim();
+
+    #need to flip this around since rx are not just string anymore! they are code blocks
+    #will have issue since we have two BEFORE keys..
+my %FUZZYPOINTENCODE = ( 
+  #  '\>(\d+)(.{0})' => 'AFTER',
+  #  '\<(.{0})(\d+)' => 'BEFORE',
+    'BEFORE' => rx{^\<('')(\d+)$},
+    'EXACT'=> rx{^(\d+)$},
+  #  '\?(\d*)'       => 'UNCERTAIN',
+  #  '(\d+)(.{0})\>' => 'AFTER',
+  #  '(.{0})(\d+)\<' => 'BEFORE',
+    'WITHIN' =>  rx{(\d+)\.(\d+)}  ,                       
+    'BETWEEN' => rx{(\d+)\^(\d+)}
+   );
     
-    for (  %FUZZYPOINTENCODE.keys ) -> $pattern {
-        if ( $string ~~ /^$pattern$/ ) {
+    
+    for (  %FUZZYPOINTENCODE.kv ) -> $type,$pattern {
+        if ( $string ~~ $pattern ) {
             my ($min,$max) = ($0,$1) unless (($0 eq '') && (!defined $1));
-            if ( (%FUZZYPOINTENCODE{$pattern} eq 'EXACT') ||
-                 (%FUZZYPOINTENCODE{$pattern} eq 'UNCERTAIN')
+            if ( ($type eq 'EXACT') ||
+                 ($type eq 'UNCERTAIN')
               ) {
                 $max = $min;
             } else {
                 $max = Mu if ((defined $max) && ($max.chars == 0));
                 $min = Mu if ((defined $min) && ($min.chars == 0));
             }
-            return (%FUZZYPOINTENCODE{$pattern},$min,$max);
+            return ($type,$min,$max);
         }
     }
     # if ( $self->verbose >= 1 ) {

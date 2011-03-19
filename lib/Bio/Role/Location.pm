@@ -2,8 +2,8 @@ role Bio::Role::Location;
 #probably add range in time
 #does Bio::Role::Range;
 
-has Int $.start is rw = 0;
-has Int $.end is rw = 0;
+has Int $!start is rw = 0;
+has Int $!end is rw = 0;
 has Str $.seq_id is rw;
 has Bool $.is_remote is rw = False;
 
@@ -41,57 +41,56 @@ our %POSTYPEDECODE = ('BEFORE'  => '<',
                      'AFTER'   => '>');
 #########################################
 
-method new(*%params is copy){
+method new(*%params){
+    my $x = self.bless(*,|%params);
     
     #parameter checking that should go away when subtypes work with attributes
     #swapping out  '+' and '-' for integers in strand
-    if ( %strands_switch.exists(%params{'strand'})) {
-        %params{'strand'} = %strands_switch{%params{'strand'}};
+    if ( %strands_switch.exists($x.strand)) {
+        $x.strand = %strands_switch{%params{'strand'}};
     }
 
     #swapping out '..' and '^' for words in location_type
-    if ( %RANGEENCODE.exists(%params{'location_type'})) {
-        %params{'location_type'} = %RANGEENCODE{%params{'location_type'}};
+    if ( %RANGEENCODE.exists($x.location_type)) {
+        $x.location_type = %RANGEENCODE{%params{'location_type'}};
     }
 
     #swapping out '<' and '>' for words in start/end pos type
-    if ( %POSTYPEENCODE.exists(%params{'start_pos_type'})) {
-        %params{'start_pos_type'} = %POSTYPEENCODE{%params{'start_pos_type'}};
+    if ( %POSTYPEENCODE.exists($x.start_pos_type)) {
+        $x.start_pos_type = %POSTYPEENCODE{%params{'start_pos_type'}};
     }
-    if ( %POSTYPEENCODE.exists(%params{'end_pos_type'})) {
-        %params{'end_pos_type'} = %POSTYPEENCODE{%params{'end_pos_type'}};
+    if ( %POSTYPEENCODE.exists($x.end_pos_type)) {
+        $x.end_pos_type = %POSTYPEENCODE{%params{'end_pos_type'}};
     }
 
     #checking for fuzzy stuff here
     if ( %params.exists('start') && %params{'start'} ~~ /\<(\d+)/) {
-        %params{'start'} ~~ s/\<//;
-        %params{'start_pos_type'} = 'BEFORE';
-    }
-    
-    my $x = self.bless(*,|%params);
+        $x.start ~~ s/\<//;
+        $x.start_pos_type = 'BEFORE';
+    } 
 
     return $x;
 }
 
-method min_start() {
+multi method min_start() {
     my $start = self.start;
     return if !$start || (self.start_pos_type eq 'BEFORE');
     return $start;
 }
 
-method max_start() {
+multi method max_start() {
     my $start = self.start;
     return unless $start;
     ($start + self.start_offset);
 }
 
-method max_end() {
+multi method max_end() {
     my $end = self.end;
     return if !$end || (self.end_pos_type eq 'AFTER');
     return ($end + self.end_offset);
 }
 
-method min_end() {
+multi method min_end() {
     return self.end;
 }
 
@@ -107,7 +106,23 @@ multi method strand($value){
     $!strand=$value;
 }
 
+multi method start(){
+    return $!start;
+}
 
+multi method start($value){
+    $!start=$value;
+}
+
+multi method end(){
+    return $!end;
+}
+
+multi method end($value){
+    $!end=$value;
+}
+
+    
 
 # below should be the interface
 # # thinking the below could possibly be flattened into Location or Range
