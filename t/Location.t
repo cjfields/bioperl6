@@ -130,7 +130,7 @@ $splitlocation.add_sub_Location($f);
 is($splitlocation.max_end, 90);
 is($splitlocation.min_start, 13);
 is($splitlocation.end, 90);
-is($splitlocation.start, 13);
+is($splitlocation.start, 13,'start');
 is($splitlocation.sub_Location().elems,5);
 
 

@@ -134,6 +134,22 @@ method to_FTstring(){
     return $str;
 }
 
+#bioperl5 version had these values return by coord policy but that is over design
+#going to need a faster way to determine start other then resorting every time
+multi method start(){
+    my @locs = self.sub_Location(1);
+    return @locs[0].min_start() if @locs; 
+    return;    
+}
+
+multi method end(){
+    # reverse sort locations by largest ending to smallest ending
+    my @locs = self.sub_Location(-1);
+    return @locs[0].max_end() if @locs; 
+    return;
+}
+###
+
 
 method min_start() {
     my @locs = self.sub_Location(1);
