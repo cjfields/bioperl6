@@ -6,6 +6,9 @@ role Bio::Role::Location::Split does Bio::Role::Location {
 has @!subLocations;
 has $.splittype is rw = 'JOIN';
 
+has Str $.seq_id is rw;
+has Str $!strand is rw = 0;
+
 method add_sub_Location(*@locations){
     for @locations -> $loc {
         if ($loc !~~ Bio::Role::Location ) {
@@ -191,6 +194,11 @@ method guide_strand($value?) {
 	return self.strand = $value if defined($value);
 	return self.strand;
 }
+
+multi method strand(){
+    return $!strand;
+}
+
 
 multi method strand($value) {
     if ( defined $value) {

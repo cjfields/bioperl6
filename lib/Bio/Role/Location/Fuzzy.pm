@@ -2,6 +2,29 @@ use v6;
 use Bio::Role::Location;
 
 role Bio::Role::Location::Fuzzy does Bio::Role::Location {
+#has Int $.start is rw = 0;
+
+has Int $.minstart is rw;
+has Int $.maxstart is rw;
+
+has Int $.minend is rw;
+has Int $.maxend is rw;
+
+#has Int $.end is rw = 0;
+
+has Str $.seq_id is rw;
+has Bool $.is_remote is rw = False;
+
+#will be type of : Location_Pos_Type
+has Str $.start_pos_type is rw = 'EXACT';
+has Str $.end_pos_type is rw = 'EXACT';
+
+#need to be Location_Type obj
+has Str $.location_type is rw = 'EXACT';
+
+#need to be Sequence_strand Obj
+has Str $!strand is rw = 0;
+
 
 our %FUZZYCODES = ( 'EXACT' => '..', # Position is 'exact
    # Exact position is unknown, but is within the range specified, ((1.2)..100)
@@ -15,24 +38,159 @@ our %FUZZYCODES = ( 'EXACT' => '..', # Position is 'exact
             # >10
             'AFTER'   => '>');   
 
-submethod BUILD(*%params is copy) {
-    # RAKUDO: These attributes should be auto-initialized but are not
-    $!start = %params.exists('start') ?? %params{'start'} !! 0;
-    $!end = %params.exists('end') ?? %params{'end'} !! 0 ;
-    $.seq_id = %params{'seq_id'};
-    $.is_remote = %params.exists('is_remote') ?? %params{'is_remote'} !! False;
-    $.start_pos_type = %params.exists('start_pos_type') ?? %params{'start_pos_type'} !! 'EXACT';
-    $.end_pos_type = %params.exists('end_pos_type') ?? %params{'end_pos_type'} !! 'EXACT';
-    $.location_type = %params.exists('location_type') ?? %params{'location_type'} !! 'EXACT';
 
-    $!strand = %params.exists('strand') ?? %params{'strand'} !! 0;
-    $.start_offset = %params.exists('start_offset') ?? %params{'start_offset'} !! 0;
-    $.end_offset = %params.exists('end_offset') ?? %params{'end_offset'} !! 0 ;
+
+our %strands_switch = ('+' => 1 , '-' => -1);
+
+our %RANGEENCODE  = ('..' => 'EXACT',
+             '^'   => 'IN-BETWEEN' );
+
+our %RANGEDECODE  = ('EXACT'      => '..',
+             'IN-BETWEEN' => '^' );
+
+our %POSTYPEENCODE = ('<' => 'BEFORE',
+                     '>' => 'AFTER');
+
+our %POSTYPEDECODE = ('BEFORE'  => '<',
+                     'AFTER'   => '>');
+#########################################
+
+method new(*%params is copy){
+    #fuzzy do not have start, they have minstart and/or maxstart
+    if ( %params.exists('start')) {
+        %params{'minstart'}=%params{'start'};
+        %params.delete('start');
+    }
+
+    #fuzzy do not have end, they have minend and/or maxend
+    if ( %params.exists('end')) {
+        %params{'maxend'}=%params{'end'};
+        %params.delete('end');
+    }
+    
+    my $x = self.bless(*,|%params);
+    #parameter checking that should go away when subtypes work with attributes
+    #swapping out  '+' and '-' for integers in strand
+    if ( %strands_switch.exists($x.strand)) {
+        $x.strand = %strands_switch{%params{'strand'}};
+    }
+
+    #swapping out '..' and '^' for words in location_type
+    if ( %RANGEENCODE.exists($x.location_type)) {
+        $x.location_type = %RANGEENCODE{%params{'location_type'}};
+    }
+
+    #swapping out '<' and '>' for words in start/end pos type
+    if ( %POSTYPEENCODE.exists($x.start_pos_type)) {
+        $x.start_pos_type = %POSTYPEENCODE{%params{'start_pos_type'}};
+    }
+    if ( %POSTYPEENCODE.exists($x.end_pos_type)) {
+        $x.end_pos_type = %POSTYPEENCODE{%params{'end_pos_type'}};
+    }
+
+    #checking for fuzzy stuff here
+    if ( %params.exists('minstart') ) {
+        my ($encode,$min,$max) = self!fuzzypointdecode(%params{'minstart'});
+        $x.start_pos_type = $encode;
+        $x.minstart = $min;
+        $x.maxstart = $max;
+    }
+
+    if ( %params.exists('maxend') ) {
+        my ($encode,$min,$max) = self!fuzzypointdecode(%params{'maxend'});
+        $x.end_pos_type = $encode;
+        $x.minend = $min;
+        $x.maxend = $max;
+    }    
+
+    return $x;
+}
+
+multi method start($value?) {
+    if ( defined $value ) {
+        my ($encode,$min,$max) = self!fuzzypointdecode($value);
+        self.start_pos_type = $encode;
+        self.min_start($min);
+        self.max_start($max);
+    }
+
+    # $self->throw("Use Bio::Location::Simple for IN-BETWEEN locations ["
+    #              . $self->SUPER::start. "] and [". $self->SUPER::end. "]")
+    # if $self->location_type eq 'IN-BETWEEN'  && defined $self->SUPER::end &&
+    #               ($self->SUPER::end - 1 == $self->SUPER::start);
+
+    #if minstart not defined, take maxstart
+    return $.minstart ?? $.minstart !! $.maxstart;
+}
+
+
+method end($value?) {
+    if ( defined $value ) {
+        my ($encode,$min,$max) = self!fuzzypointdecode($value);
+        self.end_pos_type =$encode;
+        self.min_end($min);
+        self.max_end($max);
+    }
+
+    # $self->throw("Use Bio::Location::Simple for IN-BETWEEN locations [".
+    #              $self->SUPER::start. "] and [". $self->SUPER::end. "]")
+    # if $self->location_type eq 'IN-BETWEEN' && defined $self->SUPER::start &&
+    #             ($self->SUPER::end - 1 == $self->SUPER::start);
+
+    return $.maxend ?? $.maxend !! $.minend;
+}
+
+
+method min_start($value?){
+    if ( defined $value) {
+        $.minstart = $value;
+    }
+    
+    return if !$.minstart || (self.start_pos_type eq 'BEFORE');
+    return $.minstart;
+}
+
+method max_start($value?){
+    if ( defined $value) {
+        $.maxstart = $value;
+    }
+    return $.maxstart;
+}
+
+method max_end($value?) {
+    if ( defined $value ) {
+        $.maxend = $value;
+    }
+    return if !$.maxend || (self.end_pos_type eq 'AFTER');
+    return $.maxend;
+}
+
+method min_end($value?) {
+    if ( defined $value) {
+        $.minend = $value;
+    }
+    return $.minend;    
+}
+
+
+# submethod BUILD(*%params is copy) {
+#     # RAKUDO: These attributes should be auto-initialized but are not
+#     $!start = %params.exists('start') ?? %params{'start'} !! 0;
+#     $!end = %params.exists('end') ?? %params{'end'} !! 0 ;
+#     $.seq_id = %params{'seq_id'};
+#     $.is_remote = %params.exists('is_remote') ?? %params{'is_remote'} !! False;
+#     $.start_pos_type = %params.exists('start_pos_type') ?? %params{'start_pos_type'} !! 'EXACT';
+#     $.end_pos_type = %params.exists('end_pos_type') ?? %params{'end_pos_type'} !! 'EXACT';
+#     $.location_type = %params.exists('location_type') ?? %params{'location_type'} !! 'EXACT';
+
+#     $!strand = %params.exists('strand') ?? %params{'strand'} !! 0;
+#     $.start_offset = %params.exists('start_offset') ?? %params{'start_offset'} !! 0;
+#     $.end_offset = %params.exists('end_offset') ?? %params{'end_offset'} !! 0 ;
     
 
-#    self.start(%params{'start'});
-#    self.end(%params{'end'});
-}
+# #    self.start(%params{'start'});
+# #    self.end(%params{'end'});
+# }
 
     
 
@@ -143,7 +301,7 @@ my %FUZZYPOINTENCODE = (
     'BEFORE' => rx{^\<('')(\d+)$},
     'EXACT'=> rx{^(\d+)$},
   #  '\?(\d*)'       => 'UNCERTAIN',
-  #  '(\d+)(.{0})\>' => 'AFTER',
+    'AFTER' => rx{^(\d+)\>$},
   #  '(.{0})(\d+)\<' => 'BEFORE',
     'WITHIN' =>  rx{(\d+)\.(\d+)}  ,                       
     'BETWEEN' => rx{(\d+)\^(\d+)}
@@ -158,8 +316,8 @@ my %FUZZYPOINTENCODE = (
               ) {
                 $max = $min;
             } else {
-                $max = Mu if ((defined $max) && ($max.chars == 0));
-                $min = Mu if ((defined $min) && ($min.chars == 0));
+                $max = Any if ((defined $max) && ($max.chars == 0));
+                $min = Any if ((defined $min) && ($min.chars == 0));
             }
             return ($type,$min,$max);
         }
@@ -169,6 +327,18 @@ my %FUZZYPOINTENCODE = (
     # }
     return ();
 }
+        
+multi method strand(){
+    return $!strand;
+}
 
+multi method strand($value){
+    $!strand=$value;
+}
+
+method flip_strand() {
+    $!strand = $!strand * -1;
+}
+    
 
 }

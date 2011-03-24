@@ -159,7 +159,7 @@ $f = Bio::Role::Location::Fuzzy.new(start => '45.60',
 			      end   => '75^80');
 
 is($f.to_FTstring(), '(45.60)..(75^80)');
-$f.start ='20>';
+$f.start('20>');
 is($f.to_FTstring(), '>20..(75^80)');
 
 # test that even when end < start that length is always positive
