@@ -2,29 +2,11 @@ use v6;
 use Bio::Role::Location;
 
 role Bio::Role::Location::Fuzzy does Bio::Role::Location {
-#has Int $.start is rw = 0;
-
 has Int $.minstart is rw;
 has Int $.maxstart is rw;
 
 has Int $.minend is rw;
 has Int $.maxend is rw;
-
-#has Int $.end is rw = 0;
-
-has Str $.seq_id is rw;
-has Bool $.is_remote is rw = False;
-
-#will be type of : Location_Pos_Type
-has Str $.start_pos_type is rw = 'EXACT';
-has Str $.end_pos_type is rw = 'EXACT';
-
-#need to be Location_Type obj
-has Str $.location_type is rw = 'EXACT';
-
-#need to be Sequence_strand Obj
-has Str $!strand is rw = 0;
-
 
 our %FUZZYCODES = ( 'EXACT' => '..', # Position is 'exact
    # Exact position is unknown, but is within the range specified, ((1.2)..100)
@@ -194,10 +176,6 @@ method min_end($value?) {
 
     
 
-method each_Location() {
-    return self;
-}
-
 method to_FTstring() {
     my (%vals) = ( 'start' => self.start,
            'min_start' => self.min_start,
@@ -327,18 +305,6 @@ my %FUZZYPOINTENCODE = (
     # }
     return ();
 }
-        
-multi method strand(){
-    return $!strand;
-}
 
-multi method strand($value){
-    $!strand=$value;
-}
-
-method flip_strand() {
-    $!strand = $!strand * -1;
-}
-    
 
 }

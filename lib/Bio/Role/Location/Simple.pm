@@ -4,19 +4,8 @@ use Bio::Role::Location;
 role Bio::Role::Location::Simple does Bio::Role::Location {
 has Int $.start is rw = 0;
 has Int $.end is rw = 0;
-has Str $.seq_id is rw;
-has Bool $.is_remote is rw = False;
 
-#will be type of : Location_Pos_Type
-has Str $.start_pos_type is rw = 'EXACT';
-has Str $.end_pos_type is rw = 'EXACT';
-
-#need to be Location_Type obj
-has Str $.location_type is rw = 'EXACT';
-
-#need to be Sequence_strand Obj
-has Str $!strand is rw = 0;
-
+#no spec on if we are keeping this or not. Bioperl-live does not have these however biome does
 #this is for 'fuzzy' locations like WITHIN, BEFORE, AFTER
 has Int $.start_offset is rw = 0;
 has Int $.end_offset is rw = 0;
@@ -142,11 +131,6 @@ method valid_Location() {
 }
 
 
-
-method each_Location($order?) {
-    return self;
-}
-
 method to_FTstring() {
     my $str;
     if ( self.start == self.end ) {
@@ -187,17 +171,6 @@ multi method min_end() {
     return self.end;
 }
 
-multi method strand(){
-    return $!strand;
-}
-
-multi method strand($value){
-    $!strand=$value;
-}
-
-method flip_strand() {
-    $!strand = $!strand * -1;
-}
 
     
 }

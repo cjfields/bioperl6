@@ -6,9 +6,6 @@ role Bio::Role::Location::Split does Bio::Role::Location {
 has @!subLocations;
 has $.splittype is rw = 'JOIN';
 
-has Str $.seq_id is rw;
-has Str $!strand is rw = 0;
-
 method add_sub_Location(*@locations){
     for @locations -> $loc {
         if ($loc !~~ Bio::Role::Location ) {
@@ -21,7 +18,7 @@ method add_sub_Location(*@locations){
     return @!subLocations.elems;
 }
 
-method each_Location(Int $order = 0){
+multi method each_Location(Int $order = 0){
     my @locs;
     for self.sub_Location($order) -> $subloc {
 	# Recursively check to get hierarchical split locations:
@@ -180,7 +177,7 @@ method min_end() {
     return;    
 }
 
-method flip_strand() {
+multi method flip_strand() {
     for ( self.sub_Location(0) ) -> $loc {
         $loc.flip_strand();
         if ($loc ~~ Bio::Role::Location::Split) {
@@ -193,10 +190,6 @@ method flip_strand() {
 method guide_strand($value?) {
 	return self.strand = $value if defined($value);
 	return self.strand;
-}
-
-multi method strand(){
-    return $!strand;
 }
 
 
