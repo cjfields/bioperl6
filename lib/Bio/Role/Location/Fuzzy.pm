@@ -128,7 +128,7 @@ method min_start($value?){
         $.minstart = $value;
     }
     
-    return if !$.minstart || (self.start_pos_type eq 'BEFORE');
+    return Any if !$.minstart || (self.start_pos_type eq 'BEFORE');
     return $.minstart;
 }
 
