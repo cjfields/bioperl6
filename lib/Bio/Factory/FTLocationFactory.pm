@@ -35,8 +35,7 @@ method from_string($locstr is copy ,$op?) {
     # if ($locstr =~ m{(.*?)\(($LOCREG)\)(.*)}o) { # any matching parentheses?
     #not sure if this will get all cases but works for now
     if ( $locstr ~~ /(.*?) \( (.*) \) (.*)/ ) {
-
-        my ($beg, $mid, $end) = ($0, $1, $2);
+        my ($beg, $mid, $end) = ($0.Str, $1.Str, $2);
         my (@sublocs) = (split(',',$beg), $mid, split(',',$end));
         
         my @loc_objs;

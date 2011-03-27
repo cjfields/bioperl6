@@ -44,18 +44,18 @@ my %testcases = (
   		 145, 145, "EXACT", 177, 177, "EXACT", "IN-BETWEEN", 1, 1],
   	"join(12..78,134..202)" => [$split_impl,
   		 12, 12, "EXACT", 202, 202, "EXACT", "EXACT", 2, 1],
- # 	"complement(join(4918..5163,2691..4571))" => [$split_impl,
- # 		 2691, 2691, "EXACT", 5163, 5163, "EXACT", "EXACT", 2, -1],
+  	"complement(join(4918..5163,2691..4571))" => [$split_impl,
+  		 2691, 2691, "EXACT", 5163, 5163, "EXACT", "EXACT", 2, -1],
   	"complement(34..(122.126))" => [$fuzzy_impl,
   		 34, 34, "EXACT", 122, 126, "WITHIN", "EXACT", 1, -1],
   	"J00194:100..202" => [$simple_impl,
   		 100, 100, "EXACT", 202, 202, "EXACT", "EXACT", 1, 1],
- # 	# this variant is not really allowed by the FT definition
- # 	# document but we want to be able to cope with it
+  	# this variant is not really allowed by the FT definition
+  	# document but we want to be able to cope with it
   	"J00194:(100..202)" => [$simple_impl,
   		 100, 100, "EXACT", 202, 202, "EXACT", "EXACT", 1, 1],
- # 	"((122.133)..(204.221))" => [$fuzzy_impl,
- # 		 122, 133, "WITHIN", 204, 221, "WITHIN", "EXACT", 1, 1],
+  	"((122.133)..(204.221))" => [$fuzzy_impl,
+  		 122, 133, "WITHIN", 204, 221, "WITHIN", "EXACT", 1, 1],
   	"join(AY016290.1:108..185,AY016291.1:1546..1599)"=> [$split_impl,
   		 108, 108, "EXACT", 185, 185, "EXACT", "EXACT", 2, Any],
 
@@ -77,8 +77,9 @@ my %testcases = (
     "?..?" => [$fuzzy_impl,
         Any, Any, "UNCERTAIN", Any, Any, "UNCERTAIN", "UNCERTAIN", 1, 1],
     # Not working yet:
-#    #"12..?1" => [$fuzzy_impl,
-#    #    1, 1, "UNCERTAIN", 12, 12, "EXACT", "EXACT", 1, 1]
+   # not sure if this should be valided - takadonet
+    #"12..?1" => [$fuzzy_impl,
+    #    1, 1, "UNCERTAIN", 12, 12, "EXACT", "EXACT", 1, 1]
 		 );
 
 my $locfac = Bio::Factory::FTLocationFactory.new();
@@ -114,40 +115,36 @@ for keys %testcases -> $locstr is copy {
         
 }
 
-# SKIP: {
-#     skip('nested matches in regex only supported in v5.6.1 and higher', 5) unless $^V gt v5.6.0;
-    
-# 	# bug #1674, #1765, 2101
-# 	# EMBL-like 
-# 	# join(20464..20694,21548..22763,join(complement(314652..314672),complement(232596..232990),complement(231520..231669)))
-# 	# GenBank-like
-# 	# join(20464..20694,21548..22763,complement(join(231520..231669,232596..232990,314652..314672)))
-# 	# Note that
-# 	# join(1000..2000,join(3000..4000,join(5000..6000,7000..8000)),9000..10000)
-# 	# is the same as
-# 	# join(1000..2000,3000..4000,5000..6000,7000..8000,9000..10000)
-# 	# But I don't want to bother with it at this point
-# 	my @expected = (# intentionally testing same expected string twice
-# 					# as I am providing two different encodings
-# 					# that should mean the same thing
-# 	'join(11025..11049,complement(join(315036..315294,251354..251412,241499..241580,239890..240081)))',
-# 	'join(11025..11049,complement(join(315036..315294,251354..251412,241499..241580,239890..240081)))',
-# 	# ditto
-# 	'join(20464..20694,21548..22763,complement(join(314652..314672,232596..232990,231520..231669)))',
-# 	'join(20464..20694,21548..22763,complement(join(314652..314672,232596..232990,231520..231669)))',
-# 	# this is just seen once
-# 	'join(1000..2000,join(3000..4000,join(5000..6000,7000..8000)),9000..10000)'
-#    );
+ 	# bug #1674, #1765, 2101
+ 	# EMBL-like 
+ 	# join(20464..20694,21548..22763,join(complement(314652..314672),complement(232596..232990),complement(231520..231669)))
+ 	# GenBank-like
+ 	# join(20464..20694,21548..22763,complement(join(231520..231669,232596..232990,314652..314672)))
+ 	# Note that
+ 	# join(1000..2000,join(3000..4000,join(5000..6000,7000..8000)),9000..10000)
+ 	# is the same as
+ 	# join(1000..2000,3000..4000,5000..6000,7000..8000,9000..10000)
+ 	# But I don't want to bother with it at this point
+ 	my @expected = (# intentionally testing same expected string twice
+ 					# as I am providing two different encodings
+ 					# that should mean the same thing
+ 	'join(11025..11049,complement(join(315036..315294,251354..251412,241499..241580,239890..240081)))',
+ 	'join(11025..11049,complement(join(315036..315294,251354..251412,241499..241580,239890..240081)))',
+ 	# ditto
+ 	'join(20464..20694,21548..22763,complement(join(314652..314672,232596..232990,231520..231669)))',
+ 	'join(20464..20694,21548..22763,complement(join(314652..314672,232596..232990,231520..231669)))',
+ 	# this is just seen once
+ 	'join(1000..2000,join(3000..4000,join(5000..6000,7000..8000)),9000..10000)'
+    );
 
-# 	for my $locstr (
-# 		'join(11025..11049,join(complement(239890..240081),complement(241499..241580),complement(251354..251412),complement(315036..315294)))',
-# 		'join(11025..11049,complement(join(315036..315294,251354..251412,241499..241580,239890..240081)))',
-# 		'join(20464..20694,21548..22763,complement(join(314652..314672,232596..232990,231520..231669)))',
-# 		'join(20464..20694,21548..22763,join(complement(231520..231669),complement(232596..232990),complement(314652..314672)))',
-# 		'join(1000..2000,join(3000..4000,join(5000..6000,7000..8000)),9000..10000)' 
-# 	   ) {
-# 		my $loc = $locfac.from_string($locstr);
-# 		my $ftstr = $loc.to_FTstring();
-# 		is($ftstr, shift @expected, $locstr);
-# 	}
-# }
+ 	for (
+ 		'join(11025..11049,join(complement(239890..240081),complement(241499..241580),complement(251354..251412),complement(315036..315294)))',
+ 		'join(11025..11049,complement(join(315036..315294,251354..251412,241499..241580,239890..240081)))',
+ 		'join(20464..20694,21548..22763,complement(join(314652..314672,232596..232990,231520..231669)))',
+ 		'join(20464..20694,21548..22763,join(complement(231520..231669),complement(232596..232990),complement(314652..314672)))',
+ 		'join(1000..2000,join(3000..4000,join(5000..6000,7000..8000)),9000..10000)' 
+ 	   ) ->  $locstr {
+ 		my $loc = $locfac.from_string($locstr);
+ 		my $ftstr = $loc.to_FTstring();
+ 		is($ftstr, (@expected.shift), $locstr);
+ 	}
