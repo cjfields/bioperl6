@@ -48,16 +48,16 @@ my %testcases = (
 # 		 2691, 2691, "EXACT", 5163, 5163, "EXACT", "EXACT", 2, -1],
 # 	"complement(34..(122.126))" => [$fuzzy_impl,
 # 		 34, 34, "EXACT", 122, 126, "WITHIN", "EXACT", 1, -1],
-# 	"J00194:100..202" => [$simple_impl,
-# 		 100, 100, "EXACT", 202, 202, "EXACT", "EXACT", 1, 1],
+ 	"J00194:100..202" => [$simple_impl,
+ 		 100, 100, "EXACT", 202, 202, "EXACT", "EXACT", 1, 1],
 # 	# this variant is not really allowed by the FT definition
 # 	# document but we want to be able to cope with it
-# 	"J00194:(100..202)" => [$simple_impl,
-# 		 100, 100, "EXACT", 202, 202, "EXACT", "EXACT", 1, 1],
+ 	"J00194:(100..202)" => [$simple_impl,
+ 		 100, 100, "EXACT", 202, 202, "EXACT", "EXACT", 1, 1],
 # 	"((122.133)..(204.221))" => [$fuzzy_impl,
 # 		 122, 133, "WITHIN", 204, 221, "WITHIN", "EXACT", 1, 1],
-# 	"join(AY016290.1:108..185,AY016291.1:1546..1599)"=> [$split_impl,
-# 		 108, 108, "EXACT", 185, 185, "EXACT", "EXACT", 2, undef],
+ 	"join(AY016290.1:108..185,AY016291.1:1546..1599)"=> [$split_impl,
+ 		 108, 108, "EXACT", 185, 185, "EXACT", "EXACT", 2, Any],
 
 # 	# UNCERTAIN locations and positions (Swissprot)
 #    "?2465..2774" => [$fuzzy_impl,
@@ -85,10 +85,10 @@ my $locfac = Bio::Factory::FTLocationFactory.new();
 ok($locfac ~~ Bio::Factory::FTLocationFactory, 'Is Bio::Location::FTLocationFactory Role');
 
 # sorting is to keep the order constant from one run to the next
-for keys %testcases -> $locstr { 
+for keys %testcases -> $locstr is copy { 
 	my $loc = $locfac.from_string($locstr);
 	if ($locstr eq "join(AY016290.1:108..185,AY016291.1:1546..1599)") {
-		$loc.seq_id("AY016295.1");
+		$loc.seq_id ="AY016295.1";
 	}
         my @res = @(%testcases{$locstr});
 	is($loc.WHAT, @res[0], @res[0]);
@@ -111,6 +111,7 @@ for keys %testcases -> $locstr {
 	is($ftstr, $locstr, "Location String: $locstr");
 	# test strand production
 	is($loc.strand(), @res[9]);
+        
 }
 
 # SKIP: {

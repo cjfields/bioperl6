@@ -26,6 +26,10 @@ method from_string($locstr is copy ,$op?) {
         # convert ABC123:(X..Y) to ABC123:[X..Y]
         # we should never see the above
         #     $locstr =~ s{:\((\d+\.{2}\d+)\)}{:\[$1\]}g;
+        while ($locstr ~~ / \: \( (\d+ \. ** 2 \d+) \)/ ) {
+            $locstr ~~ s/ \: \( (\d+ \. ** 2 \d+) \) /\:\[$0\]/;
+        }
+
     }
     
     # if ($locstr =~ m{(.*?)\(($LOCREG)\)(.*)}o) { # any matching parentheses?
@@ -52,7 +56,6 @@ method from_string($locstr is copy ,$op?) {
                     
 #                      && $sub !~~ m{(?:join|order|bond)}) {
                     my @splitlocs = split(',' , $sub);
-
                     
                     $loc_obj = Bio::Role::Location::Split.new(#verbose => 1,
                                                         splittype => $oparg);
@@ -109,15 +112,15 @@ method from_string($locstr is copy ,$op?) {
 
 
 
-method !parse_location($locstr) {
+method !parse_location($locstr is copy) {
     my ($loc, $seqid);
     #self.debug( "Location parse, processing $locstr\n");
     # 'remote' location?
-    # if($locstr =~ m{^(\S+):(.*)$}o) {
-    #     # yes; memorize remote ID and strip from location string
-    #     $seqid = $1;
-    #     $locstr = $2;
-    # }
+    if ($locstr ~~ /^(\S+)\:(.*)$/) {
+        # yes; memorize remote ID and strip from location string
+        $seqid = $0;
+        $locstr = $1;
+    }
     
     # split into start and end
     my ($start, $end) = split(/\.\./, $locstr);
@@ -126,7 +129,10 @@ method !parse_location($locstr) {
     # possibly surrounding the entire location the parentheses around start
     # and/or may be asymmetrical
     # Note: these are from X.Y fuzzy locations, which are deprecated!
+    
     # $start =~ s/(?:^\[+|\]+$)//g if $start;
+    $start ~~ s/^\[+|\]+// if $start;
+    $end ~~ s/^\[+|\]+// if $end;
     # $end   =~ s/(?:^\[+|\]+$)//g if $end;
 
     # Is this a simple (exact) or a fuzzy location? Simples have exact start
@@ -167,8 +173,6 @@ method !parse_location($locstr) {
     if ( $start_num > $end_num && $loctype ne '?') {
         ($start,$end,$strand) = ($end,$start,-1);
     }
-
-    
     # instantiate location and initialize
     $loc = $locclass.new(#verbose => self.verbose,
                                   start   => $start, 

@@ -213,7 +213,7 @@ multi method strand($value?) {
             if ((! $lstrand) ||
                    ($strand && ($strand != $lstrand)) ||
                        $loc.is_remote()) {
-                $strand = Mu;
+                $strand = Any;
                 last;
             } elsif (! $strand) {
                 $strand = $lstrand;
