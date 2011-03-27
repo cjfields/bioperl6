@@ -193,7 +193,7 @@ method guide_strand($value?) {
 }
 
 
-multi method strand($value) {
+multi method strand($value?) {
     if ( defined $value) {
         self.strand = $value;
         # propagate to all sublocs

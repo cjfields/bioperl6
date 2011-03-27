@@ -17,17 +17,23 @@ method from_string($locstr is copy ,$op?) {
     if (!defined($op)) {
         # convert all (X.Y) to [X.Y]
         #     $locstr =~ s{\((\d+\.\d+)\)}{\[$1\]}g;
-        $locstr ~~ s/( \( ) (\d+\.\.\d+) * ( \) )/\[$1\]/;
+        #probably a rakudo bug that does not allow for the simpler version of the while below
+        #$locstr ~~ s:g/ \( (\d+\.\d+)  \)/\[$0\]/;
+        while ($locstr ~~ / \(  (\d+\.\d+)  \) /) {
+            $locstr ~~ s/ \( (\d+\.\d+)  \)/\[$0\]/;
+        }
+        
         # convert ABC123:(X..Y) to ABC123:[X..Y]
         # we should never see the above
         #     $locstr =~ s{:\((\d+\.{2}\d+)\)}{:\[$1\]}g;
     }
-    if (0 ) {
+    
     # if ($locstr =~ m{(.*?)\(($LOCREG)\)(.*)}o) { # any matching parentheses?
+    #not sure if this will get all cases but works for now
+    if ( $locstr ~~ /(.*?) \( (.*) \) (.*)/ ) {
 
         my ($beg, $mid, $end) = ($0, $1, $2);
-    #     my (@sublocs) = (split(q(,),$beg), $mid, split(q(,),$end));
-        my @sublocs;
+        my (@sublocs) = (split(',',$beg), $mid, split(',',$end));
         
         my @loc_objs;
         my $loc_obj;
@@ -45,21 +51,25 @@ method from_string($locstr is copy ,$op?) {
                 ) {
                     
 #                      && $sub !~~ m{(?:join|order|bond)}) {
-    #                 my @splitlocs = split(q(,), $sub);
-                    my @splitlocs;
+                    my @splitlocs = split(',' , $sub);
+
                     
-                    $loc_obj = Bio::Role::Location::Split.new(verbose => 1,
+                    $loc_obj = Bio::Role::Location::Split.new(#verbose => 1,
                                                         splittype => $oparg);
                      while (my $splitloc = shift @splitlocs) {
                          next unless $splitloc;
                          my $sobj;
-    #                     if ($splitloc =~ m{\(($LOCREG)\)}) {
-    #                         my $comploc = $1;
-    #                         $sobj = self!parse_location($comploc);
-    #                         $sobj.strand(-1);
-    #                     } else {
-    #                         $sobj = self!parse_location($splitloc);
-    #                     }
+                         # [^()]+  |  \(
+                         #     (??{$LOCREG})
+                         #         \)
+    #                     if ($splitloc =~ m{\(($LOCREG)\)} ) {
+                         if ($splitloc ~~ / \( (.*?)  \) / ) {                         
+                             my $comploc = $0;
+                             $sobj = self!parse_location($comploc);
+                             $sobj.strand(-1);
+                         } else {
+                             $sobj = self!parse_location($splitloc);
+                         }
                          $loc_obj.add_sub_Location($sobj);
                      }
                  } else {
@@ -157,7 +167,7 @@ method !parse_location($locstr) {
     if ( $start_num > $end_num && $loctype ne '?') {
         ($start,$end,$strand) = ($end,$start,-1);
     }
-    say "initial :$locclass";
+
     
     # instantiate location and initialize
     $loc = $locclass.new(#verbose => self.verbose,
