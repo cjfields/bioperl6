@@ -143,7 +143,7 @@ method max_end($value?) {
     if ( defined $value ) {
         $.maxend = $value;
     }
-    return if !$.maxend || (self.end_pos_type eq 'AFTER');
+    return Any if !$.maxend || (self.end_pos_type eq 'AFTER');
     return $.maxend;
 }
 
@@ -274,13 +274,15 @@ multi method !fuzzypointdecode($string is copy) {
     #need to flip this around since rx are not just string anymore! they are code blocks
     #will have issue since we have two BEFORE keys..
 my %FUZZYPOINTENCODE = ( 
-  #  '\>(\d+)(.{0})' => 'AFTER',
-  #  '\<(.{0})(\d+)' => 'BEFORE',
+
+    #  '(.{0})(\d+)\<' => 'BEFORE',
+#    'BEFORE' => rx{('')(\d+)\<},
     'BEFORE' => rx{^\<('')(\d+)$},
     'EXACT'=> rx{^(\d+)$},
     'UNCERTAIN' => rx{\?(\d*)},
-    'AFTER' => rx{^(\d+)\>$},
-  #  '(.{0})(\d+)\<' => 'BEFORE',
+    'AFTER' => rx{^[(\d+)\>|\>(\d+)]$},
+                      #  '\>(\d+)(.{0})' => 'AFTER',
+     #'AFTER' => rx{^\>(\d+)$},
     'WITHIN' =>  rx{(\d+)\.(\d+)}  ,                       
     'BETWEEN' => rx{(\d+)\^(\d+)}
    );
