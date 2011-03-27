@@ -24,10 +24,10 @@ our %FUZZYCODES = ( 'EXACT' => '..', # Position is 'exact
 
 our %strands_switch = ('+' => 1 , '-' => -1);
 
-our %RANGEENCODE  = ('..' => 'EXACT',
+our %RANGEENCODE  = ('..' => 'EXACT', '.' => 'WITHIN',
              '^'   => 'IN-BETWEEN' );
 
-our %RANGEDECODE  = ('EXACT'      => '..',
+our %RANGEDECODE  = ('EXACT'      => '..', 'WITHIN' => '.',
              'IN-BETWEEN' => '^' );
 
 our %POSTYPEENCODE = ('<' => 'BEFORE',

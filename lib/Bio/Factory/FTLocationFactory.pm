@@ -131,8 +131,8 @@ method !parse_location($locstr is copy) {
     # Note: these are from X.Y fuzzy locations, which are deprecated!
     
     # $start =~ s/(?:^\[+|\]+$)//g if $start;
-    $start ~~ s/^\[+|\]+// if $start;
-    $end ~~ s/^\[+|\]+// if $end;
+    $start ~~ s:g/^\[+|\]+// if $start;
+    $end ~~ s:g/^\[+|\]+// if $end;
     # $end   =~ s/(?:^\[+|\]+$)//g if $end;
 
     # Is this a simple (exact) or a fuzzy location? Simples have exact start
@@ -140,10 +140,10 @@ method !parse_location($locstr is copy) {
     my $loctype = ".."; # exact with start and end as default
 
     $loctype = '?' if ( ($locstr ~~ /\?/) && ($locstr !~~ /\?\d+/) );
-
+    
     my $locclass = Bio::Role::Location::Simple;
     if (! defined($end)) {
-        if ($locstr ~~ /(\d+)([\.\^])(\d+)/) {
+        if ($locstr ~~ /(\d+)(<[\.\^]>)(\d+)/) {
             $start = $0;
             $end = $2;
             $loctype = $1;
