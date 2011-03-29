@@ -51,9 +51,7 @@ method from_string($locstr is copy ,$op?) {
                 my $sub = shift @sublocs;
                 # simple split operators (no recursive calls needed)
                 if (($oparg eq 'join' || $oparg eq 'order' || $oparg eq 'bond' )
-                ) {
-                    
-#                      && $sub !~~ m{(?:join|order|bond)}) {
+                        && $sub !~~ /[join|order|bond]/ ) {
                     my @splitlocs = split(',' , $sub);
                     
                     $loc_obj = Bio::Role::Location::Split.new(#verbose => 1,
@@ -78,7 +76,7 @@ method from_string($locstr is copy ,$op?) {
                      $loc_obj = self.from_string($sub, $oparg);
                      # reinsure the operator is set correctly for this level
                      # unless it is complement
-                     $loc_obj.splittype($oparg) unless $oparg eq 'complement';
+                     $loc_obj.splittype =$oparg unless $oparg eq 'complement';
                  }
              }
             # no operator, simple or fuzzy 
