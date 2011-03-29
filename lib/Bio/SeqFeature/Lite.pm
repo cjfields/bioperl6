@@ -55,10 +55,10 @@ method type() {
 has $.start is rw;
 has $.stop is rw;
 
-#used in type method
-has $.primary_tag is rw;
-has $.source is rw;;
-#####
+has $!type is rw;
+
+has $.source is rw;
+
 
 has $.name is rw;
 has $.desc is rw;
@@ -181,12 +181,12 @@ method new(*%args is copy) {
 #   self->{score} = shift if @_;
 #   $d;
 # }
-# method primary_tag     { 
-#     my $self = shift;
-#     my $d    = self->{type};
-#     self->{type} = shift if @_;
-#     $d;
-# }
+method primary_tag($value?) {
+    if ( defined $value) {
+        $!type = $value;
+    }
+    return $!type;
+}
 # method name            {
 #   my $self = shift;
 #   my $d    = self->{name};
