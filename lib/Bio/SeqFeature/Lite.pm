@@ -51,6 +51,18 @@ method type() {
    return $source ne '' ?? "$method" ~ ":$source" !! $method;
 }
 
+
+has $.start is rw;
+has $.stop is rw;
+
+#used in type method
+has $.primary_tag is rw;
+has $.source is rw;;
+#####
+
+has $.name is rw;
+has $.desc is rw;
+
 # usage:
 # Bio::SeqFeature::Lite->new(
 #                         -start => 1,
@@ -60,7 +72,7 @@ method type() {
 #
 # Alternatively, use -segments => [ [start,stop],[start,stop]...]
 # to create a multisegmented feature.
-method new(*%args) {
+method new(*%args is copy) {
   %args{'strand'} ||= 0;
   
   if (%args{'strand'} ~~ /^<[\+\-\.]>$/) {
@@ -521,12 +533,12 @@ method alphabet {
 
 method db { return }
 
-# method source_tag {
-#   my $self = shift;
-#   my $d = self->{source};
-#   self->{source} = shift if @_;
-#   $d;
-# }
+method source_tag($value?) {
+    if ( defined $value) {
+        self.source = $value;
+    }
+    return self.source;
+}
 
 # This probably should be deleted.  Not sure why it's here, but might
 # have been added for Ace::Sequence::Feature-compliance.
