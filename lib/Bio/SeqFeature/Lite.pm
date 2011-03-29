@@ -1,7 +1,8 @@
-package Bio::SeqFeature::Lite{
+class Bio::SeqFeature::Lite {
 
 # use base qw(Bio::Root::Root Bio::SeqFeatureI Bio::LocationI Bio::SeqI Bio::RangeI);
 
+# alias for functions    
 # *stop        = \&end;
 # *info        = \&name;
 # *seqname     = \&name;
@@ -14,111 +15,104 @@ package Bio::SeqFeature::Lite{
 # *get_all_tags   = \&all_tags;
 # *abs_ref        = \&ref;
 
-# # implement Bio::SeqI and FeatureHolderI interface
+# implement Bio::SeqI and FeatureHolderI interface
 
-# sub primary_seq { return $_[0] }
-# sub annotation { 
-#     my ($obj,$value) = @_;
-#     if( defined $value ) {
-# 	$obj->throw("object of class ".ref($value)." does not implement ".
-# 		    "Bio::AnnotationCollectionI. Too bad.")
-# 	    unless $value->isa("Bio::AnnotationCollectionI");
-# 	$obj->{'_annotation'} = $value;
-#     } elsif( ! defined $obj->{'_annotation'}) {
-# 	$obj->{'_annotation'} = Bio::Annotation::Collection->new();
-#     }
-#     return $obj->{'_annotation'};
-# }
-# sub species {
-#     my ($self, $species) = @_;
-#     if ($species) {
-#         $self->{'species'} = $species;
-#     } else {
-#         return $self->{'species'};
-#     }
-# }
-# sub is_remote { return }
-# sub feature_count { return scalar @{shift->{segments} || []} }
+# method primary_seq { return $_[0] }
+method annotation($value?) {
+    
+    if ( defined $value ) {
+        #	$obj->throw("object of class ".ref($value)." does not implement ".
+        #		    "Bio::AnnotationCollectionI. Too bad.")
+        # 	    unless $value->isa("Bio::AnnotationCollectionI");
+ 	self._annotation = $value;
+    } elsif ( ! defined self._annotation ) {
+ 	self._annotation = Bio::Annotation::Collection.new();
+    }
+    return self._annotation;
+}
 
-# sub target { return; }
-# sub hit    { shift->target }
+method species($species?) {
+    if (defined $species) {
+        self.species = $species;
+    } else {
+        return self.species;
+    }
+}
+    
+method is_remote { return }
+    
+# method feature_count { return scalar @{shift->{segments} || []} }
 
-# sub type {
-#   my $self = shift;
-#   my $method = $self->primary_tag;
-#   my $source = $self->source_tag;
-#   return $source ne '' ? "$method:$source" : $method;
-# }
+method target { return; }
+method hit    { self.target }
+method type() {
+   my $method = self.primary_tag;
+   my $source = self.source_tag;
+   return $source ne '' ?? "$method" ~ ":$source" !! $method;
+}
 
-# # usage:
-# # Bio::SeqFeature::Lite->new(
-# #                         -start => 1,
-# #                         -end   => 100,
-# #                         -name  => 'fred feature',
-# #                         -strand => +1);
-# #
-# # Alternatively, use -segments => [ [start,stop],[start,stop]...]
-# # to create a multisegmented feature.
-# sub new {
-#   my $class= shift;
-#   $class = ref($class) if ref $class;
-#   my %arg = @_;
+# usage:
+# Bio::SeqFeature::Lite->new(
+#                         -start => 1,
+#                         -end   => 100,
+#                         -name  => 'fred feature',
+#                         -strand => +1);
+#
+# Alternatively, use -segments => [ [start,stop],[start,stop]...]
+# to create a multisegmented feature.
+method new(*%args) {
+  %args{'strand'} ||= 0;
+  
+  if (%args{'strand'} ~~ /^<[\+\-\.]>$/) {
+      %args{'strand'} = "+" && %args{'strand'} ='1';
+      %args{'strand'} = "-" && %args{'strand'} = '-1';
+      %args{'strand'} = "." && %args{'strand'} = '0';
+  }
+  else {
+      %args{'strand'}  = %args{'strand'} ?? (%args{'strand'} >= 0 ?? +1 !! -1) !! 0;
+  }
+  
+  %args{'name'}    = %args{'name'}   || %args{'seqname'} || %args{'display_id'} 
+      || %args{'display_name'} || %args{'id'};
+  %args{'type'}    = %args{'type'}   || %args{'primary_tag'} || 'feature';
+  %args{'source'}  = %args{'source'} || %args{'source_tag'} || '';
+  %args{'stop'}    = %args.exists('end') ?? %args{'end'} !! %args{'stop'};
+  %args{'ref'}     = %args{'seq_id'} || %args{'ref'};
 
-#   my $self = bless {},$class;
+  #list of arguments that need attributes : url seq phase desc attributes primary_id
 
-#   $arg{-strand} ||= 0;
-#   if ($arg{-strand} =~ /^[\+\-\.]$/){
-# 	$arg{-strand} = "+" && $self->{strand} ='1';
-# 	$arg{-strand} = "-" && $self->{strand} = '-1';
-# 	$arg{-strand} = "." && $self->{strand} = '0';
-#   } else {
-# 	  $self->{strand}  = $arg{-strand} ? ($arg{-strand} >= 0 ? +1 : -1) : 0;
-#   }
-#   $self->{name}    = $arg{-name}   || $arg{-seqname} || $arg{-display_id} 
-#     || $arg{-display_name} || $arg{-id};
-#   $self->{type}    = $arg{-type}   || $arg{-primary_tag} || 'feature';
-#   $self->{subtype} = $arg{-subtype} if exists $arg{-subtype};
-#   $self->{source}  = $arg{-source} || $arg{-source_tag} || '';
-#   $self->{score}   = $arg{-score}   if exists $arg{-score};
-#   $self->{start}   = $arg{-start};
-#   $self->{stop}    = exists $arg{-end} ? $arg{-end} : $arg{-stop};
-#   $self->{ref}     = $arg{-seq_id} || $arg{-ref};
-#   for my $option (qw(class url seq phase desc attributes primary_id)) {
-#     $self->{$option} = $arg{"-$option"} if exists $arg{"-$option"};
-#   }
+  # is_circular is needed for Bio::PrimarySeqI compliance
+  %args{'is_circular'} = %args{'is_circular'} || 0;
 
-#   # is_circular is needed for Bio::PrimarySeqI compliance
-#   $self->{is_circular} = $arg{-is_circular} || 0;
+  # fix start, stop
+  if (defined %args{'stop'} && defined %args{'start'}
+          && %args{'stop'} < %args{'start'}) {
+      #swap start and stop values
+      (%args{'start'} , %args{'stop'}) = (%args{'stop'} , %args{'start'});
+      %args{'strand'} *= -1;
+  }
 
-#   # fix start, stop
-#   if (defined $self->{stop} && defined $self->{start}
-#       && $self->{stop} < $self->{start}) {
-#     @{$self}{'start','stop'} = @{$self}{'stop','start'};
-#     $self->{strand} *= -1;
-#   }
-
-#   my @segments;
-#   if (my $s = $arg{-segments}) {
+#   if (my @s = %args{'segments'}) {
 #     # NB: when $self ISA Bio::DB::SeqFeature the following invokes
 #     # Bio::DB::SeqFeature::add_segment and not
 #     # Bio::DB::SeqFeature::add_segment (as might be expected?)
-#     $self->add_segment(@$s);
+#     self->add_segment(@$s);
 #   }
 
-#   $self;
-# }
+  return self.bless(*,|%args);
+}
 
-# sub add_segment {
+# method add_segment {
 #   my $self        = shift;
-#   my $type = $self->{subtype} || $self->{type};
-#   $self->{segments} ||= [];
-#   my $ref   = $self->seq_id;
-#   my $name  = $self->name;
-#   my $class = $self->class;
-#   my $source_tag = $self->source_tag;
+#   my $type = self->{subtype} || self->{type};
+#   self->{segments} ||= [];
+#   my $ref   = self->seq_id;
+#   my $name  = self->name;
+#   my $class = self->class;
+#   my $source_tag = self->source_tag;
 
-#   my $min_start = $self->start ||  999_999_999_999;
-#   my $max_stop  = $self->end   || -999_999_999_999;
+#   my $min_start = self->start ||  999_999_999_999;
+#   my $max_stop  = self->end   || -999_999_999_999;
 
 #   my @segments = @{$self->{segments}};
 
@@ -126,24 +120,24 @@ package Bio::SeqFeature::Lite{
 #     if (ref($seg) eq 'ARRAY') {
 #       my ($start,$stop) = @{$seg};
 #       next unless defined $start && defined $stop;  # fixes an obscure bug somewhere above us
-#       my $strand = $self->{strand};
+#       my $strand = self->{strand};
 
 #       if ($start > $stop) {
 # 	($start,$stop) = ($stop,$start);
 # 	$strand = -1;
 #       }
 
-#       push @segments,$self->new(-start  => $start,
+#       push @segments,self->new(-start  => $start,
 # 				-stop   => $stop,
 # 				-strand => $strand,
 # 				-ref    => $ref,
 # 				-type   => $type,
 # 			        -name   => $name,
 # 			        -class  => $class,
-# 				-phase  => $self->{phase},
-# 				-score  => $self->{score},
+# 				-phase  => self->{phase},
+# 				-score  => self->{score},
 # 				-source_tag  => $source_tag,
-# 				-attributes  => $self->{attributes},
+# 				-attributes  => self->{attributes},
 # 			       );
 #       $min_start = $start if $start < $min_start;
 #       $max_stop  = $stop  if $stop  > $max_stop;
@@ -157,69 +151,69 @@ package Bio::SeqFeature::Lite{
 #   }
 #   if (@segments) {
 #     local $^W = 0;  # some warning of an uninitialized variable...
-#     $self->{segments} = \@segments;
-#     $self->{ref}    ||= $self->{segments}[0]->seq_id;
-#     $self->{start}    = $min_start;
-#     $self->{stop}     = $max_stop;
+#     self->{segments} = \@segments;
+#     self->{ref}    ||= self->{segments}[0]->seq_id;
+#     self->{start}    = $min_start;
+#     self->{stop}     = $max_stop;
 #   }
 # }
 
-# sub segments {
+# method segments {
 #   my $self = shift;
-#   my $s = $self->{segments} or return wantarray ? () : 0;
+#   my $s = self->{segments} or return wantarray ? () : 0;
 #   @$s;
 # }
-# sub score    {
+# method score    {
 #   my $self = shift;
-#   my $d = $self->{score};
-#   $self->{score} = shift if @_;
+#   my $d = self->{score};
+#   self->{score} = shift if @_;
 #   $d;
 # }
-# sub primary_tag     { 
+# method primary_tag     { 
 #     my $self = shift;
-#     my $d    = $self->{type};
-#     $self->{type} = shift if @_;
+#     my $d    = self->{type};
+#     self->{type} = shift if @_;
 #     $d;
 # }
-# sub name            {
+# method name            {
 #   my $self = shift;
-#   my $d    = $self->{name};
-#   $self->{name} = shift if @_;
+#   my $d    = self->{name};
+#   self->{name} = shift if @_;
 #   $d;
 # }
-# sub seq_id          { shift->ref(@_)         }
-# sub ref {
+# method seq_id          { shift->ref(@_)         }
+# method ref {
 #   my $self = shift;
-#   my $d = $self->{ref};
-#   $self->{ref} = shift if @_;
+#   my $d = self->{ref};
+#   self->{ref} = shift if @_;
 #   $d;
 # }
-# sub start    {
+# method start    {
 #   my $self = shift;
-#   my $d = $self->{start};
-#   $self->{start} = shift if @_;
-#   if (my $rs = $self->{refseq}) {
+#   my $d = self->{start};
+#   self->{start} = shift if @_;
+#   if (my $rs = self->{refseq}) {
 #     my $strand = $rs->strand || 1;
 #     return $strand >= 0 ? ($d - $rs->start + 1) : ($rs->end - $d + 1);
 #   } else {
 #     return $d;
 #   }
 # }
-# sub end    {
+# method end    {
 #   my $self = shift;
-#   my $d = $self->{stop};
-#   $self->{stop} = shift if @_;
-#   if (my $rs = $self->{refseq}) {
+#   my $d = self->{stop};
+#   self->{stop} = shift if @_;
+#   if (my $rs = self->{refseq}) {
 #     my $strand = $rs->strand || 1;
 #     return $strand >= 0 ? ($d - $rs->start + 1) : ($rs->end - $d + 1);
 #   }
 #   $d;
 # }
-# sub strand {
+# method strand {
 #   my $self = shift;
-#   my $d = $self->{strand};
-#   $self->{strand} = shift if @_;
-#   if (my $rs = $self->{refseq}) {
+#   my $d = self->{strand};
+#   self->{strand} = shift if @_;
+#   if (my $rs = self->{refseq}) {
 #     my $rstrand = $rs->strand;
 #     return  0 unless $d;
 #     return  1 if $rstrand == $d;
@@ -229,232 +223,229 @@ package Bio::SeqFeature::Lite{
 # }
 
 # # this does nothing, but it is here for compatibility reasons
-# sub absolute {
+# method absolute {
 #   my $self = shift;
-#   my $d = $self->{absolute};
-#   $self->{absolute} = shift if @_;
+#   my $d = self->{absolute};
+#   self->{absolute} = shift if @_;
 #   $d;
 # }
 
-# sub abs_start {
+# method abs_start {
 #   my $self = shift;
-#   local $self->{refseq} = undef;
-#   $self->start(@_);
+#   local self->{refseq} = undef;
+#   self->start(@_);
 # }
-# sub abs_end {
+# method abs_end {
 #   my $self = shift;
-#   local $self->{refseq} = undef;
-#   $self->end(@_);
+#   local self->{refseq} = undef;
+#   self->end(@_);
 # }
-# sub abs_strand {
+# method abs_strand {
 #   my $self = shift;
-#   local $self->{refseq} = undef;
-#   $self->strand(@_);
+#   local self->{refseq} = undef;
+#   self->strand(@_);
 # }
 
-# sub length {
+# method length {
 #   my $self = shift;
-#   return $self->end - $self->start + 1;
+#   return self->end - self->start + 1;
 # }
 
 # #is_circular is needed for Bio::PrimarySeqI
-# sub is_circular {
+# method is_circular {
 #   my $self = shift;
-#   my $d = $self->{is_circular};
-#   $self->{is_circular} = shift if @_;
+#   my $d = self->{is_circular};
+#   self->{is_circular} = shift if @_;
 #   $d;
 # }
 
 
-# sub seq {
-#   my $self = shift;
-#   my $seq =  exists $self->{seq} ? $self->{seq} : '';
-#   return $seq;
-# }
+method seq() {
+    my $seq = defined self.seq ?? self.seq !! '';
+    return $seq;
+}
 
-# sub dna {
-#   my $seq = shift->seq;
-#   $seq    = $seq->seq if CORE::ref($seq);
-#   return $seq;
-# }
+method dna {
+  my $seq = self.seq;
+#  $seq    = $seq.seq if CORE::ref($seq);
+  return $seq;
+}
 
 
-# =cut
-
-# sub display_name { shift->name }
+method display_name { self.name }
 
 # *display_id = \&display_name;
 
 
 
-# sub accession_number {
-#     return 'unknown';
-# }
+method accession_number {
+    return 'unknown';
+}
 
 
 
 
-# sub alphabet{
-#     return 'dna'; # no way this will be anything other than dna!
-# }
+method alphabet {
+    return 'dna'; # no way this will be anything other than dna!
+}
 
 
 
-# sub desc {
+# method desc {
 #   my $self = shift;
-#   my $d    = $self->notes;
-#   $self->{desc} = shift if @_;
+#   my $d    = self->notes;
+#   self->{desc} = shift if @_;
 #   $d;
 # }
 
-# sub attributes {
+# method attributes {
 #   my $self = shift;
 #   if (@_) {
-#     return $self->each_tag_value(@_);
+#     return self->each_tag_value(@_);
 #   } else {
-#     return $self->{attributes} ? %{$self->{attributes}} : ();
+#     return self->{attributes} ? %{$self->{attributes}} : ();
 #   }
 # }
 
-# sub primary_id {
+# method primary_id {
 #   my $self = shift;
-#   my $d = $self->{primary_id};
-#   $self->{primary_id} = shift if @_;
+#   my $d = self->{primary_id};
+#   self->{primary_id} = shift if @_;
 #   return $d;
 # #  return $d if defined $d;
 # #  return (overload::StrVal($self) =~ /0x([a-f0-9]+)/)[0];
 # }
 
-# sub notes {
+# method notes {
 #     my $self  = shift;
-#     my $notes = $self->{desc};
+#     my $notes = self->{desc};
 #     return $notes if defined $notes;
-#     return $self->attributes('Note');
+#     return self->attributes('Note');
 # }
 
-# sub aliases {
+# method aliases {
 #     my $self  = shift;
-#     return $self->attributes('Alias');
+#     return self->attributes('Alias');
 # }
 
-# sub low {
+# method low {
 #   my $self = shift;
-#   return $self->start < $self->end ? $self->start : $self->end;
+#   return self->start < self->end ? self->start : self->end;
 # }
 
-# sub high {
+# method high {
 #   my $self = shift;
-#   return $self->start > $self->end ? $self->start : $self->end;
+#   return self->start > self->end ? self->start : self->end;
 # }
 
 
 
-# sub location {
+# method location {
 #    my $self = shift;
 #    require Bio::Location::Split unless Bio::Location::Split->can('new');
 #    my $location;
-#    if (my @segments = $self->segments) {
+#    if (my @segments = self->segments) {
 #        $location = Bio::Location::Split->new();
 #        foreach (@segments) {
 # 	 $location->add_sub_Location($_);
 #        }
 #    } else {
-#        $location = $self;
+#        $location = self;
 #    }
 #    $location;
 # }
 
-# sub each_Location {
+# method each_Location {
 #   my $self = shift;
 #   require Bio::Location::Simple unless Bio::Location::Simple->can('new');
-#   if (my @segments = $self->segments) {
+#   if (my @segments = self->segments) {
 #     return map {
 # 	Bio::Location::Simple->new(-start  => $_->start,
 # 				   -end    => $_->end,
 # 				   -strand => $_->strand);
 #       } @segments;
 #   } else {
-#     return Bio::Location::Simple->new(-start  => $self->start,
-# 				      -end    => $self->end,
-# 				      -strand => $self->strand);
+#     return Bio::Location::Simple->new(-start  => self->start,
+# 				      -end    => self->end,
+# 				      -strand => self->strand);
 #   }
 # }
 
 
-# sub location_string {
+# method location_string {
 #   my $self = shift;
-#   my @segments = $self->segments or return $self->to_FTstring;
+#   my @segments = self->segments or return self->to_FTstring;
 #   join ',',map {$_->to_FTstring} @segments;
 # }
 
-# sub coordinate_policy {
+# method coordinate_policy {
 #    require Bio::Location::WidestCoordPolicy unless Bio::Location::WidestCoordPolicy->can('new');
 #    return Bio::Location::WidestCoordPolicy->new();
 # }
 
-# sub min_start { shift->low }
-# sub max_start { shift->low }
-# sub min_end   { shift->high }
-# sub max_end   { shift->high}
-# sub start_pos_type { 'EXACT' }
-# sub end_pos_type   { 'EXACT' }
-# sub to_FTstring {
+# method min_start { shift->low }
+# method max_start { shift->low }
+# method min_end   { shift->high }
+# method max_end   { shift->high}
+# method start_pos_type { 'EXACT' }
+# method end_pos_type   { 'EXACT' }
+# method to_FTstring {
 #   my $self = shift;
-#   my $low  = $self->min_start;
-#   my $high = $self->max_end;
-#   my $strand = $self->strand;
+#   my $low  = self->min_start;
+#   my $high = self->max_end;
+#   my $strand = self->strand;
 #   my $str = defined $strand && $strand<0 ? "complement($low..$high)" : "$low..$high";
-#   if (my $id = $self->seq_id()) {
+#   if (my $id = self->seq_id()) {
 #     $str = $id . ":" . $str;
 #   }
 #   $str;
 # }
-# sub phase {
+# method phase {
 #     my $self = shift;
-#     my $d    = $self->{phase};
-#     $self->{phase} = shift if @_;
+#     my $d    = self->{phase};
+#     self->{phase} = shift if @_;
 #     $d;
 # }
 
-# sub class {
+# method class {
 #   my $self = shift;
-#   my $d = $self->{class};
-#   $self->{class} = shift if @_;
+#   my $d = self->{class};
+#   self->{class} = shift if @_;
 #   return defined($d) ? $d : 'Sequence';  # acedb is still haunting me - LS
 # }
 
 # # set GFF dumping version
-# sub version {
+# method version {
 #   my $self = shift;
-#   my $d    = $self->{gff3_version} || 2;
-#   $self->{gff3_version} = shift if @_;
+#   my $d    = self->{gff3_version} || 2;
+#   self->{gff3_version} = shift if @_;
 #   $d;
 # }
 
-# sub gff_string {
+# method gff_string {
 #   my $self    = shift;
   
-#   if ($self->version == 3) {
-#     return $self->gff3_string(@_);
+#   if (self->version == 3) {
+#     return self->gff3_string(@_);
 #   }
   
 #   my $recurse = shift;
-#   my $name  = $self->name;
-#   my $class = $self->class;
+#   my $name  = self->name;
+#   my $class = self->class;
 #   my $group = "$class $name" if $name;
-#   my $strand = ('-','.','+')[$self->strand+1];
+#   my $strand = ('-','.','+')[self->strand+1];
 #   my $string;
 #   $string .= join("\t",
-# 		  $self->ref||'.',$self->source||'.',$self->method||'.',
-# 		  $self->start||'.',$self->stop||'.',
-# 		  defined($self->score) ? $self->score : '.',
+# 		  self->ref||'.',self->source||'.',self->method||'.',
+# 		  self->start||'.',self->stop||'.',
+# 		  defined(self->score) ? self->score : '.',
 # 		  $strand||'.',
-# 		  defined($self->phase) ? $self->phase : '.',
+# 		  defined(self->phase) ? self->phase : '.',
 # 		  $group||''
 # 		 );
 #   $string .= "\n";
 #   if ($recurse) {
-#     foreach ($self->sub_SeqFeature) {
+#     foreach (self->sub_SeqFeature) {
 #       $string .= $_->gff_string($recurse);
 #     }
 #   }
@@ -464,7 +455,7 @@ package Bio::SeqFeature::Lite{
 # # Suggested strategy for dealing with the multiple parentage issue.
 # # First recurse through object tree and record parent tree.
 # # Then recurse again, skipping objects we've seen before.
-# sub gff3_string {
+# method gff3_string {
 #     my ($self,$recurse,$parent_tree,$seenit,$force_id) = @_;
 #     $parent_tree ||= {};
 #     $seenit      ||= {};
@@ -472,18 +463,18 @@ package Bio::SeqFeature::Lite{
 #     my @parent_ids;
 
 #     if ($recurse) {
-# 	$self->_traverse($parent_tree) unless %$parent_tree;  # this will record parents of all children
-# 	my $primary_id = defined $force_id ? $force_id : $self->_real_or_dummy_id;
+# 	self->_traverse($parent_tree) unless %$parent_tree;  # this will record parents of all children
+# 	my $primary_id = defined $force_id ? $force_id : self->_real_or_dummy_id;
 
 # 	return if $seenit->{$primary_id}++;
 
-# 	@rsf = $self->get_SeqFeatures;
+# 	@rsf = self->get_SeqFeatures;
 # 	if (@rsf) {
 # 	    # Detect case in which we have a split location feature. In this case we 
 # 	    # skip to the grandchildren and trick them into thinking that our parent is theirs.
 # 	    my %types = map {$_->primary_tag=>1} @rsf;
 # 	    my @types = keys %types;
-# 	    if (@types == 1 && $types[0] eq $self->primary_tag) {
+# 	    if (@types == 1 && $types[0] eq self->primary_tag) {
 # 		return join ("\n",map {$_->gff3_string(1,$parent_tree,{},$primary_id)} @rsf);
 # 	    }
 # 	}
@@ -491,86 +482,86 @@ package Bio::SeqFeature::Lite{
 # 	@parent_ids = keys %{$parent_tree->{$primary_id}};
 #     }
 
-#     my $group      = $self->format_attributes(\@parent_ids,$force_id);
-#     my $name       = $self->name;
+#     my $group      = self->format_attributes(\@parent_ids,$force_id);
+#     my $name       = self->name;
 
-#     my $class = $self->class;
-#     my $strand = ('-','.','+')[$self->strand+1];
+#     my $class = self->class;
+#     my $strand = ('-','.','+')[self->strand+1];
 #     my $p = join("\t",
-# 		 $self->seq_id||'.',
-# 		 $self->source||'.',
-# 		 $self->method||'.',
-# 		 $self->start||'.',
-# 		 $self->stop||'.',
-# 		 defined($self->score) ? $self->score : '.',
+# 		 self->seq_id||'.',
+# 		 self->source||'.',
+# 		 self->method||'.',
+# 		 self->start||'.',
+# 		 self->stop||'.',
+# 		 defined(self->score) ? self->score : '.',
 # 		 $strand||'.',
-# 		 defined($self->phase) ? $self->phase : '.',
+# 		 defined(self->phase) ? self->phase : '.',
 # 		 $group||'');
 #     return join("\n",
 # 		$p,
 # 		map {$_->gff3_string(1,$parent_tree,$seenit)} @rsf);
 # }
 
-# sub _real_or_dummy_id {
+# method _real_or_dummy_id {
 #     my $self = shift;
-#     my $id   = $self->primary_id;
+#     my $id   = self->primary_id;
 #     return $id if defined $id;
 #     return return (overload::StrVal($self) =~ /0x([a-f0-9]+)/)[0];
 # }
 
-# sub _traverse {
+# method _traverse {
 #     my $self   = shift;
 #     my $tree   = shift;  # tree => {$child}{$parent} = 1
 #     my $parent = shift;
-#     my $id     = $self->_real_or_dummy_id;
+#     my $id     = self->_real_or_dummy_id;
 #     defined $id or return;
 #     $tree->{$id}{$parent->_real_or_dummy_id}++ if $parent;
-#     $_->_traverse($tree,$self) foreach $self->get_SeqFeatures;
+#     $_->_traverse($tree,$self) foreach self->get_SeqFeatures;
 # }
 
-# sub db { return }
+method db { return }
 
-# sub source_tag {
+# method source_tag {
 #   my $self = shift;
-#   my $d = $self->{source};
-#   $self->{source} = shift if @_;
+#   my $d = self->{source};
+#   self->{source} = shift if @_;
 #   $d;
 # }
 
-# # This probably should be deleted.  Not sure why it's here, but might
-# # have been added for Ace::Sequence::Feature-compliance.
-# sub introns {
+# This probably should be deleted.  Not sure why it's here, but might
+# have been added for Ace::Sequence::Feature-compliance.
+# method introns {
 #   my $self = shift;
 #   return;
 # }
 
-# sub has_tag { exists shift->{attributes}{shift()} }
+# method has_tag { exists shift->{attributes}{shift()} }
 
-# sub escape {
-#   my $self     = shift;
+# method escape {
+#   my self     = shift;
 #   my $toencode = shift;
 #   $toencode    =~ s/([^a-zA-Z0-9_.:?^*\(\)\[\]@!+-])/uc sprintf("%%%02x",ord($1))/eg;
 #   $toencode;
 # }
 
-# sub all_tags {
+# method all_tags {
 #   my $self = shift;
 #   return keys %{$self->{attributes}};
 # }
 
-# sub add_tag_value {
+# method add_tag_value {
 #   my $self = shift;
 #   my ($tag_name,@tag_values) = @_;
 #   push @{$self->{attributes}{$tag_name}},@tag_values;
 # }
 
-# sub remove_tag {
+# method remove_tag {
 #   my $self = shift;
 #   my $tag_name = shift;
 #   delete $self->{attributes}{$tag_name};
 # }
 
-# sub each_tag_value {
+# method each_tag_value {
 #   my $self = shift;
 #   my $tag  = shift;
 #   my $value = $self->{attributes}{$tag} or return;
@@ -579,41 +570,41 @@ package Bio::SeqFeature::Lite{
 #                                  : $self->{attributes}{$tag};
 # }
 
-# sub get_Annotations {
+# method get_Annotations {
 #   my $self = shift;
 #   my $tag  = shift;
-#   my @values = $self->get_tag_values($tag);
+#   my @values = self->get_tag_values($tag);
 #   return $values[0] if @values == 1;
 #   return @values;
 # }
 
-# sub format_attributes {
+# method format_attributes {
 #   my $self        = shift;
 #   my $parent      = shift;
 #   my $fallback_id = shift;
 
-#   my @tags = $self->all_tags;
+#   my @tags = self->all_tags;
 #   my @result;
 #   for my $t (@tags) {
-#     my @values = $self->each_tag_value($t);
-#     push @result,join '=',$self->escape($t),join(',', map {$self->escape($_)} @values) if @values;
+#     my @values = self->each_tag_value($t);
+#     push @result,join '=',self->escape($t),join(',', map {self->escape($_)} @values) if @values;
 #   }
-#   my $id        = $self->escape($self->_real_or_dummy_id) || $fallback_id;
+#   my $id        = self->escape(self->_real_or_dummy_id) || $fallback_id;
 
 #   my $parent_id;
 #   if (@$parent) {
-#       $parent_id  = join (',',map {$self->escape($_)} @$parent);
+#       $parent_id  = join (',',map {self->escape($_)} @$parent);
 #   }
 
-#   my $name = $self->display_name;
+#   my $name = self->display_name;
 #   unshift @result,"ID=".$id                                    if defined $id;
 #   unshift @result,"Parent=".$parent_id                         if defined $parent_id;
-#   unshift @result,"Name=".$self->escape($name)                 if defined $name;
+#   unshift @result,"Name=".self->escape($name)                 if defined $name;
 #   return join ';',@result;
 # }
 
 
-# sub clone {
+# method clone {
 #   my $self  = shift;
 #   my %clone  = %$self;
 #   # overwrite attributes
@@ -627,14 +618,14 @@ package Bio::SeqFeature::Lite{
 
 
 
-# sub refseq {
+# method refseq {
 #   my $self = shift;
-#   my $d    = $self->{refseq};
+#   my $d    = self->{refseq};
 #   if (@_) {
 #     my $newref = shift;
 #     $self->throw("attempt to set refseq using a feature that does not share the same seq_id")
 #       unless $newref->seq_id eq $self->seq_id;
-#     $self->{refseq} = $newref;
+#     self->{refseq} = $newref;
 #   }
 #   return $d;
 # }
