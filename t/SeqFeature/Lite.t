@@ -59,3 +59,24 @@ for ($lite.segments) -> $x {
     is($x.type,'similarity');
     is($x.is_circular,False);
 }
+
+
+# build up a gene exon by exon
+my $e1 = Bio::SeqFeature::Lite.new(start=>1,stop=>100,type=>'exon');
+my $e2 = Bio::SeqFeature::Lite.new(start=>150,stop=>200,type=>'exon');
+my $e3 = Bio::SeqFeature::Lite.new(start=>300,stop=>500,type=>'exon');
+$lite  = Bio::SeqFeature::Lite.new(segments=>[$e1,$e2,$e3],type=>'gene');
+ 
+is($e1.type,'exon');
+is($e2.type,'exon');
+is($e3.type,'exon');
+
+is($lite.start,1,'correct start');
+is($lite.stop,500,'correct stop');
+is($lite.feature_count,3);
+
+is($lite.type,'gene');
+#they should still keep their type as 'exon'
+for ($lite.segments) -> $x {
+    is($x.type,'exon');
+}

@@ -179,9 +179,8 @@ method add_segment(@s) {
             #probably want to check for a generic SeqFeature
         } elsif ($seg ~~ Bio::SeqFeature::Lite) {
             push @segments,$seg;
-
             $min_start = $seg.start if ($seg.start && $seg.start < $min_start);
-            $max_stop  = $seg.end   if ($seg.end && $seg.end > $max_stop);
+            $max_stop  = $seg.stop   if ($seg.stop && $seg.stop > $max_stop);
         }
     }
         
