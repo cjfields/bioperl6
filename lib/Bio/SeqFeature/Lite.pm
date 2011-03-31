@@ -41,7 +41,7 @@ method species($species?) {
     
 method is_remote { return }
     
-# method feature_count { return scalar @{shift->{segments} || []} }
+ method feature_count { return  @!segments.elems }
 
 method target { return; }
 method hit    { self.target }

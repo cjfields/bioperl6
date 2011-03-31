@@ -4,7 +4,7 @@ BEGIN {
 }
 
 use Test;
-plan 28;
+plan 30;
 eval_lives_ok 'use Bio::SeqFeature::Lite', 'Can use Bio::SeqFeature::Lite';
 
 use Bio::SeqFeature::Lite;
@@ -30,6 +30,7 @@ is($lite.start_pos_type,"EXACT");
 is($lite.end_pos_type,"EXACT");
 is($lite.strand,0);
 is($lite.class,'Sequence');
+is($lite.feature_count,0);
 
 
 # create a feature composed of multiple segments, all of type "similarity"
@@ -50,6 +51,7 @@ is($lite.end_pos_type,"EXACT");
 is($lite.strand,0);
 is($lite.class,'Sequence');
 is($lite.type,'gapped_alignment');
+is($lite.feature_count,3);
 
 for ($lite.segments) -> $x {
     is($x.type,'similarity');
