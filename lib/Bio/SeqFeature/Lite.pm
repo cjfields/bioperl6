@@ -396,11 +396,10 @@ method each_Location() {
    }
 }
 
-# method location_string {
-#   my $self = shift;
-#   my @segments = self->segments or return self->to_FTstring;
-#   join ',',map {$_->to_FTstring} @segments;
-# }
+method location_string() {
+   my @segments = @!segments or return self.to_FTstring;
+   join ',', map { $_.to_FTstring } , @segments;
+}
 
 # method coordinate_policy {
 #    require Bio::Location::WidestCoordPolicy unless Bio::Location::WidestCoordPolicy->can('new');
