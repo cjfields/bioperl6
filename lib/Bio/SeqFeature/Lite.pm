@@ -389,21 +389,24 @@ method alphabet {
 #    $location;
 # }
 
-# method each_Location {
-#   my $self = shift;
-#   require Bio::Location::Simple unless Bio::Location::Simple->can('new');
-#   if (my @segments = self->segments) {
-#     return map {
-# 	Bio::Location::Simple->new(-start  => $_->start,
-# 				   -end    => $_->end,
-# 				   -strand => $_->strand);
-#       } @segments;
-#   } else {
-#     return Bio::Location::Simple->new(-start  => self->start,
-# 				      -end    => self->end,
-# 				      -strand => self->strand);
-#   }
-# }
+method each_Location() {
+    #want to use require sometime in the future - takadonet
+    #    unless Bio::Role::Location::Simple.can('new') {
+    use Bio::Role::Location::Simple;
+    #    }
+    
+   if (my @segments = @!segments) {
+       return map {
+           Bio::Role::Location::Simple.new(start  => $_.start,
+                                     end    => $_.stop,
+                                     strand => $_.strand);
+       } ,@segments;
+   } else {
+       return Bio::Role::Location::Simple.new(start  => self.start,
+                                        end    => self.stop,
+                                        strand => self.strand);
+   }
+}
 
 
 # method location_string {

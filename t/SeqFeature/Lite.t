@@ -34,7 +34,8 @@ is($lite.feature_count,0);
 
 
 # create a feature composed of multiple segments, all of type "similarity"
-$lite = Bio::SeqFeature::Lite.new(segments => [[1000,1100],[1500,1550],[1800,2000]],
+my @coord = [1000,1100],[1500,1550],[1800,2000];
+$lite = Bio::SeqFeature::Lite.new(segments => @coord,
                                    name     => 'ABC-3',
                                    type     => 'gapped_alignment',
                                    subtype  => 'similarity');
@@ -53,6 +54,14 @@ is($lite.class,'Sequence');
 is($lite.type,'gapped_alignment');
 is($lite.feature_count,3);
 is($lite.is_circular,False);
+
+for ($lite.each_Location ) -> $x {
+    my @feature = @(@coord.shift);
+    my ($start,$end) = (@feature[0],@feature[1]);
+    is($x.start,$start);
+    is($x.end,$end);
+} 
+
 
 for ($lite.segments) -> $x {
     is($x.name,'ABC-3');
