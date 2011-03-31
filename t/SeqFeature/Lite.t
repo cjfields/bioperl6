@@ -4,7 +4,7 @@ BEGIN {
 }
 
 use Test;
-plan 53;
+plan 56;
 eval_lives_ok 'use Bio::SeqFeature::Lite', 'Can use Bio::SeqFeature::Lite';
 
 use Bio::SeqFeature::Lite;

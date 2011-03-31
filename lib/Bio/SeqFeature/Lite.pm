@@ -41,7 +41,7 @@ method species($species?) {
     
 method is_remote { return }
     
- method feature_count { return  @!segments.elems }
+method feature_count { return  @!segments.elems }
 
 method target { return; }
 method hit    { self.target }
@@ -307,23 +307,16 @@ method dna {
 
 method display_name() { self.name }
 
-#todo want an easlier way to redispatch
+#todo want an easy way to redispatch
 method display_id() { self.name};    
-
-
 
 method accession_number {
     return 'unknown';
 }
 
-
-
-
 method alphabet {
     return 'dna'; # no way this will be anything other than dna!
 }
-
-
 
 # method desc {
 #   my $self = shift;
@@ -370,8 +363,6 @@ method high() {
    return self.start > self.stop ?? self.start !! self.stop;
 }
 
-
-
 # method location {
 #    my $self = shift;
 #    require Bio::Location::Split unless Bio::Location::Split->can('new');
@@ -381,7 +372,7 @@ method high() {
 #        foreach (@segments) {
 # 	 $location->add_sub_Location($_);
 #        }
-#    } else {
+v#    } else {
 #        $location = self;
 #    }
 #    $location;
@@ -405,7 +396,6 @@ method each_Location() {
                                         strand => self.strand);
    }
 }
-
 
 # method location_string {
 #   my $self = shift;
