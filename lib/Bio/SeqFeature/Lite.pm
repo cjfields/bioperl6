@@ -51,7 +51,6 @@ method type() {
    return $source ne '' ?? "$method" ~ ":$source" !! $method;
 }
 
-
 has $.start is rw;
 has $.stop is rw;
 
@@ -363,20 +362,20 @@ method high() {
    return self.start > self.stop ?? self.start !! self.stop;
 }
 
-# method location {
-#    my $self = shift;
-#    require Bio::Location::Split unless Bio::Location::Split->can('new');
-#    my $location;
-#    if (my @segments = self->segments) {
-#        $location = Bio::Location::Split->new();
-#        foreach (@segments) {
-# 	 $location->add_sub_Location($_);
-#        }
-v#    } else {
-#        $location = self;
-#    }
-#    $location;
-# }
+method location() {
+    use Bio::Role::Location::Split;
+
+    my $location;
+    if (my @segments = self.segments) {
+        $location = Bio::Role::Location::Split.new();
+        for (@segments) {
+            $location.add_sub_Location($_);
+        }
+    } else {
+        $location = self;
+    }
+    $location;
+}
 
 method each_Location() {
     #want to use require sometime in the future - takadonet
@@ -412,6 +411,15 @@ method min_start { self.low }
 method max_start { self.low }
 method min_end   { self.high }
 method max_end   { self.high}
+
+method end($value?){
+    if ( defined $value) {
+        $.stop = $value;
+    }
+    return $.stop;
+}
+
+
     
 method start_pos_type() { 'EXACT' }
 method end_pos_type()   { 'EXACT' }

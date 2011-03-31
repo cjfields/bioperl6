@@ -8,7 +8,8 @@ has $.splittype is rw = 'JOIN';
 
 method add_sub_Location(*@locations){
     for @locations -> $loc {
-        if ($loc !~~ Bio::Role::Location ) {
+        #in time this will need to be reviewed and fix. Need a common interface
+        if ($loc !~~ Bio::Role::Location && $loc !~~ Bio::SeqFeature::Lite) {
             #old bioperl5 msg
 	    #self.throw("Trying to add $loc as a sub Location but it doesn't implement Bio::LocationI!");
 	    next;
