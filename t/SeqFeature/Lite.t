@@ -4,7 +4,7 @@ BEGIN {
 }
 
 use Test;
-plan 30;
+plan 37;
 eval_lives_ok 'use Bio::SeqFeature::Lite', 'Can use Bio::SeqFeature::Lite';
 
 use Bio::SeqFeature::Lite;
@@ -52,7 +52,10 @@ is($lite.strand,0);
 is($lite.class,'Sequence');
 is($lite.type,'gapped_alignment');
 is($lite.feature_count,3);
+is($lite.is_circular,False);
 
 for ($lite.segments) -> $x {
+    is($x.name,'ABC-3');
     is($x.type,'similarity');
+    is($x.is_circular,False);
 }

@@ -73,6 +73,7 @@ has $.refseq is rw;
 
 has @!segments is rw;
 
+has Bool $!is_circular is rw;
 
 # usage:
 # Bio::SeqFeature::Lite->new(
@@ -105,7 +106,7 @@ method new(*%args is copy) {
   #list of arguments that need attributes : url seq phase desc attributes primary_id
 
   # is_circular is needed for Bio::PrimarySeqI compliance
-  %args{'is_circular'} = %args{'is_circular'} || 0;
+  %args{'is_circular'} = %args{'is_circular'} || False;
 
   # fix start, stop
   if (defined %args{'stop'} && defined %args{'start'}
@@ -285,13 +286,12 @@ method strand($value?) {
 #   return self->end - self->start + 1;
 # }
 
-# #is_circular is needed for Bio::PrimarySeqI
-# method is_circular {
-#   my $self = shift;
-#   my $d = self->{is_circular};
-#   self->{is_circular} = shift if @_;
-#   $d;
-# }
+#is_circular is needed for Bio::PrimarySeqI
+method is_circular(Bool $value?) {
+   my $d = $!is_circular;
+   $!is_circular = $value if $value;
+   $d;
+}
 
 method seq() {
     my $seq = defined $!seq ?? $!seq !! '';
