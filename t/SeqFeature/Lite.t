@@ -4,7 +4,7 @@ BEGIN {
 }
 
 use Test;
-plan 37;
+plan 53;
 eval_lives_ok 'use Bio::SeqFeature::Lite', 'Can use Bio::SeqFeature::Lite';
 
 use Bio::SeqFeature::Lite;
@@ -54,6 +54,7 @@ is($lite.class,'Sequence');
 is($lite.type,'gapped_alignment');
 is($lite.feature_count,3);
 is($lite.is_circular,False);
+is($lite.to_FTstring(),'1000..2000');
 
 for ($lite.each_Location ) -> $x {
     my @feature = @(@coord.shift);
@@ -74,7 +75,7 @@ for ($lite.segments) -> $x {
 my $e1 = Bio::SeqFeature::Lite.new(start=>1,stop=>100,type=>'exon');
 my $e2 = Bio::SeqFeature::Lite.new(start=>150,stop=>200,type=>'exon');
 my $e3 = Bio::SeqFeature::Lite.new(start=>300,stop=>500,type=>'exon');
-$lite  = Bio::SeqFeature::Lite.new(segments=>[$e1,$e2,$e3],type=>'gene');
+$lite  = Bio::SeqFeature::Lite.new(segments=>[$e1,$e2,$e3],type=>'gene',seq_id=>'123456');
  
 is($e1.type,'exon');
 is($e2.type,'exon');
@@ -83,8 +84,11 @@ is($e3.type,'exon');
 is($lite.start,1,'correct start');
 is($lite.stop,500,'correct stop');
 is($lite.feature_count,3);
-
 is($lite.type,'gene');
+is($lite.low(),'1');
+is($lite.high(),'500');
+
+
 #they should still keep their type as 'exon'
 for ($lite.segments) -> $x {
     is($x.type,'exon');

@@ -362,15 +362,13 @@ method alphabet {
 #     return self->attributes('Alias');
 # }
 
-# method low {
-#   my $self = shift;
-#   return self->start < self->end ? self->start : self->end;
-# }
+method low() {
+    return self.start < self.stop ?? self.start !! self.stop;
+}
 
-# method high {
-#   my $self = shift;
-#   return self->start > self->end ? self->start : self->end;
-# }
+method high() {
+   return self.start > self.stop ?? self.start !! self.stop;
+}
 
 
 
@@ -420,25 +418,24 @@ method each_Location() {
 #    return Bio::Location::WidestCoordPolicy->new();
 # }
 
-# method min_start { shift->low }
-# method max_start { shift->low }
-# method min_end   { shift->high }
-# method max_end   { shift->high}
+method min_start { self.low }
+method max_start { self.low }
+method min_end   { self.high }
+method max_end   { self.high}
     
 method start_pos_type() { 'EXACT' }
 method end_pos_type()   { 'EXACT' }
 
-# method to_FTstring {
-#   my $self = shift;
-#   my $low  = self->min_start;
-#   my $high = self->max_end;
-#   my $strand = self->strand;
-#   my $str = defined $strand && $strand<0 ? "complement($low..$high)" : "$low..$high";
-#   if (my $id = self->seq_id()) {
-#     $str = $id . ":" . $str;
-#   }
-#   $str;
-# }
+method to_FTstring() {
+   my $low  = self.min_start;
+   my $high = self.max_end;
+   my $strand = self.strand;
+   my $str = defined $strand && $strand < 0 ?? "complement($low..$high)" !! "$low..$high";
+   if (my $id = self.seq_id()) {
+       $str = $id ~ ":" ~ $str;
+   }
+   $str;
+}
 
 method phase($value?) {
     my $d    = $!phase;
