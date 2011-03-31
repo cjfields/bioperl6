@@ -54,6 +54,7 @@ method type() {
 has $.start is rw;
 has $.stop is rw;
 
+has $!score is rw;
 has $!type is rw;
 has $!strand is rw;
 has $.ref is rw;
@@ -192,16 +193,14 @@ method add_segment(@s) {
 }
 
 method segments() {
-#   my $s = self->{segments} or return wantarray ? () : 0;
-#   @$s;
    return @!segments;
 }
-# method score    {
-#   my $self = shift;
-#   my $d = self->{score};
-#   self->{score} = shift if @_;
-#   $d;
-# }
+
+method score($value?)    {
+   my $d = $!score;
+   $!score = $value if $value;
+   $d;
+}
 method primary_tag($value?) {
     if ( defined $value) {
         $!type = $value;
@@ -245,7 +244,6 @@ method seq_id($value?){
 method strand($value?) {
    my $d = $!strand;
    $!strand = $value if $value;
-#   if (my $rs = self->{refseq}) {
    if (my $rs = self.refseq) {       
        my $rstrand = $rs.strand;
        return  0 unless $d;
@@ -401,11 +399,6 @@ method location_string() {
    join ',', map { $_.to_FTstring } , @segments;
 }
 
-# method coordinate_policy {
-#    require Bio::Location::WidestCoordPolicy unless Bio::Location::WidestCoordPolicy->can('new');
-#    return Bio::Location::WidestCoordPolicy->new();
-# }
-
 method min_start { self.low }
 method max_start { self.low }
 method min_end   { self.high }
@@ -417,8 +410,6 @@ method end($value?){
     }
     return $.stop;
 }
-
-
     
 method start_pos_type() { 'EXACT' }
 method end_pos_type()   { 'EXACT' }

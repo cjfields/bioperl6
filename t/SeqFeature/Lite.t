@@ -4,7 +4,7 @@ BEGIN {
 }
 
 use Test;
-plan 64;
+plan 66;
 eval_lives_ok 'use Bio::SeqFeature::Lite', 'Can use Bio::SeqFeature::Lite';
 
 use Bio::SeqFeature::Lite;
@@ -59,6 +59,7 @@ is($lite.feature_count,3);
 is($lite.is_circular,False);
 is($lite.to_FTstring(),'1000..2000');
 is($lite.location_string,'1000..1100,1500..1550,1800..2000');
+is($lite.score,Any);
 
 my $split = $lite.location();
 ok($split ~~ Bio::Role::Location::Split,'return Split Object');
@@ -97,6 +98,7 @@ is($lite.type,'gene');
 is($lite.low(),'1');
 is($lite.high(),'500');
 is($lite.location_string,'1..100,150..200,300..500');
+is($lite.score,Any);
 
 #they should still keep their type as 'exon'
 for ($lite.segments) -> $x {
