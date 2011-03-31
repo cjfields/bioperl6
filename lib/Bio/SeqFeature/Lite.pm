@@ -56,12 +56,17 @@ has $.start is rw;
 has $.stop is rw;
 
 has $!type is rw;
+has $!strand is rw;
 
 has $.source is rw;
 
+has $!seq is rw;
 
 has $.name is rw;
 has $.desc is rw;
+
+has $.refseq is rw;
+
 
 # usage:
 # Bio::SeqFeature::Lite->new(
@@ -221,18 +226,18 @@ method primary_tag($value?) {
 #   }
 #   $d;
 # }
-# method strand {
-#   my $self = shift;
-#   my $d = self->{strand};
-#   self->{strand} = shift if @_;
+method strand($value?) {
+   my $d = $!strand;
+   $!strand = $value if $value;
 #   if (my $rs = self->{refseq}) {
-#     my $rstrand = $rs->strand;
-#     return  0 unless $d;
-#     return  1 if $rstrand == $d;
-#     return -1 if $rstrand != $d;
-#   }
-#   $d;
-# }
+   if (my $rs = self.refseq) {       
+       my $rstrand = $rs.strand;
+       return  0 unless $d;
+       return  1 if $rstrand == $d;
+       return -1 if $rstrand != $d;
+   }
+   $d;
+}
 
 # # this does nothing, but it is here for compatibility reasons
 # method absolute {
@@ -271,22 +276,23 @@ method primary_tag($value?) {
 #   $d;
 # }
 
-
 method seq() {
-    my $seq = defined self.seq ?? self.seq !! '';
+    my $seq = defined $!seq ?? $!seq !! '';
     return $seq;
 }
 
 method dna {
   my $seq = self.seq;
-#  $seq    = $seq.seq if CORE::ref($seq);
+  #assume that seq could be a Str or an object. No test for this yet
+  #$seq    = $seq.seq if CORE::ref($seq);
   return $seq;
 }
 
 
-method display_name { self.name }
+method display_name() { self.name }
 
-# *display_id = \&display_name;
+#todo want an easlier way to redispatch
+method display_id() { self.name};    
 
 
 
@@ -399,8 +405,10 @@ method alphabet {
 # method max_start { shift->low }
 # method min_end   { shift->high }
 # method max_end   { shift->high}
-# method start_pos_type { 'EXACT' }
-# method end_pos_type   { 'EXACT' }
+    
+method start_pos_type() { 'EXACT' }
+method end_pos_type()   { 'EXACT' }
+
 # method to_FTstring {
 #   my $self = shift;
 #   my $low  = self->min_start;
