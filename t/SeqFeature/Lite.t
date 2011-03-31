@@ -31,6 +31,7 @@ is($lite.end_pos_type,"EXACT");
 is($lite.strand,0);
 is($lite.class,'Sequence');
 is($lite.feature_count,0);
+is($lite.length,1001);
 is($lite.location(),$lite,'Should return itself if no segment(s)');
 is($lite.location_string,'1000..2000');
 
@@ -45,6 +46,7 @@ $lite = Bio::SeqFeature::Lite.new(segments => @coord,
 is($lite.start,1000,'correct start');
 is($lite.stop,2000,'correct stop');
 is($lite.end,2000,"correct stop using alias 'end'");
+is($lite.length,1001);
 is($lite.type,'gapped_alignment');
 is($lite.desc,Any);
 is($lite.display_name,"ABC-3");
@@ -99,6 +101,7 @@ is($lite.low(),'1');
 is($lite.high(),'500');
 is($lite.location_string,'1..100,150..200,300..500');
 is($lite.score,Any);
+is($lite.length,500);
 
 #they should still keep their type as 'exon'
 for ($lite.segments) -> $x {

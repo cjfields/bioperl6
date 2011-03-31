@@ -277,10 +277,9 @@ method strand($value?) {
 #   self->strand(@_);
 # }
 
-# method length {
-#   my $self = shift;
-#   return self->end - self->start + 1;
-# }
+method length() {
+    return self.stop - self.start + 1;
+}
 
 #is_circular is needed for Bio::PrimarySeqI
 method is_circular(Bool $value?) {
