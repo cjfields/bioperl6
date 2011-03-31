@@ -57,15 +57,21 @@ has $.stop is rw;
 
 has $!type is rw;
 has $!strand is rw;
+has $.ref is rw;
 
 has $.source is rw;
 
+has $!phase is rw;
 has $!seq is rw;
+has $!class is rw;
 
 has $.name is rw;
 has $.desc is rw;
+has $!subtype is rw;
 
 has $.refseq is rw;
+
+has @!segments is rw;
 
 
 # usage:
@@ -109,77 +115,88 @@ method new(*%args is copy) {
       %args{'strand'} *= -1;
   }
 
-#   if (my @s = %args{'segments'}) {
-#     # NB: when $self ISA Bio::DB::SeqFeature the following invokes
-#     # Bio::DB::SeqFeature::add_segment and not
-#     # Bio::DB::SeqFeature::add_segment (as might be expected?)
-#     self->add_segment(@$s);
-#   }
 
-  return self.bless(*,|%args);
+  my @s;
+  #remove segments from argument since need some pre processing.
+  if (%args.exists('segments')) {
+      @s = @(%args{'segments'});
+      %args.delete('segments');
+  }
+  
+  my $x = self.bless(*,|%args);
+  
+  if (@s) {
+      # old p5 comments
+      # NB: when $self ISA Bio::DB::SeqFeature the following invokes
+      # Bio::DB::SeqFeature::add_segment and not
+      # Bio::DB::SeqFeature::add_segment (as might be expected?)
+      $x.add_segment(@s);
+  } 
+  
+  return $x;
 }
 
-# method add_segment {
-#   my $self        = shift;
-#   my $type = self->{subtype} || self->{type};
-#   self->{segments} ||= [];
-#   my $ref   = self->seq_id;
-#   my $name  = self->name;
-#   my $class = self->class;
-#   my $source_tag = self->source_tag;
+method add_segment(@s) {
+    my $type = $!subtype || self.type;
+    my $ref   = self.seq_id;
+    my $name  = self.name;
+    my $class = self.class;
+    my $source_tag = self.source_tag;
 
-#   my $min_start = self->start ||  999_999_999_999;
-#   my $max_stop  = self->end   || -999_999_999_999;
+    my $min_start = self.start ||  999_999_999_999;
+    my $max_stop  = self.end   || -999_999_999_999;
 
-#   my @segments = @{$self->{segments}};
+    my @segments = @!segments;
 
-#   for my $seg (@_) {
-#     if (ref($seg) eq 'ARRAY') {
-#       my ($start,$stop) = @{$seg};
-#       next unless defined $start && defined $stop;  # fixes an obscure bug somewhere above us
-#       my $strand = self->{strand};
+    for (@s) -> $seg {
+        if ($seg ~~ Array ) {
+            #flatting array
+            my ($start,$stop) = @($seg);
+            next unless defined $start && defined $stop;  # fixes an obscure bug somewhere above us
+            my $strand = self.strand;
 
-#       if ($start > $stop) {
-# 	($start,$stop) = ($stop,$start);
-# 	$strand = -1;
-#       }
+            if ($start > $stop) {
+                ($start,$stop) = ($stop,$start);
+                $strand = -1;
+            }
+            
+            push @segments,Bio::SeqFeature::Lite.new(start  => $start,
+                                                     stop   => $stop,
+                                                     strand => $strand,
+                                                     ref    => $ref,
+                                                     type   => $type,
+                                                     name   => $name,
+                                                     class  => $class,
+                                                     phase  => $!phase,
+                                                     #score  => self->{score},
+                                                     source_tag  => $source_tag,
+                                                     #attributes  => self->{attributes},
+                                                 );
+            $min_start = $start if $start < $min_start;
+            $max_stop  = $stop  if $stop  > $max_stop;
+            
+            #probably want to check for a generic SeqFeature
+        } elsif ($seg ~~ Bio::SeqFeature::Lite) {
+            push @segments,$seg;
 
-#       push @segments,self->new(-start  => $start,
-# 				-stop   => $stop,
-# 				-strand => $strand,
-# 				-ref    => $ref,
-# 				-type   => $type,
-# 			        -name   => $name,
-# 			        -class  => $class,
-# 				-phase  => self->{phase},
-# 				-score  => self->{score},
-# 				-source_tag  => $source_tag,
-# 				-attributes  => self->{attributes},
-# 			       );
-#       $min_start = $start if $start < $min_start;
-#       $max_stop  = $stop  if $stop  > $max_stop;
+            $min_start = $seg.start if ($seg.start && $seg.start < $min_start);
+            $max_stop  = $seg.end   if ($seg.end && $seg.end > $max_stop);
+        }
+    }
+        
+   if (@segments) {
+       @!segments = @segments;
+       $.ref    ||= @segments[0].seq_id;
+       $.start    = $min_start;
+       $.stop     = $max_stop;
+   }
+}
 
-#     } elsif (ref $seg) {
-#       push @segments,$seg;
-
-#       $min_start = $seg->start if ($seg->start && $seg->start < $min_start);
-#       $max_stop  = $seg->end   if ($seg->end && $seg->end > $max_stop);
-#     }
-#   }
-#   if (@segments) {
-#     local $^W = 0;  # some warning of an uninitialized variable...
-#     self->{segments} = \@segments;
-#     self->{ref}    ||= self->{segments}[0]->seq_id;
-#     self->{start}    = $min_start;
-#     self->{stop}     = $max_stop;
-#   }
-# }
-
-# method segments {
-#   my $self = shift;
+method segments() {
 #   my $s = self->{segments} or return wantarray ? () : 0;
 #   @$s;
-# }
+   return @!segments;
+}
 # method score    {
 #   my $self = shift;
 #   my $d = self->{score};
@@ -198,13 +215,13 @@ method primary_tag($value?) {
 #   self->{name} = shift if @_;
 #   $d;
 # }
-# method seq_id          { shift->ref(@_)         }
-# method ref {
-#   my $self = shift;
-#   my $d = self->{ref};
-#   self->{ref} = shift if @_;
-#   $d;
-# }
+
+method seq_id($value?){
+   my $d    = $.ref;
+   $.ref = $value if $value;
+   $d;
+}
+
 # method start    {
 #   my $self = shift;
 #   my $d = self->{start};
@@ -420,19 +437,18 @@ method end_pos_type()   { 'EXACT' }
 #   }
 #   $str;
 # }
-# method phase {
-#     my $self = shift;
-#     my $d    = self->{phase};
-#     self->{phase} = shift if @_;
-#     $d;
-# }
 
-# method class {
-#   my $self = shift;
-#   my $d = self->{class};
-#   self->{class} = shift if @_;
-#   return defined($d) ? $d : 'Sequence';  # acedb is still haunting me - LS
-# }
+method phase($value?) {
+    my $d    = $!phase;
+    $!phase = $value if $value;
+    $d;
+}
+
+method class($value?) {
+   my $d = $!class;
+   $!class = $value if $value;
+   return defined($d) ?? $d !! 'Sequence';
+}
 
 # # set GFF dumping version
 # method version {
