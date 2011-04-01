@@ -79,7 +79,30 @@ multi method length(Int $val){
 
 # end trunc 
 
-method trunc(Int $start,Int $end where {  $start < $end }) {
+multi method trunc( $location ) {
+    my Str $str;
+
+    $str = self.subseq($location);
+    # my $seqclass;
+    # if($self->can_call_new()) {
+    #     $seqclass = ref($self);
+    # } else {
+    #     $seqclass = 'Bio::PrimarySeq';
+    #     $self->_attempt_to_load_Seq();
+    # }
+
+    my $out = Bio::PrimarySeq.new( seq => $str,
+                                   display_id  => self.display_id,
+                                   accession_number => self.accession_number,
+                                   alphabet => self.alphabet,
+                                   description => self.description(),
+                               );
+    
+   return $out;
+}
+
+
+multi method trunc(Int $start,Int $end where {  $start < $end }) {
     my Str $str;
 
     $str = self.subseq(start => $start,end => $end);

@@ -5,6 +5,7 @@ BEGIN {
 }
 
 use Test;
+plan 48;
 eval_lives_ok 'use Bio::PrimarySeq', 'Can use Bio::PrimarySeq';
 eval_lives_ok 'use Bio::Role::Location::Simple';
 eval_lives_ok 'use Bio::Role::Location::Split';
@@ -90,9 +91,9 @@ my $trunc = $seq.trunc( 1, 4 );
 # isa_ok $trunc, 'Bio::PrimarySeqI';
 is($trunc.seq(),'TTGG',"Expecting TTGG. Got " ~ $trunc.seq());
 
-#$trunc = $seq.trunc($splitlocation);
+$trunc = $seq.trunc($splitlocation);
 # isa_ok( $trunc, 'Bio::PrimarySeqI' );
-#is( $trunc.seq(), 'TTGGTGACGC' );
+is( $trunc.seq(), 'TTGGTGACGC' );
 
 # $trunc = $seq.trunc($fuzzy);
 # isa_ok( $trunc, 'Bio::PrimarySeqI' );
