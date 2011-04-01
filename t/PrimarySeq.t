@@ -5,7 +5,7 @@ BEGIN {
 }
 
 use Test;
-plan 54;
+plan 55;
 eval_lives_ok 'use Bio::PrimarySeq', 'Can use Bio::PrimarySeq';
 eval_lives_ok 'use Bio::Role::Location::Simple';
 eval_lives_ok 'use Bio::Role::Location::Split';
@@ -212,6 +212,7 @@ $seq = Bio::PrimarySeq.new(
     description => 'Alias desc'
 );
 is( $seq.description, 'Alias desc' );
+is( $seq.desc('new desc'), 'new desc' );
 is( $seq.display_id,  'aliasid' );
 
 # test that x's are ignored and n's are assumed to be 'dna' no longer true!
