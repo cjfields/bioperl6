@@ -52,7 +52,7 @@ method as_text() {
 # =cut
 
 
-    my $DEFAULT_CB = sub ($self) { $self.value() };
+my $DEFAULT_CB = sub ($self) { $self.value() };
 
 method display_text($cb? is copy) {
     $cb ||= $DEFAULT_CB;
