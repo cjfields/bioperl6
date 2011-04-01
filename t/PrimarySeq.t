@@ -218,9 +218,9 @@ is( $seq.display_id,  'aliasid' );
 # See Bug 2438. There are protein sequences floating about which are all 'X'
 # (unknown aa)
 
-$seq.seq ='atgxxxxxx';
+$seq.seq('atgxxxxxx');
 is( $seq.alphabet, 'protein' );
-$seq.seq ='atgnnnnnn';
+$seq.seq('atgnnnnnn');
 is( $seq.alphabet, 'dna' );
 
 # Bug #2864:

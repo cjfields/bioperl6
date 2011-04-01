@@ -4,10 +4,87 @@ use Bio::Tools::CodonTable;
 use Bio::Role::Location::Simple;
 class Bio::PrimarySeq does Bio::Role::Describe does Bio::Role::Identify {
 
-has Str $.seq is rw;
+has Str $!seq is rw;
 has Str $.alphabet is rw;
 has Int $!seq_length is ro;
 has Bool $.is_circular is rw;
+
+
+method !guess_alphabet() {
+   my $type;
+
+   my $str = $!seq;
+   
+   # Remove char's that clearly denote ambiguity
+   $str ~~ s:g/<[\-\.\?]>//;
+   #::g emacs syntax
+
+   my $total = $str.chars;
+   if ( $total == 0 ) {
+   #   if (!$self->{'_nowarnonempty'}) {
+   #     $self->warn("Got a sequence with no letters in it ".
+   #         "cannot guess alphabet");
+   #   }
+       return '';
+   }
+
+   #counting the # of character were found in the string . Need a better way - takadonet
+   my $u = $str.chars - $str.trans('U' => '','u' => '').chars;
+   # The assumption here is that most of sequences comprised of mainly
+   # ATGC, with some N, will be 'dna' despite the fact that N could
+   # also be Asparagine
+   my $atgc = $str.chars - $str.trans('A' => '' ,'T' => '','G'=> '','C'=> '','N'=> '','a'=> '',
+                         't'=> '','g'=> '','c'=> '','n' => '' ).chars;
+   
+   if ( ($atgc / $total) > 0.85 ) {
+       $type = 'dna';
+   } elsif ( (($atgc + $u) / $total) > 0.85 ) {
+       $type = 'rna';
+   } else {
+       $type = 'protein';
+   }
+
+   $.alphabet =$type;
+   return $type;
+}
+
+method seq(Str $value?,Str $alphabet?) {
+    return $!seq if ! defined $value;
+
+   #     if (defined($value) && (! $obj->validate_seq($value))) {
+   #         $obj->throw("Attempting to set the sequence to [$value] ".
+   #      						"which does not look healthy");
+   #      	}
+    
+    # if a sequence was already set we make sure that we re-adjust the
+    # alphabet, otherwise we skip guessing if alphabet is already set
+    # note: if the new seq is empty or undef, we don't consider that a
+    # change (we wouldn't have anything to guess on anyway)
+    my $is_changed_seq =
+        defined $!seq && $value.chars > 0;
+    $!seq = $value;
+    
+    # new alphabet overridden by arguments?
+    if (defined $alphabet) {
+        # yes, set it no matter what
+        self.alphabet = $alphabet;
+    }
+    elsif ( # if we changed a previous sequence to a new one
+        $is_changed_seq ||
+            # or if there is no alphabet yet at all
+            (! defined($.alphabet)) ) {
+        # we need to guess the (possibly new) alphabet
+        self!guess_alphabet();
+    }
+    
+    # else (seq not changed and alphabet was defined) do nothing
+    # if the seq is changed, make sure we unset a possibly set length
+    #    self.length(undef) if $is_changed_seq || $!seq;
+
+    return $!seq;
+}
+
+
 
 # begin length
 
