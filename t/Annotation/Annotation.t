@@ -6,7 +6,7 @@ BEGIN {
 
 use Test;
 plan 158;
-eval_lives_ok('Bio::Annotation::Collection');
+eval_lives_ok('Bio::Annotation::Collection','Can load Bio::Annotation::Collection');
 eval_lives_ok('Bio::Annotation::DBLink','Can load Bio::Annotation::DBLink ');
 eval_lives_ok('Bio::Annotation::Comment');
 eval_lives_ok('Bio::Annotation::Reference');
@@ -22,6 +22,7 @@ eval_lives_ok('Bio::Annotation::SimpleValue','Can load Bio::Annotation::SimpleVa
 
 use Bio::Annotation::SimpleValue;
 use Bio::Annotation::DBLink;
+use Bio::Annotation::Collection;
 
 #simple value
 my $simple = Bio::Annotation::SimpleValue.new(tagname => 'colour',
@@ -49,10 +50,11 @@ is $link1.database(), 'TSC';
 is $link1.primary_id(), 'TSC0000030';
 is $link1.as_text, 'Direct database link to TSC0000030 in database TSC';
 is $link1.display_text, 'TSC:TSC0000030';
-# my $ac = Bio::Annotation::Collection.new();
+
+my $ac = Bio::Annotation::Collection.new();
 # isa_ok($ac,'Bio::AnnotationCollectionI');
 
-# $ac.add_Annotation('dblink',$link1);
+$ac.add_Annotation('dblink',$link1);
 # $ac.add_Annotation('dblink',
 # 		    Bio::Annotation::DBLink.new(database => 'TSC',
 # 						 primary_id => 'HUM_FABV'));
