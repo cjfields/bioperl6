@@ -4,13 +4,25 @@ role Bio::Role::Identify;
 # Bio::IdentifiableI interface. I've included the primary accession
 # (accession_number) in this implementation.
 
-has Str $.display_id                is rw;
+has Str $!id                is rw;
 has Str $.primary_id                is rw;
 has Int $.version                   is rw; 
 has Str $.authority                 is rw;
 has Str $.namespace                 is rw;
 has Str $.accession_number          is rw;
 has Str $object_id;
+
+our method id($id?) {
+    if (defined $id) {
+        $!id =$id;
+    }
+    return $!id;
+}
+
+our method display_id($id?) {
+    return self.id($id);
+}
+
 
 our method object_id ($id?) {
     if (defined $id) {

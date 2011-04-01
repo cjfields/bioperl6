@@ -9,6 +9,21 @@ has Str $.alphabet is rw;
 has Int $!seq_length is ro;
 has Bool $.is_circular is rw;
 
+method new(*%args) {
+    #allow for both 'id' and 'display_id' to initialize $!id attributes
+    if (%args.exists('display_id')) {
+        %args{'id'}= %args{'display_id'};
+        %args.delete('display_id');
+    }
+
+    #allow for both 'desc' and 'description' to initalize $.description attributes
+    if (%args.exists('desc')) {
+        %args{'description'}= %args{'desc'};
+        %args.delete('desc');
+    }
+    return self.bless(*,|%args);
+}
+
 
 method !guess_alphabet() {
    my $type;
