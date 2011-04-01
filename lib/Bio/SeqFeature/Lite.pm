@@ -51,8 +51,8 @@ method type() {
    return $source ne '' ?? "$method" ~ ":$source" !! $method;
 }
 
-has $.start is rw;
-has $.stop is rw;
+has $!start is rw;
+has $!stop is rw;
 
 has $!score is rw;
 has $!type is rw;
@@ -187,8 +187,8 @@ method add_segment(@s) {
    if (@segments) {
        @!segments = @segments;
        $.ref    ||= @segments[0].seq_id;
-       $.start    = $min_start;
-       $.stop     = $max_stop;
+       $!start    = $min_start;
+       $!stop     = $max_stop;
    }
 }
 
@@ -220,27 +220,29 @@ method seq_id($value?){
    $d;
 }
 
-# method start    {
-#   my $self = shift;
-#   my $d = self->{start};
-#   self->{start} = shift if @_;
-#   if (my $rs = self->{refseq}) {
-#     my $strand = $rs->strand || 1;
-#     return $strand >= 0 ? ($d - $rs->start + 1) : ($rs->end - $d + 1);
-#   } else {
-#     return $d;
-#   }
-# }
-# method end    {
-#   my $self = shift;
-#   my $d = self->{stop};
-#   self->{stop} = shift if @_;
-#   if (my $rs = self->{refseq}) {
-#     my $strand = $rs->strand || 1;
-#     return $strand >= 0 ? ($d - $rs->start + 1) : ($rs->end - $d + 1);
-#   }
-#   $d;
-# }
+method start($value?)    {
+   my $d = $!start;
+   $!start = $value if $value;
+   if (my $rs = $.refseq) {
+     my $strand = $rs.strand || 1;
+     return $strand >= 0 ?? ($d - $rs.start + 1) !! ($rs.end - $d + 1);
+   } else {
+     return $d;
+   }
+}
+
+method stop($value?) { self.end($value);}
+
+method end($value?) {
+    my $d = $!stop;
+    $!stop = $value if $value;
+    if (my $rs = $.refseq) {
+        my $strand = $rs.strand || 1;
+        return $strand >= 0 ?? ($d - $rs.start + 1) !! ($rs.end - $d + 1);
+    }
+   $d;
+}
+
 method strand($value?) {
    my $d = $!strand;
    $!strand = $value if $value;
@@ -253,7 +255,7 @@ method strand($value?) {
    $d;
 }
 
-# # this does nothing, but it is here for compatibility reasons
+# this does nothing, but it is here for compatibility reasons
 # method absolute {
 #   my $self = shift;
 #   my $d = self->{absolute};
@@ -403,13 +405,6 @@ method max_start { self.low }
 method min_end   { self.high }
 method max_end   { self.high}
 
-method end($value?){
-    if ( defined $value) {
-        $.stop = $value;
-    }
-    return $.stop;
-}
-    
 method start_pos_type() { 'EXACT' }
 method end_pos_type()   { 'EXACT' }
 
@@ -436,7 +431,7 @@ method class($value?) {
    return defined($d) ?? $d !! 'Sequence';
 }
 
-# # set GFF dumping version
+# set GFF dumping version
 # method version {
 #   my $self = shift;
 #   my $d    = self->{gff3_version} || 2;
@@ -474,9 +469,9 @@ method class($value?) {
 #   $string;
 # }
 
-# # Suggested strategy for dealing with the multiple parentage issue.
-# # First recurse through object tree and record parent tree.
-# # Then recurse again, skipping objects we've seen before.
+# Suggested strategy for dealing with the multiple parentage issue.
+# First recurse through object tree and record parent tree.
+# Then recurse again, skipping objects we've seen before.
 # method gff3_string {
 #     my ($self,$recurse,$parent_tree,$seenit,$force_id) = @_;
 #     $parent_tree ||= {};
