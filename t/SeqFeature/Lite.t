@@ -4,7 +4,7 @@ BEGIN {
 }
 
 use Test;
-plan 66;
+plan 75;
 eval_lives_ok 'use Bio::SeqFeature::Lite', 'Can use Bio::SeqFeature::Lite';
 
 use Bio::SeqFeature::Lite;
@@ -24,6 +24,9 @@ is($lite.stop,2000,'correct stop');
 is($lite.type,'transcript','Got correct transcript');
 is($lite.desc,'an enzyme inhibitor','Got desc');
 is($lite.display_name,"alpha-1 antitrypsin");
+is($lite.name,'alpha-1 antitrypsin');
+is($lite.seqname,'alpha-1 antitrypsin');
+is($lite.info,'alpha-1 antitrypsin');
 is($lite.display_id,"alpha-1 antitrypsin");
 is($lite.dna,'');
 is($lite.start_pos_type,"EXACT");
@@ -50,6 +53,7 @@ is($lite.length,1001);
 is($lite.type,'gapped_alignment');
 is($lite.desc,Any);
 is($lite.display_name,"ABC-3");
+is($lite.name,'ABC-3');
 is($lite.display_id,"ABC-3");
 is($lite.dna,'');
 is($lite.start_pos_type,"EXACT");
@@ -92,6 +96,7 @@ $lite  = Bio::SeqFeature::Lite.new(segments=>[$e1,$e2,$e3],type=>'gene',seq_id=>
 is($e1.type,'exon');
 is($e2.type,'exon');
 is($e3.type,'exon');
+is($e3.name,Any);
 
 is($lite.start,1,'correct start');
 is($lite.stop,500,'correct stop');
@@ -102,6 +107,7 @@ is($lite.high(),'500');
 is($lite.location_string,'1..100,150..200,300..500');
 is($lite.score,Any);
 is($lite.length,500);
+is($lite.name,Any);
 
 #they should still keep their type as 'exon'
 for ($lite.segments) -> $x {

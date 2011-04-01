@@ -3,9 +3,7 @@ class Bio::SeqFeature::Lite {
 # use base qw(Bio::Root::Root Bio::SeqFeatureI Bio::LocationI Bio::SeqI Bio::RangeI);
 
 # alias for functions    
-# *stop        = \&end;
-# *info        = \&name;
-# *seqname     = \&name;
+
 # *exons       = *sub_SeqFeature = *merged_segments = \&segments;
 # *get_all_SeqFeatures = *get_SeqFeatures = \&segments;
 # *method         = \&primary_tag;
@@ -65,7 +63,7 @@ has $!phase is rw;
 has $!seq is rw;
 has $!class is rw;
 
-has $.name is rw;
+has $!name is rw;
 has $.desc is rw;
 has $!subtype is rw;
 
@@ -207,12 +205,15 @@ method primary_tag($value?) {
     }
     return $!type;
 }
-# method name            {
-#   my $self = shift;
-#   my $d    = self->{name};
-#   self->{name} = shift if @_;
-#   $d;
-# }
+method name($value?)            {
+    my $d    = $!name;
+    $!name = $value if $value;
+    $d;
+}
+#alias for name
+method info($value?) { self.name($value);}
+method seqname($value?) { self.name($value);}
+
 
 method seq_id($value?){
    my $d    = $.ref;
