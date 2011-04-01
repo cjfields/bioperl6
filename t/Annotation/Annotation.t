@@ -7,9 +7,9 @@ BEGIN {
 use Test;
 plan 158;
 eval_lives_ok('Bio::Annotation::Collection','Can load Bio::Annotation::Collection');
-eval_lives_ok('Bio::Annotation::DBLink','Can load Bio::Annotation::DBLink ');
-eval_lives_ok('Bio::Annotation::Comment');
-eval_lives_ok('Bio::Annotation::Reference');
+eval_lives_ok('Bio::Annotation::DBLink','Can load Bio::Annotation::DBLink');
+eval_lives_ok('Bio::Annotation::Comment','Can load Bio::Annotation::Comment');
+eval_lives_ok('Bio::Annotation::Reference','Can load Bio::Annotation::Reference');
 eval_lives_ok('Bio::Annotation::Target');
 eval_lives_ok('Bio::Annotation::AnnotationFactory');
 eval_lives_ok('Bio::Annotation::StructuredValue');
@@ -22,6 +22,8 @@ eval_lives_ok('Bio::Annotation::SimpleValue','Can load Bio::Annotation::SimpleVa
 
 use Bio::Annotation::SimpleValue;
 use Bio::Annotation::DBLink;
+use Bio::Annotation::Reference;
+use Bio::Annotation::Comment;
 use Bio::Annotation::Collection;
 
 #simple value
@@ -55,16 +57,14 @@ my $ac = Bio::Annotation::Collection.new();
 # isa_ok($ac,'Bio::AnnotationCollectionI');
 
 $ac.add_Annotation('dblink',$link1);
-# $ac.add_Annotation('dblink',
-# 		    Bio::Annotation::DBLink.new(database => 'TSC',
-# 						 primary_id => 'HUM_FABV'));
+$ac.add_Annotation('dblink',
+                   Bio::Annotation::DBLink.new(database => 'TSC',
+                                               primary_id => 'HUM_FABV'));
 
-# my $comment = Bio::Annotation::Comment.new( text => 'sometext');
-# is $comment.text, 'sometext';
-# is $comment.as_text, 'Comment: sometext';
-# $ac.add_Annotation('comment', $comment);
-
-
+my $comment = Bio::Annotation::Comment.new( text => 'sometext');
+is $comment.text, 'sometext';
+is $comment.as_text, 'Comment: sometext';
+$ac.add_Annotation('comment', $comment);
 
 # my $target = Bio::Annotation::Target.new(target_id  => 'F321966.1',
 # 					  start      => 1,
@@ -75,21 +75,21 @@ $ac.add_Annotation('dblink',$link1);
 # ok $ac.add_Annotation('target', $target);
 
 
-# my $ref = Bio::Annotation::Reference.new( authors  => 'author line',
-# 					   title    => 'title line',
-# 					   location => 'location line',
-# 					   start    => 12);
+my $ref = Bio::Annotation::Reference.new( authors  => 'author line',
+ 					   title    => 'title line',
+ 					   location => 'location line',
+ 					   start    => 12);
 # isa_ok($ref,'Bio::AnnotationI');
-# is $ref.authors, 'author line';
-# is $ref.title,  'title line';
-# is $ref.location, 'location line';
-# is $ref.start, 12;
-# is $ref.database, 'MEDLINE';
-# is $ref.as_text, 'Reference: title line';
-# $ac.add_Annotation('reference', $ref);
+is $ref.authors, 'author line';
+is $ref.title,  'title line';
+is $ref.location, 'location line';
+is $ref.start, 12;
+is $ref.database, 'MEDLINE';
+is $ref.as_text, 'Reference: title line';
+$ac.add_Annotation('reference', $ref);
 
 
-# my $n = 0;
+my $n = 0;
 # foreach my $link ( $ac.get_Annotations('dblink') ) {
 #     is $link.database, 'TSC';
 #     is $link.tagname(), 'dblink';

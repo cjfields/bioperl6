@@ -184,7 +184,7 @@ method display_text($cb? is copy) {
 
 has $!database is rw;
 
-method database($value?){
+multi method database($value?){
      $!database = $value if defined $value;
      return $!database;
 }
