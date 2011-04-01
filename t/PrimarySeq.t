@@ -7,12 +7,13 @@ BEGIN {
 use Test;
 eval_lives_ok 'use Bio::PrimarySeq', 'Can use Bio::PrimarySeq';
 eval_lives_ok 'use Bio::Role::Location::Simple';
-
-#    use_ok('Bio::Location::Fuzzy');
-#    use_ok('Bio::Location::Split');
+eval_lives_ok 'use Bio::Role::Location::Split';
+eval_lives_ok 'use Bio::Role::Location::Fuzzy';
 
 use Bio::PrimarySeq;
 use Bio::Role::Location::Simple;
+use Bio::Role::Location::Split;
+use Bio::Role::Location::Fuzzy;
 
 my $seq = Bio::PrimarySeq.new(
     seq              => 'TTGGTGGCGTCAACT',
@@ -58,42 +59,42 @@ my $location = Bio::Role::Location::Simple.new(
 );
 is( $seq.subseq($location), 'ACCA' );
 
-# my $splitlocation = Bio::Location::Split->new();
-# $splitlocation->add_sub_Location(
-#     Bio::Location::Simple->new(
-#         '-start'  => 1,
-#         '-end'    => 4,
-#         '-strand' => 1
-#     )
-# );
+my $splitlocation = Bio::Role::Location::Split.new();
+$splitlocation.add_sub_Location(
+    Bio::Role::Location::Simple.new(
+        start  => 1,
+        end    => 4,
+        strand => 1
+    )
+    );
 
-# $splitlocation->add_sub_Location(
-#     Bio::Location::Simple->new(
-#         '-start'  => 7,
-#         '-end'    => 12,
-#         '-strand' => -1
-#     )
-# );
+$splitlocation.add_sub_Location(
+    Bio::Role::Location::Simple.new(
+        start  => 7,
+        end    => 12,
+        strand => -1
+    )
+);
 
-# is( $seq->subseq($splitlocation), 'TTGGTGACGC' );
+is( $seq.subseq($splitlocation), 'TTGGTGACGC' );
 
-# my $fuzzy = Bio::Location::Fuzzy->new(
-#     -start  => '<3',
-#     -end    => '8',
-#     -strand => 1
-# );
+my $fuzzy = Bio::Role::Location::Fuzzy.new(
+    start  => '<3',
+    end    => '8',
+    strand => 1
+);
 
-# is( $seq->subseq($fuzzy), 'GGTGGC' );
+#is( $seq.subseq($fuzzy), 'GGTGGC' );
 
 my $trunc = $seq.trunc( 1, 4 );
 # isa_ok $trunc, 'Bio::PrimarySeqI';
 is($trunc.seq(),'TTGG',"Expecting TTGG. Got " ~ $trunc.seq());
 
-# $trunc = $seq->trunc($splitlocation);
+#$trunc = $seq.trunc($splitlocation);
 # isa_ok( $trunc, 'Bio::PrimarySeqI' );
-# is( $trunc.seq(), 'TTGGTGACGC' );
+#is( $trunc.seq(), 'TTGGTGACGC' );
 
-# $trunc = $seq->trunc($fuzzy);
+# $trunc = $seq.trunc($fuzzy);
 # isa_ok( $trunc, 'Bio::PrimarySeqI' );
 # is( $trunc.seq(), 'GGTGGC' );
 

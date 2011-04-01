@@ -123,7 +123,9 @@ method trunc(Int $start,Int $end where {  $start < $end }) {
 #            with $new_subseq in the sequence object
 # cut
 
-multi method subseq(Bio::Role::Location::Simple $loc, Bool :$nogap?,Str :$replace_with?) {
+#todo Should have type restriction to any of Bio::Role::Location instead of none - takadonet
+
+multi method subseq($loc, Bool :$nogap?,Str :$replace_with?) {
        my $seq = "";
        for  $loc.each_Location() -> $subloc {
            my $piece = self.subseq(start=>$subloc.start(),
