@@ -290,7 +290,7 @@ my %FUZZYPOINTENCODE = (
     
     for (  %FUZZYPOINTENCODE.kv ) -> $type,$pattern {
         if ( $string ~~ $pattern ) {
-            my ($min,$max) = ($0,$1) unless (($0 eq '') && (!defined $1));
+            my ($min,$max) = ($0.Str.Int,$1.Str.Int) unless (($0 eq '') && (!defined $1));
             if ( ($type eq 'EXACT') ||
                  ($type eq 'UNCERTAIN')
               ) {

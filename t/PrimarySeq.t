@@ -5,7 +5,7 @@ BEGIN {
 }
 
 use Test;
-plan 48;
+plan 54;
 eval_lives_ok 'use Bio::PrimarySeq', 'Can use Bio::PrimarySeq';
 eval_lives_ok 'use Bio::Role::Location::Simple';
 eval_lives_ok 'use Bio::Role::Location::Split';
@@ -85,27 +85,28 @@ my $fuzzy = Bio::Role::Location::Fuzzy.new(
     strand => 1
 );
 
-#is( $seq.subseq($fuzzy), 'GGTGGC' );
+is( $seq.subseq($fuzzy), 'GGTGGC' );
 
 my $trunc = $seq.trunc( 1, 4 );
-# isa_ok $trunc, 'Bio::PrimarySeqI';
+ok($trunc ~~ Bio::PrimarySeq, 'Bio::PrimarySeq object');
 is($trunc.seq(),'TTGG',"Expecting TTGG. Got " ~ $trunc.seq());
 
 $trunc = $seq.trunc($splitlocation);
-# isa_ok( $trunc, 'Bio::PrimarySeqI' );
+ok($trunc ~~ Bio::PrimarySeq, 'Bio::PrimarySeq object');
 is( $trunc.seq(), 'TTGGTGACGC' );
 
-# $trunc = $seq.trunc($fuzzy);
-# isa_ok( $trunc, 'Bio::PrimarySeqI' );
-# is( $trunc.seq(), 'GGTGGC' );
+$trunc = $seq.trunc($fuzzy);
+ok($trunc ~~ Bio::PrimarySeq, 'Bio::PrimarySeq object');
+is( $trunc.seq(), 'GGTGGC' );
 
 my $rev = $seq.revcom();
-# isa_ok( $rev, 'Bio::PrimarySeqI' );
+ok($trunc ~~ Bio::PrimarySeq, 'Bio::PrimarySeq object');
 
 is($rev.seq(), 'AGTTGACGCCACCAA', 'revcom() failed, was ' ~ $rev.seq());
 
 is($rev.display_id, 'new-id');
 is( $rev.alphabet(),    'dna', 'alphabet copied through revcom' );
+
 # TODO: {
 #     local $TODO =
 #       'all attributes of primaryseqs are not currently copied through revcoms';

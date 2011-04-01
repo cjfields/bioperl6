@@ -146,15 +146,14 @@ multi method trunc(Int $start,Int $end where {  $start < $end }) {
 #            with $new_subseq in the sequence object
 # cut
 
-#todo Should have type restriction to any of Bio::Role::Location instead of none - takadonet
-
-multi method subseq($loc, Bool :$nogap?,Str :$replace_with?) {
+multi method subseq(Bio::Role::Location $loc, Bool :$nogap?,Str :$replace_with?) {
        my $seq = "";
-       for  $loc.each_Location() -> $subloc {
+       for $loc.each_Location() -> $subloc {
            my $piece = self.subseq(start=>$subloc.start(),
-        			     end=>$subloc.end(), 
-        			     replace_with=>$replace_with,
-                                     nogap=>$nogap);
+                                   end=>$subloc.end(), 
+                                   replace_with=>$replace_with,
+                                   nogap=>$nogap
+                                 );
            #todo please add uncomment this line one day.
    #        $piece ~~ s:g/$GAP_SYMBOLS// if $nogap;
            
