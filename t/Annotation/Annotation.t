@@ -10,7 +10,7 @@ eval_lives_ok('Bio::Annotation::Collection','Can load Bio::Annotation::Collectio
 eval_lives_ok('Bio::Annotation::DBLink','Can load Bio::Annotation::DBLink');
 eval_lives_ok('Bio::Annotation::Comment','Can load Bio::Annotation::Comment');
 eval_lives_ok('Bio::Annotation::Reference','Can load Bio::Annotation::Reference');
-eval_lives_ok('Bio::Annotation::Target');
+eval_lives_ok('Bio::Annotation::Target','Can load Bio::Annotation::Target');
 eval_lives_ok('Bio::Annotation::AnnotationFactory');
 eval_lives_ok('Bio::Annotation::StructuredValue');
 eval_lives_ok('Bio::Annotation::TagTree');
@@ -24,6 +24,7 @@ use Bio::Annotation::SimpleValue;
 use Bio::Annotation::DBLink;
 use Bio::Annotation::Reference;
 use Bio::Annotation::Comment;
+use Bio::Annotation::Target;
 use Bio::Annotation::Collection;
 
 #simple value
@@ -66,13 +67,13 @@ is $comment.text, 'sometext';
 is $comment.as_text, 'Comment: sometext';
 $ac.add_Annotation('comment', $comment);
 
-# my $target = Bio::Annotation::Target.new(target_id  => 'F321966.1',
-# 					  start      => 1,
-# 					  end        => 200,
-# 					  strand     => 1,
-# 					 );
+my $target = Bio::Annotation::Target.new(target_id  => 'F321966.1',
+ 					  start      => 1,
+ 					  end        => 200,
+ 					  strand     => 1,
+ 					 );
 # isa_ok($target,'Bio::AnnotationI');
-# ok $ac.add_Annotation('target', $target);
+ok $ac.add_Annotation('target', $target);
 
 
 my $ref = Bio::Annotation::Reference.new( authors  => 'author line',
@@ -97,68 +98,68 @@ for ( $ac.get_Annotations('dblink') ) -> $link {
 }
 is($n, 2);
 
-# $n = 0;
-# my @keys = $ac.get_all_annotation_keys();
-# is (scalar(@keys), 4);
-# foreach my $ann ( $ac.get_Annotations() ) {
-#     shift(@keys) if ($n > 0) && ($ann.tagname ne $keys[0]);
-#     is $ann.tagname(), $keys[0];
-#     $n++;
-# }
-# is ($n, 5);
+$n = 0;
+my @keys = $ac.get_all_annotation_keys();
+is(@keys.elems, 4);
+for ( $ac.get_Annotations() ) -> $ann {
+    shift(@keys) if ($n > 0) && ($ann.tagname ne @keys[0]);
+    is $ann.tagname(), @keys[0];
+    $n++;
+}
+is($n, 5);
 
 # $ac.add_Annotation($link1);
 
 # $n = 0;
-# foreach my $link ( $ac.get_Annotations('dblink') ) {
-#     is $link.tagname(), 'dblink';
-#     $n++;
+# for ( $ac.get_Annotations('dblink') ) -> $link {
+#      is $link.tagname(), 'dblink';
+#      $n++;
 # }
-# is ($n, 3);
+# is($n, 3);
 
 # # annotation of structured simple values (like swissprot''is GN line)
 # my $ann = Bio::Annotation::StructuredValue.new();
 # isa_ok($ann, "Bio::AnnotationI");
 
 # $ann.add_value([-1], "val1");
-# is ($ann.value(), "val1");
+# is($ann.value(), "val1");
 # $ann.value("compat test");
-# is ($ann.value(), "compat test");
+# is($ann.value(), "compat test");
 # $ann.add_value([-1], "val2");
-# is ($ann.value(joins => [" AND "]), "compat test AND val2");
+# is($ann.value(joins => [" AND "]), "compat test AND val2");
 # $ann.add_value([0], "val1");
-# is ($ann.value(joins => [" AND "]), "val1 AND val2");
+# is($ann.value(joins => [" AND "]), "val1 AND val2");
 # $ann.add_value([-1,-1], "val3", "val4");
 # $ann.add_value([-1,-1], "val5", "val6");
 # $ann.add_value([-1,-1], "val7");
-# is ($ann.value(joins => [" AND "]), "val1 AND val2 AND (val3 AND val4) AND (val5 AND val6) AND val7");
-# is ($ann.value(joins => [" AND ", " OR "]), "val1 AND val2 AND (val3 OR val4) AND (val5 OR val6) AND val7");
+# is($ann.value(joins => [" AND "]), "val1 AND val2 AND (val3 AND val4) AND (val5 AND val6) AND val7");
+# is($ann.value(joins => [" AND ", " OR "]), "val1 AND val2 AND (val3 OR val4) AND (val5 OR val6) AND val7");
 
 # $n = 1;
 # foreach ($ann.get_all_values()) {
-#     is ($_, "val".$n++);
+#     is($_, "val".$n++);
 # }
 
 # # nested collections
 # my $nested_ac = Bio::Annotation::Collection.new();
 # $nested_ac.add_Annotation('nested', $ac);
 
-# is (scalar($nested_ac.get_Annotations()), 1);
+# is(scalar($nested_ac.get_Annotations()), 1);
 # ($ac) = $nested_ac.get_Annotations();
 # isa_ok($ac, "Bio::AnnotationCollectionI");
-# is (scalar($nested_ac.get_all_Annotations()), 6);
+# is(scalar($nested_ac.get_all_Annotations()), 6);
 # $nested_ac.add_Annotation('gene names', $ann);
-# is (scalar($nested_ac.get_Annotations()), 2);
-# is (scalar($nested_ac.get_all_Annotations()), 7);
-# is (scalar($nested_ac.get_Annotations('dblink')), 0);
+# is(scalar($nested_ac.get_Annotations()), 2);
+# is(scalar($nested_ac.get_all_Annotations()), 7);
+# is(scalar($nested_ac.get_Annotations('dblink')), 0);
 # my @anns = $nested_ac.get_Annotations('gene names');
 # isa_ok($anns[0], "Bio::Annotation::StructuredValue");
 # @anns = map { $_.get_Annotations('dblink');
 # 	  } $nested_ac.get_Annotations('nested');
-# is (scalar(@anns), 3);
-# is (scalar($nested_ac.flatten_Annotations()), 2);
-# is (scalar($nested_ac.get_Annotations()), 7);
-# is (scalar($nested_ac.get_all_Annotations()), 7);
+# is(scalar(@anns), 3);
+# is(scalar($nested_ac.flatten_Annotations()), 2);
+# is(scalar($nested_ac.get_Annotations()), 7);
+# is(scalar($nested_ac.get_all_Annotations()), 7);
 
 # SKIP: {
 #   test_skip(-tests => 7, -requires_modules => [qw(Graph::Directed Bio::Annotation::OntologyTerm)]);
@@ -168,11 +169,11 @@ is($n, 2);
 # 						   identifier => 'Ann:00001',
 # 						   ontology => 'dumpster');
 #   isa_ok($termann.term,'Bio::Ontology::Term');
-#   is ($termann.term.name, 'test case');
-#   is ($termann.term.identifier, 'Ann:00001');
-#   is ($termann.tagname, 'dumpster');
-#   is ($termann.ontology.name, 'dumpster');
-#   is ($termann.as_text, "dumpster|test case|");
+#   is($termann.term.name, 'test case');
+#   is($termann.term.identifier, 'Ann:00001');
+#   is($termann.tagname, 'dumpster');
+#   is($termann.ontology.name, 'dumpster');
+#   is($termann.as_text, "dumpster|test case|");
 # }
 
 # # AnnotatableI

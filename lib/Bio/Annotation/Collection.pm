@@ -46,10 +46,9 @@ has %!annotation is rw;
 
 # =cut
 
-# method get_all_annotation_keys{
-#    my ($self) = @_;
-#    return keys %{$self.{'_annotation'}};
-# }
+method get_all_annotation_keys {
+    return keys %!annotation;
+}
 
 # =head2 get_Annotations
 
@@ -71,7 +70,7 @@ has %!annotation is rw;
 
 
 
-method get_Annotations(*@keys){
+method get_Annotations(*@keys is copy){
     my @anns = ();
 
     #todo implement get_all_annotation_keys

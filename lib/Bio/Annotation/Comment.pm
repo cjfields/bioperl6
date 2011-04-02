@@ -113,13 +113,11 @@ method display_text($cb?) {
 
 # =cut
 
-# method tagname{
-#     my ($self,$value) = @_;
-#     if( defined $value) {
-# 	$self.{'tagname'} = $value;
-#     }
-#     return $self.{'tagname'};
-# }
+has $!tagname is rw;
+method tagname($value?){
+    return $!tagname = $value if defined $value;
+    return $!tagname;
+}
 
 # =head1 Specific accessors for Comments
 
