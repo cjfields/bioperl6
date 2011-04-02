@@ -1,3 +1,79 @@
+class Bio::AnnotationI {
+
+# =head2 as_text
+
+#  Title   : as_text
+#  Usage   : my $str = $ann.display_text();
+#  Function: single text string, without newlines representing the
+#            annotation, mainly for human readability. It is not aimed
+#            at being able to store/represent the annotation.
+#  Example :
+#  Returns : a string
+#  Args    : none
+
+# =cut
+
+method as_text { ... }
+
+# =head2 display_text
+
+#  Title   : display_text
+#  Usage   : my $str = $ann.display_text();
+#  Function: returns a string. Unlike as_text(), this method returns a string
+#            formatted as would be expected for the specific implementation.
+
+#            Implementations should allow passing a callback as an argument which
+#            allows custom text generation; the callback will be passed the
+#            current implementation.
+
+#            Note that this is meant to be used as a simple representation of the
+#            annotation data but probably shouldn't be used in cases where more
+#            complex comparisons are needed or where data is stored.
+#  Example :
+#  Returns : a string
+#  Args    : [optional] callback
+
+# =cut
+
+method display_text { ... }
+
+# =head2 hash_tree
+
+#  Title   : hash_tree
+#  Usage   :
+#  Function: should return an anonymous hash with "XML-like" formatting
+#  Example :
+#  Returns : a hash reference
+#  Args    : none
+
+
+# =cut
+
+method hash_tree { ... }
+
+# =head2 tagname
+
+#  Title   : tagname
+#  Usage   : $obj.tagname($newval)
+#  Function: Get/set the tagname for this annotation value.
+
+#            Setting this is optional. If set, it obviates the need to
+#            provide a tag to Bio::AnnotationCollectionI when adding
+#            this object. When obtaining an AnnotationI object from the
+#            collection, the collection will set the value to the tag
+#            under which it was stored unless the object has a tag
+#            stored already.
+
+#  Example :
+#  Returns : value of tagname (a scalar)
+#  Args    : new value (a scalar, optional)
+
+# =cut
+
+method tagname{ ... }
+
+}
+
 # $Id: AnnotationI.pm 15549 2009-02-21 00:48:48Z maj $
 #
 # BioPerl module for Bio::AnnotationI
@@ -12,11 +88,11 @@
 #
 # POD documentation - main docs before the code
 #
-#=head1 NAME
+# =head1 NAME
 #
 #Bio::AnnotationI - Annotation interface
 #
-#=head1 SYNOPSIS
+# =head1 SYNOPSIS
 #
 #  # generally you get AnnotationI's from AnnotationCollectionI's
 #
@@ -32,7 +108,7 @@
 #   }
 #
 #
-#=head1 DESCRIPTION
+# =head1 DESCRIPTION
 #
 #Interface all annotations must support. There are two things that each
 #annotation has to support.
@@ -72,9 +148,9 @@
 #style, without forcing everything to inheriet off some super-generic
 #interface for representing things in the hash.
 #
-#=head1 FEEDBACK
+# =head1 FEEDBACK
 #
-#=head2 Mailing Lists
+# =head2 Mailing Lists
 #
 #User feedback is an integral part of the evolution of this
 #and other Bioperl modules. Send your comments and suggestions preferably
@@ -83,7 +159,7 @@
 #
 #  bioperl-l@bioperl.org
 #
-#=head2 Support 
+# =head2 Support 
 # 
 #Please direct usage questions or support issues to the mailing list:
 #  
@@ -94,7 +170,7 @@
 #address it. Please include a thorough description of the problem 
 #with code and data examples if at all possible.
 #
-#=head2 Reporting Bugs
+# =head2 Reporting Bugs
 #
 #Report bugs to the Bioperl bug tracking system to help us keep track
 #the bugs and their resolution.  Bug reports can be submitted via the
@@ -102,89 +178,16 @@
 #
 #  http://bugzilla.open-bio.org/
 #
-#=head1 AUTHOR - Ewan Birney
+# =head1 AUTHOR - Ewan Birney
 #
 #Email birney@ebi.ac.uk
 #
-#=head1 APPENDIX
+# =head1 APPENDIX
 #
 #The rest of the documentation details each of the object methods. Internal methods are usually preceded with a _
 #
-#=cut
+# =cut
 #'
 # Let the code begin...
 
-class Bio::AnnotationI;
-
-=head2 as_text
-
- Title   : as_text
- Usage   : my $str = $ann.display_text();
- Function: single text string, without newlines representing the
-           annotation, mainly for human readability. It is not aimed
-           at being able to store/represent the annotation.
- Example :
- Returns : a string
- Args    : none
-
-=cut
-
-sub as_text { ... }
-
-=head2 display_text
-
- Title   : display_text
- Usage   : my $str = $ann.display_text();
- Function: returns a string. Unlike as_text(), this method returns a string
-           formatted as would be expected for the specific implementation.
-
-           Implementations should allow passing a callback as an argument which
-           allows custom text generation; the callback will be passed the
-           current implementation.
-
-           Note that this is meant to be used as a simple representation of the
-           annotation data but probably shouldn't be used in cases where more
-           complex comparisons are needed or where data is stored.
- Example :
- Returns : a string
- Args    : [optional] callback
-
-=cut
-
-method display_text { ... }
-
-=head2 hash_tree
-
- Title   : hash_tree
- Usage   :
- Function: should return an anonymous hash with "XML-like" formatting
- Example :
- Returns : a hash reference
- Args    : none
-
-
-=cut
-
-method hash_tree { ... }
-
-=head2 tagname
-
- Title   : tagname
- Usage   : $obj.tagname($newval)
- Function: Get/set the tagname for this annotation value.
-
-           Setting this is optional. If set, it obviates the need to
-           provide a tag to Bio::AnnotationCollectionI when adding
-           this object. When obtaining an AnnotationI object from the
-           collection, the collection will set the value to the tag
-           under which it was stored unless the object has a tag
-           stored already.
-
- Example :
- Returns : value of tagname (a scalar)
- Args    : new value (a scalar, optional)
-
-=cut
-
-method tagname{ ... }
-
+    

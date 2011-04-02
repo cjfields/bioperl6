@@ -1,8 +1,11 @@
+
 class Bio::Annotation::Collection {
 # Object preamble - inherits from Bio::Root::Root
 use Bio::Annotation::TypeManager;
 use Bio::Annotation::SimpleValue;
-# use base qw(Bio::Root::Root Bio::AnnotationCollectionI Bio::AnnotationI);
+use Bio::AnnotationI;
+
+# use base qw(Bio::Root::Root Bio::AnnotationCollectionI);
 
 #probably will be a singleton - takadonet
 has $!typemap is rw = Bio::Annotation::TypeManager.new();
@@ -238,32 +241,47 @@ method get_Annotations(*@keys is copy){
 
 # =cut
 
+multi method add_Annotation(Bio::AnnotationI $object,$archetype? is copy) {
+
+    my $key = $object.tagname();
+    $archetype = $object;
+
+    #$key = $key.name() if ref($key); # OntologyTermI
+    #        $self.throw("Annotation object must have a tagname if key omitted")
+    # 	   unless $key;
+    
+    # check typemap, storing if needed.
+    my $stored_map = self!typemap.type_for_key($key);
+
+ #    if( defined $stored_map ) {
+ #        # check validity, irregardless of archetype. A little cheeky
+ #        # this means isa stuff is executed correctly
+
+ #        if( !$self._typemap().is_valid($key,$object) ) {
+ # 	   $self.throw("Object $object was not valid with key $key. ".
+ #          "If you were adding new keys in, perhaps you want to make use\n".
+ #          "of the archetype method to allow registration to a more basic type");
+ #        }
+ #    } else {
+ #        $self._typemap._add_type_map($key,$archetype);
+ #    }
+
+     # we are ok to store
+
+     if ( !defined %!annotation{$key} ) {
+         %!annotation{$key} = [];
+     }
+     push @(%!annotation{$key}),$object;
+
+     return 1;
+}
+
+
+
 #todo perhaps have $key has a type that accept only certain types of str.
-multi method add_Annotation(Str $key,$object,$archetype? is copy){
+multi method add_Annotation(Str $key,Bio::AnnotationI $object,$archetype? is copy){
    
-    # if there's no key we use the tagname() as key
-#    if(ref($key) && $key.isa("Bio::AnnotationI") && (!ref($object))) {
-#        $archetype = $object if defined($object);
-#        $object = $key;
-#        $key = $object.tagname();
-#        $key = $key.name() if ref($key); # OntologyTermI
-#        $self.throw("Annotation object must have a tagname if key omitted")
-# 	   unless $key;
-#    }
-
-#    if( !defined $object ) {
-#        $self.throw("Must have at least key and object in add_Annotation");
-#    }
-
-#    if( !ref $object ) {
-#        $self.throw("Must add an object. Use Bio::Annotation::{Comment,SimpleValue,OntologyTerm} for simple text additions");
-#    }
-
-#    if( !$object.isa("Bio::AnnotationI") ) {
-#        $self.throw("object must be AnnotationI compliant, otherwise we won't add it!");
-#    }
-
-    # ok, now we are ready! If we don't have an archetype, set it
+    # If we don't have an archetype, set it
     # from the type of the object
 
     if ( !defined $archetype ) {
@@ -292,8 +310,6 @@ multi method add_Annotation(Str $key,$object,$archetype? is copy){
         %!annotation{$key} = [];
     }
     push @(%!annotation{$key}),$object;
-    
-#    push(@{$self.{'_annotation'}.{$key}},$object);
 
     return 1;
 }

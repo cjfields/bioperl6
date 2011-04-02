@@ -48,7 +48,7 @@ is $simple.display_text, 0;
 my $link1 = Bio::Annotation::DBLink.new(database => 'TSC',
 					 primary_id => 'TSC0000030',
 					);
-# isa_ok($link1,'Bio::AnnotationI');
+ok($link1 ~~ Bio::AnnotationI);
 is $link1.database(), 'TSC';
 is $link1.primary_id(), 'TSC0000030';
 is $link1.as_text, 'Direct database link to TSC0000030 in database TSC';
@@ -72,7 +72,8 @@ my $target = Bio::Annotation::Target.new(target_id  => 'F321966.1',
  					  end        => 200,
  					  strand     => 1,
  					 );
-# isa_ok($target,'Bio::AnnotationI');
+
+ok($target ~~ Bio::AnnotationI);
 ok $ac.add_Annotation('target', $target);
 
 
@@ -80,7 +81,7 @@ my $ref = Bio::Annotation::Reference.new( authors  => 'author line',
  					   title    => 'title line',
  					   location => 'location line',
  					   start    => 12);
-# isa_ok($ref,'Bio::AnnotationI');
+ok($ref ~~ Bio::AnnotationI);
 is $ref.authors, 'author line';
 is $ref.title,  'title line';
 is $ref.location, 'location line';
@@ -108,14 +109,14 @@ for ( $ac.get_Annotations() ) -> $ann {
 }
 is($n, 5);
 
-# $ac.add_Annotation($link1);
+$ac.add_Annotation($link1);
 
-# $n = 0;
-# for ( $ac.get_Annotations('dblink') ) -> $link {
-#      is $link.tagname(), 'dblink';
-#      $n++;
-# }
-# is($n, 3);
+$n = 0;
+for ( $ac.get_Annotations('dblink') ) -> $link {
+     is $link.tagname(), 'dblink';
+     $n++;
+}
+is($n, 3);
 
 # # annotation of structured simple values (like swissprot''is GN line)
 # my $ann = Bio::Annotation::StructuredValue.new();

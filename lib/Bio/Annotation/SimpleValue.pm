@@ -1,7 +1,8 @@
-class Bio::Annotation::SimpleValue {
+use Bio::AnnotationI;
+class Bio::Annotation::SimpleValue is Bio::AnnotationI {
 # Object preamble - inherits from Bio::Root::Root
 #use Bio::Ontology::TermI;
-#use base qw(Bio::Root::Root Bio::AnnotationI);
+#use base qw(Bio::Root::Root);
 
 # =head2 new
 

@@ -1,5 +1,6 @@
-class Bio::Annotation::Comment{
-# use base qw(Bio::Root::Root Bio::AnnotationI);
+use Bio::AnnotationI;
+class Bio::Annotation::Comment is Bio::AnnotationI {
+# use base qw(Bio::Root::Root);
 
 # =head2 new
 

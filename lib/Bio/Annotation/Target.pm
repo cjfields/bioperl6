@@ -1,4 +1,5 @@
-class Bio::Annotation::Target {
+use Bio::AnnotationI;
+class Bio::Annotation::Target is Bio::AnnotationI {
 # use base qw(Bio::Annotation::DBLink Bio::AnnotationI Bio::Range);
 
 

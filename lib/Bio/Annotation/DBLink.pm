@@ -1,6 +1,7 @@
 use Bio::Role::Identify;
-class Bio::Annotation::DBLink does Bio::Role::Identify {
-# use base qw(Bio::Root::Root Bio::AnnotationI Bio::IdentifiableI);
+use Bio::AnnotationI;
+class Bio::Annotation::DBLink is Bio::AnnotationI does Bio::Role::Identify  {
+# use base qw(Bio::Root::Root);
 
 # =head2 new
 
