@@ -1,5 +1,7 @@
+
 use Bio::Role::Identify;
 use Bio::AnnotationI;
+
 class Bio::Annotation::DBLink is Bio::AnnotationI does Bio::Role::Identify  {
 # use base qw(Bio::Root::Root);
 
