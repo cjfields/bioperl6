@@ -90,12 +90,12 @@ $ac.add_Annotation('reference', $ref);
 
 
 my $n = 0;
-# foreach my $link ( $ac.get_Annotations('dblink') ) {
-#     is $link.database, 'TSC';
-#     is $link.tagname(), 'dblink';
-#     $n++;
-# }
-# is ($n, 2);
+for ( $ac.get_Annotations('dblink') ) -> $link {
+     is $link.database, 'TSC';
+     is $link.tagname(), 'dblink';
+     $n++;
+}
+is($n, 2);
 
 # $n = 0;
 # my @keys = $ac.get_all_annotation_keys();

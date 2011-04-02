@@ -159,12 +159,11 @@ method display_text($cb? is copy) {
 
 # =cut
 
-# method tagname{
-#     my $self = shift;
-
-#     return $self.{'tagname'} = shift if @_;
-#     return $self.{'tagname'};
-# }
+has $!tagname is rw;
+method tagname($value?){
+    return $!tagname = $value if defined $value;
+    return $!tagname;
+}
 
 # =head1 Specific accessors for DBLinks
 

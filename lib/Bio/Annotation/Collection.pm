@@ -7,6 +7,9 @@ use Bio::Annotation::SimpleValue;
 #probably will be a singleton - takadonet
 has $!typemap is rw = Bio::Annotation::TypeManager.new();
 
+#p5 implementation is hashes of arrays
+has %!annotation is rw;
+
 # =head2 new
 
 #  Title   : new
@@ -66,21 +69,24 @@ has $!typemap is rw = Bio::Annotation::TypeManager.new();
 
 # =cut
 
-# method get_Annotations{
-#     my ($self,@keys) = @_;
 
-#     my @anns = ();
-#     @keys = $self.get_all_annotation_keys() unless @keys;
-#     foreach my $key (@keys) {
-#       if(exists($self.{'_annotation'}.{$key})) {
-#         push(@anns,
-#             map {
-#             $_.tagname($key) if ! $_.tagname(); $_;
-#             } @{$self.{'_annotation'}.{$key}});
-#       }
-#     }
-#     return @anns;
-# }
+
+method get_Annotations(*@keys){
+    my @anns = ();
+
+    #todo implement get_all_annotation_keys
+    @keys = self.get_all_annotation_keys() unless @keys;
+    
+     for (@keys) -> $key {
+       if ( %!annotation.exists($key) ) {
+         push(@anns,
+             map {
+             $_.tagname($key) if ! $_.tagname(); $_;
+             } , @(%!annotation{$key}) );
+       }
+         
+    return @anns;
+}
 
 
 # =head2 get_nested_Annotations
@@ -283,10 +289,11 @@ multi method add_Annotation(Str $key,$object,$archetype? is copy){
 
     # we are ok to store
 
-#    if( !defined $self.{'_annotation'}.{$key} ) {
-#        $self.{'_annotation'}.{$key} = [];
-#    }
-
+    if ( !defined %!annotation{$key} ) {
+        %!annotation{$key} = [];
+    }
+    push @(%!annotation{$key}),$object;
+    
 #    push(@{$self.{'_annotation'}.{$key}},$object);
 
     return 1;
