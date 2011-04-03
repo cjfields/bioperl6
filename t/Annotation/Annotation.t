@@ -12,7 +12,7 @@ eval_lives_ok('Bio::Annotation::Comment','Can load Bio::Annotation::Comment');
 eval_lives_ok('Bio::Annotation::Reference','Can load Bio::Annotation::Reference');
 eval_lives_ok('Bio::Annotation::Target','Can load Bio::Annotation::Target');
 eval_lives_ok('Bio::Annotation::AnnotationFactory');
-eval_lives_ok('Bio::Annotation::StructuredValue');
+eval_lives_ok('Bio::Annotation::StructuredValue','Can load Bio::Annotation::StructuredValue');
 eval_lives_ok('Bio::Annotation::TagTree');
 eval_lives_ok('Bio::Annotation::Tree');
 eval_lives_ok('Bio::Seq');
@@ -26,6 +26,7 @@ use Bio::Annotation::Reference;
 use Bio::Annotation::Comment;
 use Bio::Annotation::Target;
 use Bio::Annotation::Collection;
+use Bio::Annotation::StructuredValue;
 
 #simple value
 my $simple = Bio::Annotation::SimpleValue.new(tagname => 'colour',
@@ -118,30 +119,30 @@ for ( $ac.get_Annotations('dblink') ) -> $link {
 }
 is($n, 3);
 
-# # annotation of structured simple values (like swissprot''is GN line)
-# my $ann = Bio::Annotation::StructuredValue.new();
-# isa_ok($ann, "Bio::AnnotationI");
+# annotation of structured simple values (like swissprot''is GN line)
+my $ann = Bio::Annotation::StructuredValue.new();
+ok($ann ~~ Bio::AnnotationI);
 
-# $ann.add_value([-1], "val1");
-# is($ann.value(), "val1");
-# $ann.value("compat test");
-# is($ann.value(), "compat test");
-# $ann.add_value([-1], "val2");
-# is($ann.value(joins => [" AND "]), "compat test AND val2");
-# $ann.add_value([0], "val1");
-# is($ann.value(joins => [" AND "]), "val1 AND val2");
-# $ann.add_value([-1,-1], "val3", "val4");
-# $ann.add_value([-1,-1], "val5", "val6");
-# $ann.add_value([-1,-1], "val7");
-# is($ann.value(joins => [" AND "]), "val1 AND val2 AND (val3 AND val4) AND (val5 AND val6) AND val7");
-# is($ann.value(joins => [" AND ", " OR "]), "val1 AND val2 AND (val3 OR val4) AND (val5 OR val6) AND val7");
+$ann.add_value([-1], "val1");
+is($ann.value(), "val1");
+$ann.value("compat test");
+is($ann.value(), "compat test");
+$ann.add_value([-1], "val2");
+is($ann.value(joins => [" AND "]), "compat test AND val2");
+$ann.add_value([0], "val1");
+is($ann.value(joins => [" AND "]), "val1 AND val2");
+$ann.add_value([-1,-1], "val3", "val4");
+$ann.add_value([-1,-1], "val5", "val6");
+$ann.add_value([-1,-1], "val7");
+is($ann.value(joins => [" AND "]), "val1 AND val2 AND (val3 AND val4) AND (val5 AND val6) AND val7");
+is($ann.value(joins => [" AND ", " OR "]), "val1 AND val2 AND (val3 OR val4) AND (val5 OR val6) AND val7");
 
-# $n = 1;
+$n = 1;
 # foreach ($ann.get_all_values()) {
 #     is($_, "val".$n++);
 # }
 
-# # nested collections
+# nested collections
 # my $nested_ac = Bio::Annotation::Collection.new();
 # $nested_ac.add_Annotation('nested', $ac);
 
@@ -177,7 +178,7 @@ is($n, 3);
 #   is($termann.as_text, "dumpster|test case|");
 # }
 
-# # AnnotatableI
+# AnnotatableI
 # my $seq = Bio::Seq.new();
 # isa_ok($seq,"Bio::AnnotatableI");
 # SKIP: {
@@ -195,12 +196,12 @@ is($n, 3);
 # my $aln = Bio::SimpleAlign.new();
 # isa_ok($clu,"Bio::AnnotatableI");
 
-# # tests for Bio::Annotation::AnnotationFactory
+# tests for Bio::Annotation::AnnotationFactory
 
 # my $factory = Bio::Annotation::AnnotationFactory.new;
 # isa_ok($factory, 'Bio::Factory::ObjectFactoryI');
 
-# # defaults to SimpleValue
+# defaults to SimpleValue
 # $ann = $factory.create_object(value => 'peroxisome',
 # 			       tagname => 'cellular component');
 # isa_ok($ann, 'Bio::Annotation::SimpleValue');
@@ -212,7 +213,7 @@ is($n, 3);
 # ok(defined $ann);
 # isa_ok($ann, 'Bio::Annotation::OntologyTerm');
 
-# # unset type()
+# unset type()
 # $factory.type(undef);
 # $ann = $factory.create_object(text => 'this is a comment');
 # ok(defined $ann,'Bio::Annotation::Comment');
@@ -224,13 +225,13 @@ is($n, 3);
 # ok(defined $ann,'Bio::Annotation::Comment');
 # isa_ok($ann,'Bio::Annotation::Comment');
 
-# # factory guessing the type: Comment
+# factory guessing the type: Comment
 # $factory = Bio::Annotation::AnnotationFactory.new();
 # $ann = $factory.create_object(text => 'this is a comment');
 # ok(defined $ann,'Bio::Annotation::Comment');
 # isa_ok($ann,'Bio::Annotation::Comment');
 
-# # factory guessing the type: Target
+# factory guessing the type: Target
 # $factory = Bio::Annotation::AnnotationFactory.new();
 # $ann = $factory.create_object(target_id => 'F1234',
 # 			       start     => 1,
@@ -238,13 +239,13 @@ is($n, 3);
 # ok defined $ann;
 # isa_ok($ann,'Bio::Annotation::Target');
 
-# # factory guessing the type: OntologyTerm
+# factory guessing the type: OntologyTerm
 # $factory = Bio::Annotation::AnnotationFactory.new();
 # ok(defined ($ann = $factory.create_object(name => 'peroxisome',
 # 					   tagname => 'cellular component')));
 # like(ref $ann, qr(Bio::Annotation::OntologyTerm));
 
-# # tree
+# tree
 # my $tree_filename = test_input_file('longnames.dnd');
 # my $tree = Bio::TreeIO.new(file=>$tree_filename).next_tree();
 # my $ann_tree = Bio::Annotation::Tree.new(
@@ -308,12 +309,12 @@ is($n, 3);
 # my $val = $ann_struct.value;
 # like($val, qr/Name: CALM1/,'default itext');
 
-# # roundtrip
+# roundtrip
 # my $ann_struct2 = Bio::Annotation::TagTree.new(tagname => 'gn',
 # 						value => $val);
 # is($ann_struct2.value, $val,'roundtrip');
 
-# # formats 
+# formats 
 # like($ann_struct2.value, qr/Name: CALM1/,'itext');
 # $ann_struct2.tagformat('sxpr');
 # like($ann_struct2.value, qr/\(Name "CALM1"\)/,'spxr');
@@ -327,7 +328,7 @@ is($n, 3);
 #     like($ann_struct2.value, qr/<Name>CALM1<\/Name>/,'xml');
 # }
 
-# # grab Data::Stag nodes, use Data::Stag methods
+# grab Data::Stag nodes, use Data::Stag methods
 # my @nodes = $ann_struct2.children;
 # for my $node (@nodes) {
 #     isa_ok($node, 'Data::Stag::StagI');
@@ -341,7 +342,7 @@ is($n, 3);
 # $ann_struct2.tagformat('itext');
 # like($ann_struct2.value, qr/foo:\s+bar/,'child changes in parent node');
 
-# # pass in a Data::Stag node to value()
+# pass in a Data::Stag node to value()
 # $ann_struct = Bio::Annotation::TagTree.new(tagname => 'mytags');
 # like($ann_struct.value, qr/^\s+:\s+$/xms, 'no tags');
 # like($ann_struct.value, qr/^\s+:\s+$/xms,'before Stag node');
@@ -350,7 +351,7 @@ is($n, 3);
 # is(ref $ann_struct.node, ref $nodes[0], 'both stag nodes');
 # isnt($ann_struct.node, $nodes[0], 'different instances');
 
-# # pass in another TagTree to value()
+# pass in another TagTree to value()
 # $ann_struct = Bio::Annotation::TagTree.new(tagname => 'mytags');
 # like($ann_struct.value, qr/^\s+:\s+$/xms,'before TagTree');
 # $ann_struct.value($ann_struct2);
@@ -358,7 +359,7 @@ is($n, 3);
 # is(ref $ann_struct.node, ref $ann_struct2.node, 'both stag nodes');
 # isnt($ann_struct.node, $ann_struct2.node, 'different instances');
 
-# # replace the Data::Stag node in the annotation (no copy)
+# replace the Data::Stag node in the annotation (no copy)
 # $ann_struct = Bio::Annotation::TagTree.new(tagname => 'mytags');
 # like($ann_struct.value, qr/^\s+:\s+$/xms,'before TagTree');
 # $ann_struct.node($nodes[1]);
@@ -373,7 +374,7 @@ is($n, 3);
 # is(ref $ann_struct.node, ref $ann_struct2.node, 'stag nodes');
 # isnt($ann_struct.node, $nodes[1], 'different instance');
 
-# #check insertion in to collection
+#check insertion in to collection
 # $ann_struct = Bio::Annotation::TagTree.new(value => $struct);
 # $ac = Bio::Annotation::Collection.new();
 
@@ -389,7 +390,7 @@ is($n, 3);
 # }
 # is($ct,3);
 
-# # factory guessing the type: TagTree
+# factory guessing the type: TagTree
 # $factory = Bio::Annotation::AnnotationFactory.new();
 # $ann = $factory.create_object(value => $struct);
 # ok defined $ann;
