@@ -146,12 +146,12 @@ for ($ann.get_all_values()) {
 my $nested_ac = Bio::Annotation::Collection.new();
 $nested_ac.add_Annotation('nested', $ac);
 
-# is(scalar($nested_ac.get_Annotations()), 1);
-# ($ac) = $nested_ac.get_Annotations();
-# isa_ok($ac, "Bio::AnnotationCollectionI");
-# is(scalar($nested_ac.get_all_Annotations()), 6);
-# $nested_ac.add_Annotation('gene names', $ann);
-# is(scalar($nested_ac.get_Annotations()), 2);
+is($nested_ac.get_Annotations().elems, 1);
+($ac) = $nested_ac.get_Annotations();
+ok($ann ~~ Bio::AnnotationI);
+is($nested_ac.get_all_Annotations().elems, 6);
+$nested_ac.add_Annotation('gene names', $ann);
+#is($nested_ac.get_Annotations().elems, 2);
 # is(scalar($nested_ac.get_all_Annotations()), 7);
 # is(scalar($nested_ac.get_Annotations('dblink')), 0);
 # my @anns = $nested_ac.get_Annotations('gene names');

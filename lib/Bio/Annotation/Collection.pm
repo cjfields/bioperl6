@@ -7,7 +7,7 @@ use Bio::Annotation::TypeManager;
 use Bio::Annotation::SimpleValue;
 use Bio::AnnotationI;
 
-# use base qw(Bio::Root::Root Bio::AnnotationCollectionI);
+# use base qw(Bio::Root::Root);
 
 #probably will be a singleton - takadonet
 has $!typemap is rw = Bio::Annotation::TypeManager.new();
@@ -80,7 +80,6 @@ method get_Annotations(*@keys is copy){
 
     #todo implement get_all_annotation_keys
     @keys = self.get_all_annotation_keys() unless @keys;
-    
      for (@keys) -> $key {
        if ( %!annotation.exists($key) ) {
          push(@anns,
@@ -89,6 +88,7 @@ method get_Annotations(*@keys is copy){
              } , @(%!annotation{$key}) );
        }
      }
+
     return @anns;
 }
 
@@ -187,14 +187,15 @@ method get_Annotations(*@keys is copy){
 
 # =cut
 
-# method get_all_Annotations{
-#     my ($self,@keys) = @_;
+method get_all_Annotations(@keys?){
+    
+     my @list =  map {
+ 	$_ ~~ Bio::AnnotationCollectionI ??
+ 	    $_.get_all_Annotations() !! $_;
+     } , @(self.get_Annotations(@keys));
 
-#     return map {
-# 	$_.isa("Bio::AnnotationCollectionI") ?
-# 	    $_.get_all_Annotations() : $_;
-#     } $self.get_Annotations(@keys);
-# }
+     return @list;
+}
 
 
 # =head2 get_num_of_annotations
