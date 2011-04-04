@@ -55,7 +55,8 @@ is $link1.as_text, 'Direct database link to TSC0000030 in database TSC';
 is $link1.display_text, 'TSC:TSC0000030';
 
 my $ac = Bio::Annotation::Collection.new();
-# isa_ok($ac,'Bio::AnnotationCollectionI');
+ok($ac ~~ Bio::AnnotationCollectionI);
+
 
 $ac.add_Annotation('dblink',$link1);
 $ac.add_Annotation('dblink',
@@ -143,7 +144,7 @@ for ($ann.get_all_values()) {
 
 # nested collections
 my $nested_ac = Bio::Annotation::Collection.new();
-# $nested_ac.add_Annotation('nested', $ac);
+$nested_ac.add_Annotation('nested', $ac);
 
 # is(scalar($nested_ac.get_Annotations()), 1);
 # ($ac) = $nested_ac.get_Annotations();

@@ -1,3 +1,102 @@
+role Bio::AnnotationCollectionI {
+
+# Interface preamble - inherits from Bio::Root::RootI
+
+# =head1 ACCESSOR METHODS
+
+# Use these for Bio::AnnotationI object access.
+
+# =cut
+
+# =head2 get_all_annotation_keys()
+
+#  Usage   : $ac->get_all_annotation_keys()
+#  Function: gives back a list of annotation keys, which are simple text strings
+#  Returns : list of strings
+#  Args    : none
+
+# =cut
+
+method get_all_annotation_keys{
+    ...
+#    shift->throw_not_implemented();
+}
+
+# =head2 get_Annotations()
+
+#  Usage   : my @annotations = $collection->get_Annotations('key')
+#  Function: Retrieves all the Bio::AnnotationI objects for a specific key
+#  Returns : list of Bio::AnnotationI - empty if no objects stored for a key
+#  Args    : string which is key for annotations
+
+# =cut
+
+method get_Annotations{
+    ...
+#    shift->throw_not_implemented();
+}
+
+# =head2 add_Annotation()
+
+#  Usage   : $self->add_Annotation('reference',$object);
+#            $self->add_Annotation($object,'Bio::MyInterface::DiseaseI');
+#            $self->add_Annotation($object);
+#            $self->add_Annotation('disease',$object,'Bio::MyInterface::DiseaseI');
+#  Function: Adds an annotation for a specific key.
+
+#            If the key is omitted, the object to be added must provide a value
+#            via its tagname().
+
+#            If the archetype is provided, this and future objects added under
+#            that tag have to comply with the archetype and will be rejected
+#            otherwise.
+
+#  Returns : none
+#  Args    : annotation key ('disease', 'dblink', ...)
+#            object to store (must be Bio::AnnotationI compliant)
+#            [optional] object archetype to map future storage of object
+#            of these types to
+
+# =cut
+
+method add_Annotation {
+    ...
+#  shift->throw_not_implemented();
+}
+
+# =head2 remove_Annotations()
+
+#  Usage   :
+#  Function: Remove the annotations for the specified key from this collection.
+#  Returns : an list of Bio::AnnotationI compliant objects which were stored
+#            under the given key(s)
+#  Args    : the key(s) (tag name(s), one or more strings) for which to
+#            remove annotations (optional; if none given, flushes all
+#            annotations)
+
+# =cut
+
+method remove_Annotations{
+    ...
+#  shift->throw_not_implemented();
+}
+
+# =head2 get_num_of_annotations()
+
+#  Usage   : my $count = $collection->get_num_of_annotations()
+#  Function: Returns the count of all annotations stored in this collection
+#  Returns : integer
+#  Args    : none
+
+# =cut
+
+method get_num_of_annotations{
+    ...
+#    shift->throw_not_implemented();
+}
+
+}
+
 # $Id: AnnotationCollectionI.pm 15549 2009-02-21 00:48:48Z maj $
 #
 # BioPerl module for Bio::AnnotationCollectionI
@@ -12,11 +111,11 @@
 
 # POD documentation - main docs before the code
 
-#=head1 NAME
+# =head1 NAME
 #
 #Bio::AnnotationCollectionI - Interface for annotation collections
 #
-#=head1 SYNOPSIS
+# =head1 SYNOPSIS
 #
 #   # get an AnnotationCollectionI somehow, eg
 #
@@ -34,7 +133,7 @@
 #       }
 #   }
 #
-#=head1 DESCRIPTION
+# =head1 DESCRIPTION
 #
 #Annotation Collections are a way of storing a series of "interesting
 #facts" about something. We call an "interesting fact" in Bioperl an
@@ -86,9 +185,9 @@
 #area.
 #
 #
-#=head1 FEEDBACK
+# =head1 FEEDBACK
 #
-#=head2 Mailing Lists
+# =head2 Mailing Lists
 #
 #User feedback is an integral part of the evolution of this and other
 #Bioperl modules. Send your comments and suggestions preferably to one
@@ -96,7 +195,7 @@
 #
 #  bioperl-l@bioperl.org
 #
-#=head2 Support 
+# =head2 Support 
 # 
 #Please direct usage questions or support issues to the mailing list:
 #  
@@ -107,7 +206,7 @@
 #address it. Please include a thorough description of the problem 
 #with code and data examples if at all possible.
 #
-#=head2 Reporting Bugs
+# =head2 Reporting Bugs
 #
 #Report bugs to the Bioperl bug tracking system to help us keep track
 #the bugs and their resolution.  Bug reports can be submitted via the
@@ -115,110 +214,14 @@
 #
 #  http://bugzilla.open-bio.org/
 #
-#=head1 AUTHOR - Ewan Birney
+# =head1 AUTHOR - Ewan Birney
 #
 #Email birney@ebi.ac.uk
 #
-#=head1 APPENDIX
+# =head1 APPENDIX
 #
 #The rest of the documentation details each of the object methods. Internal methods
 #are usually preceded with a _
 #
-#=cut
+# =cut
 #
-
-# Let the code begin...
-
-role Bio::AnnotationCollectionI;
-
-# Interface preamble - inherits from Bio::Root::RootI
-
-=head1 ACCESSOR METHODS
-
-Use these for Bio::AnnotationI object access.
-
-=cut
-
-=head2 get_all_annotation_keys()
-
- Usage   : $ac->get_all_annotation_keys()
- Function: gives back a list of annotation keys, which are simple text strings
- Returns : list of strings
- Args    : none
-
-=cut
-
-sub get_all_annotation_keys{
-    shift->throw_not_implemented();
-}
-
-=head2 get_Annotations()
-
- Usage   : my @annotations = $collection->get_Annotations('key')
- Function: Retrieves all the Bio::AnnotationI objects for a specific key
- Returns : list of Bio::AnnotationI - empty if no objects stored for a key
- Args    : string which is key for annotations
-
-=cut
-
-sub get_Annotations{
-    shift->throw_not_implemented();
-}
-
-=head2 add_Annotation()
-
- Usage   : $self->add_Annotation('reference',$object);
-           $self->add_Annotation($object,'Bio::MyInterface::DiseaseI');
-           $self->add_Annotation($object);
-           $self->add_Annotation('disease',$object,'Bio::MyInterface::DiseaseI');
- Function: Adds an annotation for a specific key.
-
-           If the key is omitted, the object to be added must provide a value
-           via its tagname().
-
-           If the archetype is provided, this and future objects added under
-           that tag have to comply with the archetype and will be rejected
-           otherwise.
-
- Returns : none
- Args    : annotation key ('disease', 'dblink', ...)
-           object to store (must be Bio::AnnotationI compliant)
-           [optional] object archetype to map future storage of object
-           of these types to
-
-=cut
-
-sub add_Annotation {
-  shift->throw_not_implemented();
-}
-
-=head2 remove_Annotations()
-
- Usage   :
- Function: Remove the annotations for the specified key from this collection.
- Returns : an list of Bio::AnnotationI compliant objects which were stored
-           under the given key(s)
- Args    : the key(s) (tag name(s), one or more strings) for which to
-           remove annotations (optional; if none given, flushes all
-           annotations)
-
-=cut
-
-sub remove_Annotations{
-  shift->throw_not_implemented();
-}
-
-=head2 get_num_of_annotations()
-
- Usage   : my $count = $collection->get_num_of_annotations()
- Function: Returns the count of all annotations stored in this collection
- Returns : integer
- Args    : none
-
-=cut
-
-sub get_num_of_annotations{
-    shift->throw_not_implemented();
-}
-
-1;

@@ -1,5 +1,7 @@
 
-class Bio::Annotation::Collection {
+use Bio::AnnotationCollectionI;
+
+class Bio::Annotation::Collection does Bio::AnnotationCollectionI {
 # Object preamble - inherits from Bio::Root::Root
 use Bio::Annotation::TypeManager;
 use Bio::Annotation::SimpleValue;
@@ -241,7 +243,7 @@ method get_Annotations(*@keys is copy){
 
 # =cut
 
-multi method add_Annotation(Bio::AnnotationI $object,$archetype? is copy) {
+multi method add_Annotation(Bio::AnnotationI $object,$archetype? is copy ) {
 
     my $key = $object.tagname();
     $archetype = $object;
@@ -313,6 +315,44 @@ multi method add_Annotation(Str $key,Bio::AnnotationI $object,$archetype? is cop
 
     return 1;
 }
+
+
+#probably want to have one multi that allows for str $key and either type object : Bio::Annotation or bio::AnnotationCollectionI
+multi method add_Annotation(Str $key,Bio::AnnotationCollectionI $object,$archetype? is copy){
+   
+    # If we don't have an archetype, set it
+    # from the type of the object
+
+    if ( !defined $archetype ) {
+        $archetype = $object.WHAT;
+    }
+
+    # check typemap, storing if needed.
+    my $stored_map = self!typemap.type_for_key($key);
+
+#    if( defined $stored_map ) {
+#        # check validity, irregardless of archetype. A little cheeky
+#        # this means isa stuff is executed correctly
+
+#        if( !$self._typemap().is_valid($key,$object) ) {
+# 	   $self.throw("Object $object was not valid with key $key. ".
+#          "If you were adding new keys in, perhaps you want to make use\n".
+#          "of the archetype method to allow registration to a more basic type");
+#        }
+#    } else {
+#        $self._typemap._add_type_map($key,$archetype);
+#    }
+
+    # we are ok to store
+
+    if ( !defined %!annotation{$key} ) {
+        %!annotation{$key} = [];
+    }
+    push @(%!annotation{$key}),$object;
+
+    return 1;
+}
+
 
 # =head2 remove_Annotations
 
@@ -489,12 +529,11 @@ multi method add_Annotation(Str $key,Bio::AnnotationI $object,$archetype? is cop
 
 # =cut
 
-# method tagname{
-#     my $self = shift;
-
-#     return $self.{'tagname'} = shift if @_;
-#     return $self.{'tagname'};
-# }
+has $!tagname is rw;
+method tagname($value?) {
+    return $!tagname = $value if defined $value;
+    return $!tagname;
+}
 
 
 # =head1 Backward compatible functions
