@@ -370,18 +370,16 @@ multi method add_Annotation(Str $key,Bio::AnnotationCollectionI $object,$archety
 
 # =cut
 
-# method remove_Annotations{
-#     my ($self, @keys) = @_;
-
-#     @keys = $self.get_all_annotation_keys() unless @keys;
-#     my @anns = $self.get_Annotations(@keys);
-#     # flush
-#     foreach my $key (@keys) {
-#       delete $self.{'_annotation'}.{$key};
-#       delete $self.{'_typemap'}.{'_type'}.{$key};
-#     }
-#     return @anns;
-# }
+method remove_Annotations(*@keys is copy) {
+    @keys = self.get_all_annotation_keys() unless @keys;
+    my @anns = self.get_Annotations(@keys);
+    # flush
+    for (@keys) -> $key {
+        %!annotation.delete($key);
+        $!typemap.type.delete($key);
+    }
+    return @anns;
+}
 
 # =head2 flatten_Annotations
 
@@ -403,16 +401,14 @@ multi method add_Annotation(Str $key,Bio::AnnotationCollectionI $object,$archety
 
 # =cut
 
-# method flatten_Annotations{
-#     my ($self,@keys) = @_;
-
-#     my @anns = $self.get_all_Annotations(@keys);
-#     my @origanns = $self.remove_Annotations(@keys);
-#     foreach (@anns) {
-# 	$self.add_Annotation($_);
-#     }
-#     return @origanns;
-# }
+method flatten_Annotations(*@keys){
+     my @anns = self.get_all_Annotations(@keys);
+     my @origanns = self.remove_Annotations(@keys);
+     for (@anns) {
+         self.add_Annotation($_);
+     }
+    return @origanns;
+}
 
 # =head1 Bio::AnnotationI methods implementations
 

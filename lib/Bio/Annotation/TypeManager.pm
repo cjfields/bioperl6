@@ -1,9 +1,9 @@
 class Bio::Annotation::TypeManager {
-    #    use Bio::Annotation::Comment;
+    use Bio::Annotation::Comment;
     use Bio::Annotation::DBLink;
-    #    use Bio::Annotation::Reference;
+    use Bio::Annotation::Reference;
     
-has %!type is rw;    
+has %.type is rw;    
 # Object preamble - inherits from Bio::Root::Root
 # use base qw(Bio::Root::Root);
 # =head2 new
@@ -20,8 +20,8 @@ has %!type is rw;
 
 method new(){
     my $x = self.bless(*);
-#    $x!add_type_map('reference',Bio::Annotation::Reference);
-#    $x!add_type_map('comment',Bio::Annotation::Comment);
+    $x!add_type_map('reference',Bio::Annotation::Reference);
+    $x!add_type_map('comment',Bio::Annotation::Comment);
     $x!add_type_map('dblink',Bio::Annotation::DBLink);
 
     return $x;
@@ -43,7 +43,7 @@ method new(){
 method type_for_key($key){
     #in good time sir - takadonet
     #    $key = $key.name() if ref($key) && $key->isa("Bio::Ontology::TermI");
-    return %!type{$key};
+    return %.type{$key};
 }
 
 
@@ -88,7 +88,7 @@ method type_for_key($key){
 
 method !add_type_map($key,$type){
 #    $key = $key->name() if ref($key) && $key->isa("Bio::Ontology::TermI");
-    %!type{$key} = $type;
+    %.type{$key} = $type;
 }
 
 }

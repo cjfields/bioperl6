@@ -154,14 +154,14 @@ $nested_ac.add_Annotation('gene names', $ann);
 is($nested_ac.get_Annotations().elems, 2);
 is($nested_ac.get_all_Annotations().elems, 7);
 is($nested_ac.get_Annotations('dblink').elems, 0);
-# my @anns = $nested_ac.get_Annotations('gene names');
-#ok($anns[0] ~~ Bio::Annotation::StructuredValue);
-# @anns = map { $_.get_Annotations('dblink');
-# 	  } $nested_ac.get_Annotations('nested');
-# is(scalar(@anns), 3);
-# is(scalar($nested_ac.flatten_Annotations()), 2);
-# is(scalar($nested_ac.get_Annotations()), 7);
-# is(scalar($nested_ac.get_all_Annotations()), 7);
+my @anns = $nested_ac.get_Annotations('gene names');
+ok(@anns[0] ~~ Bio::Annotation::StructuredValue);
+ @anns = map { $_.get_Annotations('dblink');
+ 	  } , $nested_ac.get_Annotations('nested');
+is(@anns.elems, 3);
+is($nested_ac.flatten_Annotations().elems, 2);
+is($nested_ac.get_Annotations().elems, 7);
+is($nested_ac.get_all_Annotations().elems, 7);
 
 # SKIP: {
 #   test_skip(-tests => 7, -requires_modules => [qw(Graph::Directed Bio::Annotation::OntologyTerm)]);
