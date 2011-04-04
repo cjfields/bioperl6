@@ -193,12 +193,11 @@ method !to_text(@arr,$joins,$brackets,$rec_n? is copy) {
 
 # =cut
 
-# method get_all_values{
-#     my ($self) = @_;
-#     # we code lazy here and just take advantage of value()
-#     my $txt = $self.value(-joins => ['@!@'], -brackets => ['','']);
-#     return split(/\@!\@/, $txt);
-# }
+method get_all_values(){
+    # we code lazy here and just take advantage of value()
+    my $txt = self.value(joins => ['@!@'], brackets => ['','']);
+    return $txt.split('@!@');
+}
 
 # =head2 add_value
 

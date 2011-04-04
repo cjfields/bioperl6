@@ -33,7 +33,7 @@ my $simple = Bio::Annotation::SimpleValue.new(tagname => 'colour',
 					       value   => '1',
 					      );
 
-# isa_ok($simple, 'Bio::AnnotationI');
+ok($simple ~~ Bio::AnnotationI);
 is $simple.display_text, 1;
 is $simple.as_text, 'Value: 1';
 is $simple.value, 1;
@@ -45,7 +45,6 @@ is $simple.value, 0;
 is $simple.display_text, 0;
 
 # link
-
 my $link1 = Bio::Annotation::DBLink.new(database => 'TSC',
 					 primary_id => 'TSC0000030',
 					);
@@ -138,12 +137,12 @@ is($ann.value(joins => [" AND "]), "val1 AND val2 AND (val3 AND val4) AND (val5 
 is($ann.value(joins => [" AND ", " OR "]), "val1 AND val2 AND (val3 OR val4) AND (val5 OR val6) AND val7");
 
 $n = 1;
-# foreach ($ann.get_all_values()) {
-#     is($_, "val".$n++);
-# }
+for ($ann.get_all_values()) {
+     is($_, "val" ~ $n++);
+}
 
 # nested collections
-# my $nested_ac = Bio::Annotation::Collection.new();
+my $nested_ac = Bio::Annotation::Collection.new();
 # $nested_ac.add_Annotation('nested', $ac);
 
 # is(scalar($nested_ac.get_Annotations()), 1);
