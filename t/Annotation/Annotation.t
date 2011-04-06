@@ -42,7 +42,7 @@ is $simple.as_text, 'Value: 1';
 is $simple.value, 1;
 is $simple.tagname, 'colour';
 is $simple.tag_term, Any;
-
+is $simple.hash_tree.{'value'},1;
 is $simple.value(0), 0;
 is $simple.value, 0;
 is $simple.display_text, 0;

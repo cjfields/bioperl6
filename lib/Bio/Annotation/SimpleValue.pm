@@ -74,13 +74,12 @@ method display_text($cb? is copy) {
 
 # =cut
 
-# method hash_tree{
-#     my $self = shift;
 
-#     my $h = {};
-#     $h->{'value'} = $self->value;
-#     return $h;
-# }
+method hash_tree(){
+     my %h;
+     %h{'value'} = self.value;
+     return %h;
+}
 
 # =head2 tagname
 
