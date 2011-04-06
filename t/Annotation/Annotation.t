@@ -56,6 +56,15 @@ is $link1.database(), 'TSC';
 is $link1.primary_id(), 'TSC0000030';
 is $link1.as_text, 'Direct database link to TSC0000030 in database TSC';
 is $link1.display_text, 'TSC:TSC0000030';
+is $link1.comment, Any;
+is $link1.tagname, Any;
+is $link1.optional_id, Any;
+is $link1.url, Any;
+
+
+my %dblink = $link1.hash_tree();
+is %dblink{'database'},'TSC';
+is %dblink.exists('comment'),False;
 
 my $ac = Bio::Annotation::Collection.new();
 ok($ac ~~ Bio::AnnotationCollectionI);

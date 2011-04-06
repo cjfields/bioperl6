@@ -1,33 +1,32 @@
 
 use Bio::Role::Identify;
 use Bio::AnnotationI;
-
 class Bio::Annotation::DBLink is Bio::AnnotationI does Bio::Role::Identify  {
 # use base qw(Bio::Root::Root);
 
 # =head2 new
 
 #  Title   : new
-#  Usage   : $dblink = Bio::Annotation::DBLink.new(-database =>"GenBank",
-#                                                   -primary_id => "M123456");
+#  Usage   : $dblink = Bio::Annotation::DBLink.new(database =>"GenBank",
+#                                                   primary_id => "M123456");
 #  Function: Creates a new instance of this class.
 #  Example :
 #  Returns : A new instance of Bio::Annotation::DBLink.
 #  Args    : Named parameters. At present, the following parameters are
 #            recognized.
 
-#              -database    the name of the database referenced by the xref
-#              -primary_id  the primary (main) id of the referenced entry
+#              database    the name of the database referenced by the xref
+#              primary_id  the primary (main) id of the referenced entry
 #                           (usually this will be an accession number)
-#              -optional_id a secondary ID under which the referenced entry
+#              optional_id a secondary ID under which the referenced entry
 #                           is known in the same database
-#              -comment     comment text for the dbxref
-#              -tagname     the name of the tag under which to add this
+#              comment     comment text for the dbxref
+#              tagname     the name of the tag under which to add this
 #                           instance to an annotation bundle (usually 'dblink')
-#              -namespace   synonymous with -database (also overrides)
-#              -version     version of the referenced entry
-#              -authority   attribute of the Bio::IdentifiableI interface
-#              -url         attribute of the Bio::IdentifiableI interface
+#              namespace   synonymous with database (also overrides)
+#              version     version of the referenced entry
+#              authority   attribute of the Bio::IdentifiableI interface
+#              url         attribute of the Bio::IdentifiableI interface
 
 # =cut
 
@@ -125,22 +124,21 @@ method display_text($cb? is copy) {
 
 # =cut
 
-# method hash_tree{
-#    my ($self) = @_;
-   
-#    my $h = {};
-#    $h.{'database'}   = $self.database;
-#    $h.{'primary_id'} = $self.primary_id;
-#    if( defined $self.optional_id ) {
-#        $h.{'optional_id'} = $self.optional_id;
-#    }
-#    if( defined $self.comment ) {
-#        # we know that comments have hash_tree methods
-#        $h.{'comment'} = $self.comment;
-#    }
+method hash_tree(){
+    my %h;
+    
+   %h{'database'}   = self.database;
+   %h{'primary_id'} = self.primary_id;
+   if ( defined self.optional_id ) {
+       %h{'optional_id'} = self.optional_id;
+   }
+   if ( defined self.comment ) {
+       # we know that comments have hash_tree methods
+       %h{'comment'} = self.comment;
+   }
 
-#    return $h;
-# }
+    return %h;
+}
 
 # =head2 tagname
 
@@ -230,12 +228,12 @@ method optional_id($value?){
 
 # =cut
 
-# method comment{
-#     my $self = shift;
+has $!comment is rw;
 
-#     return $self.{'comment'} = shift if @_;
-#     return $self.{'comment'};
-# }
+method comment($value?){
+    $!comment = $value if defined $value;
+    return $!comment;
+}
 
 # =head1 Methods for Bio::IdentifiableI compliance
 
@@ -253,8 +251,8 @@ method optional_id($value?){
 
 # =cut
 
-# method object_id {
-#     return shift.primary_id(@_);
+# method object_id(*@args?) {
+#      return self.primary_id(@args);
 # }
 
 
@@ -267,11 +265,12 @@ method optional_id($value?){
 
 # =cut
 
-# method url {
-#     my $self = shift;
-#     return $self.{'url'} = shift if @_;
-#     return $self.{'url'};
-# }
+has $!url is rw;
+
+method url($value?){
+    $!url = $value if defined $value;
+    return $!url;
+}
 
 # =head2 namespace
 
@@ -287,9 +286,9 @@ method optional_id($value?){
 
 # =cut
 
-# method namespace{
-#     return shift.database(@_);
-# }
+#method namespace(*@args){
+#    return shift.database(@_);
+#}
 
 }
 
@@ -313,8 +312,8 @@ method optional_id($value?){
 
 # =head1 SYNOPSIS
 
-#    $link1 = Bio::Annotation::DBLink.new(-database => 'TSC',
-#                                         -primary_id => 'TSC0000030'
+#    $link1 = Bio::Annotation::DBLink.new(database => 'TSC',
+#                                         primary_id => 'TSC0000030'
 # 					);
 
 #    #or 
