@@ -11,10 +11,11 @@ eval_lives_ok('Bio::Annotation::DBLink','Can load Bio::Annotation::DBLink');
 eval_lives_ok('Bio::Annotation::Comment','Can load Bio::Annotation::Comment');
 eval_lives_ok('Bio::Annotation::Reference','Can load Bio::Annotation::Reference');
 eval_lives_ok('Bio::Annotation::Target','Can load Bio::Annotation::Target');
-eval_lives_ok('Bio::Annotation::AnnotationFactory');
+eval_lives_ok('Bio::Annotation::AnnotationFactory','Can load Bio::Annotation::AnnotationFactory');
 eval_lives_ok('Bio::Annotation::StructuredValue','Can load Bio::Annotation::StructuredValue');
 eval_lives_ok('Bio::Annotation::TagTree');
 eval_lives_ok('Bio::Annotation::Tree');
+eval_lives_ok('Bio::Annotation::OntologyTerm','Can load Bio::Annotation::OntologyTerm');
 eval_lives_ok('Bio::Seq');
 eval_lives_ok('Bio::SimpleAlign');
 eval_lives_ok('Bio::Cluster::UniGene');
@@ -27,6 +28,8 @@ use Bio::Annotation::Comment;
 use Bio::Annotation::Target;
 use Bio::Annotation::Collection;
 use Bio::Annotation::StructuredValue;
+use Bio::Annotation::AnnotationFactory;
+use Bio::Annotation::OntologyTerm;
 
 #simple value
 my $simple = Bio::Annotation::SimpleValue.new(tagname => 'colour',
@@ -198,51 +201,53 @@ is($nested_ac.get_all_Annotations().elems, 7);
 
 # tests for Bio::Annotation::AnnotationFactory
 
-# my $factory = Bio::Annotation::AnnotationFactory.new;
-# isa_ok($factory, 'Bio::Factory::ObjectFactoryI');
+my $factory = Bio::Annotation::AnnotationFactory.new;
+#ok($factory ~~ Bio::Factory::ObjectFactoryI);
 
 # defaults to SimpleValue
-# $ann = $factory.create_object(value => 'peroxisome',
-# 			       tagname => 'cellular component');
-# isa_ok($ann, 'Bio::Annotation::SimpleValue');
+ $ann = $factory.create_object(value => 'peroxisome',
+ 			       tagname => 'cellular component');
+ok($ann ~~ Bio::Annotation::SimpleValue);
+
 
 # $factory.type('Bio::Annotation::OntologyTerm');
 
-# $ann = $factory.create_object(name => 'peroxisome',
-# 			       tagname => 'cellular component');
-# ok(defined $ann);
-# isa_ok($ann, 'Bio::Annotation::OntologyTerm');
+$ann = $factory.create_object(name => 'peroxisome',
+ 			       tagname => 'cellular component');
+ok(defined $ann,'Bio::Annotation::OntologyTerm');
+ok($ann ~~ Bio::Annotation::OntologyTerm);
 
 # unset type()
-# $factory.type(undef);
-# $ann = $factory.create_object(text => 'this is a comment');
-# ok(defined $ann,'Bio::Annotation::Comment');
-
-# isa_ok($ann,'Bio::Annotation::Comment');
-
-# ok $factory.type('Bio::Annotation::Comment');
-# $ann = $factory.create_object(text => 'this is a comment');
-# ok(defined $ann,'Bio::Annotation::Comment');
-# isa_ok($ann,'Bio::Annotation::Comment');
+$factory.type(Any);
+$ann = $factory.create_object(text => 'this is a comment');
+ok(defined $ann,'Bio::Annotation::Comment');
+ok($ann ~~ Bio::Annotation::Comment,'Isa Bio::Annotation::Comment');
+my $x= Bio::Annotation::Comment;
+ok($factory.type( Bio::Annotation::Comment ),Bio::Annotation::Comment );
+$ann = $factory.create_object(text => 'this is a comment');
+ok(defined $ann,'Bio::Annotation::Comment');
+ok($ann ~~ Bio::Annotation::Comment);
 
 # factory guessing the type: Comment
-# $factory = Bio::Annotation::AnnotationFactory.new();
-# $ann = $factory.create_object(text => 'this is a comment');
-# ok(defined $ann,'Bio::Annotation::Comment');
-# isa_ok($ann,'Bio::Annotation::Comment');
+$factory = Bio::Annotation::AnnotationFactory.new();
+$ann = $factory.create_object(text => 'this is a comment');
+ok(defined $ann,'Bio::Annotation::Comment');
+ok($ann ~~ Bio::Annotation::Comment);
 
 # factory guessing the type: Target
-# $factory = Bio::Annotation::AnnotationFactory.new();
-# $ann = $factory.create_object(target_id => 'F1234',
-# 			       start     => 1,
-# 			       end       => 10 );
-# ok defined $ann;
-# isa_ok($ann,'Bio::Annotation::Target');
+$factory = Bio::Annotation::AnnotationFactory.new();
+$ann = $factory.create_object(target_id => 'F1234',
+ 			       start     => 1,
+ 			       end       => 10 );
+ok defined $ann;
+isa_ok($ann,'Bio::Annotation::Target');
+
+
 
 # factory guessing the type: OntologyTerm
-# $factory = Bio::Annotation::AnnotationFactory.new();
-# ok(defined ($ann = $factory.create_object(name => 'peroxisome',
-# 					   tagname => 'cellular component')));
+$factory = Bio::Annotation::AnnotationFactory.new();
+ok(defined ($ann = $factory.create_object(name => 'peroxisome',
+ 					   tagname => 'cellular component')));
 # like(ref $ann, qr(Bio::Annotation::OntologyTerm));
 
 # tree
