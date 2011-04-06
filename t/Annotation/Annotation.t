@@ -103,6 +103,24 @@ is $ref.location, 'location line';
 is $ref.start, 12;
 is $ref.database, 'MEDLINE';
 is $ref.as_text, 'Reference: title line';
+is $ref.display_text, 'title line';
+is $ref.display_text( sub ($self) { $self.title ~ ' ' ~ $self.start}), 'title line 12';
+is $ref.end,Any;
+is $ref.rp,Any;
+is $ref.rg,Any;
+is $ref.publisher,Any;
+is $ref.editors,Any;
+is $ref.encoded_ref,Any;
+is $ref.doi,Any;
+is $ref.consortium,Any;
+is $ref.gb_reference,Any;
+
+
+my %items = $ref.hash_tree;
+is %items{'title'},'title line';
+is %items{'authors'},'author line';
+is  %items.exists('end'),False;
+
 $ac.add_Annotation('reference', $ref);
 
 

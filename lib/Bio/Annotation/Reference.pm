@@ -3,10 +3,10 @@ class Bio::Annotation::Reference is Bio::Annotation::DBLink {
 # =head2 new
 
 #  Title   : new
-#  Usage   : $ref = Bio::Annotation::Reference.new( -title => 'title line',
-#                            -authors => 'author line',
-#                            -location => 'location line',
-#                            -medline => 9988812);
+#  Usage   : $ref = Bio::Annotation::Reference.new( title => 'title line',
+#                            authors => 'author line',
+#                            location => 'location line',
+#                            medline => 9988812);
 #  Function:
 #  Example :
 #  Returns : a new Bio::Annotation::Reference object
@@ -88,17 +88,15 @@ method as_text(){
 
 # =cut
 
-# {
-#   my $DEFAULT_CB = sub { $_[0].title || ''};
 
-#   method display_text {
-#     my ($self, $cb) = @_;
-#     $cb ||= $DEFAULT_CB;
-#     $self.throw("Callback must be a code reference") if ref $cb ne 'CODE';
-#     return $cb.($self);
-#   }
 
-# }
+my $DEFAULT_CB = sub ($self) { $self.title() };
+
+method display_text($cb? is copy) {
+    $cb ||= $DEFAULT_CB;
+#     $self->throw("Callback must be a code reference") if ref $cb ne 'CODE';
+    return $cb.(self);
+}
 
 # =head2 hash_tree
 
@@ -112,26 +110,24 @@ method as_text(){
 
 # =cut
 
-# method hash_tree{
-#     my ($self) = @_;
+method hash_tree(){
+    my %h;
+    %h{'title'}   = self.title;
+    %h{'authors'} = self.authors;
+    %h{'location'} = self.location;
+    if (defined self.start) {
+        %h{'start'}   = self.start;
+    }
+    if (defined self.end) {
+        %h{'end'} = self.end;
+    }
+    %h{'medline'} = self.medline;
+    if (defined self.pubmed) {
+        %h{'pubmed'} = self.pubmed;
+    }
 
-#     my $h = {};
-#     $h.{'title'}   = $self.title;
-#     $h.{'authors'} = $self.authors;
-#     $h.{'location'} = $self.location;
-#     if (defined $self.start) {
-#         $h.{'start'}   = $self.start;
-#     }
-#     if (defined $self.end) {
-#         $h.{'end'} = $self.end;
-#     }
-#     $h.{'medline'} = $self.medline;
-#     if (defined $self.pubmed) {
-#         $h.{'pubmed'} = $self.pubmed;
-#     }
-
-#     return $h;
-# }
+    return %h;
+}
 
 # =head2 tagname
 
@@ -189,13 +185,13 @@ method start($value?) {
 
 # =cut
 
-# method end {
-#     my ($self,$value) = @_;
-#     if( defined $value) {
-#     $self.{'end'} = $value;
-#     }
-#     return $self.{'end'};
-# }
+has $!end is rw;    
+method end($value?) {
+    if ( defined $value) {
+        $!end = $value;
+    }
+    return $!end;
+} 
 
 # =head2 rp
 
@@ -209,13 +205,13 @@ method start($value?) {
 
 # =cut
 
-# method rp{
-#    my ($self,$value) = @_;
-#    if( defined $value) {
-#       $self.{'rp'} = $value;
-#     }
-#     return $self.{'rp'};
-# }
+has $!rp is rw;    
+method rp($value?) {
+    if ( defined $value) {
+        $!rp = $value;
+    }
+    return $!rp;
+} 
 
 # =head2 rg
 
@@ -233,12 +229,14 @@ method start($value?) {
 
 # =cut
 
-# method rg{
-#     my $self = shift;
 
-#     return $self.{'rg'} = shift if @_;
-#     return $self.{'rg'};
-# }
+has $!rg is rw;    
+method rg($value?) {
+    if ( defined $value) {
+        $!rg = $value;
+    }
+    return $!rg;
+} 
 
 # =head2 authors
 
@@ -419,14 +417,13 @@ multi method database(*@args){
 
 # =cut
 
-# method publisher {
-#    my ($self,$value) = @_;
-#    if( defined $value) {
-#       $self.{'publisher'} = $value;
-#    }
-#    return $self.{'publisher'};
-# }
-
+has $!publisher is rw;    
+method publisher($value?) {
+    if ( defined $value) {
+        $!publisher = $value;
+    }
+    return $!publisher;
+} 
 
 # =head2 editors
 
@@ -440,13 +437,13 @@ multi method database(*@args){
 
 # =cut
 
-# method editors {
-#    my ($self,$value) = @_;
-#    if( defined $value) {
-#       $self.{'editors'} = $value;
-#    }
-#    return $self.{'editors'};
-# }
+has $!editors is rw;    
+method editors($value?) {
+    if ( defined $value) {
+        $!editors = $value;
+    }
+    return $!editors;
+} 
 
 
 # =head2 encoded_ref
@@ -463,13 +460,13 @@ multi method database(*@args){
 
 # =cut
 
-# method encoded_ref {
-#    my ($self,$value) = @_;
-#    if( defined $value) {
-#       $self.{'encoded_ref'} = $value;
-#    }
-#    return $self.{'encoded_ref'};
-# }
+has $!encoded_ref is rw;    
+method encoded_ref($value?) {
+    if ( defined $value) {
+        $!encoded_ref = $value;
+    }
+    return $!encoded_ref;
+} 
 
 # =head2 doi
 
@@ -487,13 +484,14 @@ multi method database(*@args){
 
 # =cut
 
-# method doi {
-#    my ($self,$value) = @_;
-#    if( defined $value) {
-#       $self.{'doi'} = $value;
-#     }
-#     return $self.{'doi'};
-# }
+has $!doi is rw;    
+method doi($value?) {
+    if ( defined $value) {
+        $!doi = $value;
+    }
+    return $!doi;
+} 
+
 
 # =head2 consortium
 
@@ -507,13 +505,13 @@ multi method database(*@args){
 
 # =cut
 
-# method consortium{
-#    my ($self,$value) = @_;
-#    if( defined $value) {
-#       $self.{'consortium'} = $value;
-#     }
-#     return $self.{'consortium'};
-# }
+has $!consortium is rw;    
+method consortium($value?) {
+    if ( defined $value) {
+        $!consortium = $value;
+    }
+    return $!consortium;
+} 
 
 # =head2 gb_reference
 
@@ -532,14 +530,13 @@ multi method database(*@args){
 
 # =cut
 
-# method gb_reference{
-#    my ($self,$value) = @_;
-#    if( defined $value) {
-#       $self.{'gb_reference'} = $value;
-#     }
-#     return $self.{'gb_reference'};
-
-# }
+has $!gb_reference is rw;    
+method gb_reference($value?) {
+    if ( defined $value) {
+        $!gb_reference = $value;
+    }
+    return $!gb_reference;
+} 
 
 }
 
@@ -563,10 +560,10 @@ multi method database(*@args){
 
 # =head1 SYNOPSIS
 
-#     $reg = Bio::Annotation::Reference.new( -title    => 'title line',
-#                                             -location => 'location line',
-#                                             -authors  => 'author line',
-#                                             -medline  => 998122 );
+#     $reg = Bio::Annotation::Reference.new( title    => 'title line',
+#                                             location => 'location line',
+#                                             authors  => 'author line',
+#                                             medline  => 998122 );
 
 # =head1 DESCRIPTION
 
