@@ -2,31 +2,6 @@ use Bio::AnnotationI;
 class Bio::Annotation::Comment is Bio::AnnotationI {
 # use base qw(Bio::Root::Root);
 
-# =head2 new
-
-#  Title   : new
-#  Usage   : $comment = Bio::Annotation::Comment.new( '-text' => 'some text for this comment');
-#  Function: This returns a new comment object, optionally with
-#            text filed
-#  Example :
-#  Returns : a Bio::Annotation::Comment object
-#  Args    : a hash with -text optionally set
-
-
-# =cut
-
-
-# method new {
-#   my($class,@args) = @_;
-
-#   my $self = $class.SUPER::new(@args);
-#   my ($text,$tag, $type) = $self._rearrange([qw(TEXT TAGNAME TYPE)], @args);
-
-#   defined $text && $self.text($text);
-#   defined $tag && $self.tagname($tag);
-#   defined $type && $self.type($type);
-#   return $self;
-# }
 
 # =head1 AnnotationI implementing functions
 
@@ -67,7 +42,7 @@ method as_text(){
 
 my $DEFAULT_CB = sub ($self)  {$self.text || ''};
 
-method display_text($cb?) {
+method display_text($cb? is copy) {
     $cb ||= $DEFAULT_CB;
     #     $self.throw("Callback must be a code reference") if ref $cb ne 'CODE';
     return $cb.(self);
@@ -86,13 +61,11 @@ method display_text($cb?) {
 
 # =cut
 
-# method hash_tree{
-#     my $self = shift;
-   
-#     my $h = {};
-#     $h.{'text'} = $self.text;
-#     return $h;
-# }
+method hash_tree(){
+     my %h;
+     %h{'text'} = self.text;
+     return %h;
+}
 
 # =head2 tagname
 
@@ -159,8 +132,9 @@ method text($value?){
 
 # =cut
 
-
-# *value = \&text;
+method value($value?){
+    self.text($value);
+}
 
 # =head2 type
 
@@ -176,14 +150,13 @@ method text($value?){
 
 # =cut
 
-# method type {
-#    my ($self,$type) = @_;
-#    if( defined $type) {
-#       $self.{'type'} = $type;
-#     }
-#     return $self.{'type'};
-
-# }
+has $!type is rw;
+method type($type?) {
+    if ( defined $type) {
+        $!type = $type;
+    }
+    return $!type;
+}
 
 }
 

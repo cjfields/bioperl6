@@ -69,6 +69,17 @@ $ac.add_Annotation('dblink',
 my $comment = Bio::Annotation::Comment.new( text => 'sometext');
 is $comment.text, 'sometext';
 is $comment.as_text, 'Comment: sometext';
+is $comment.display_text(), 'sometext';
+is $comment.display_text( sub ($self) { $self.text ~ ' appending test'}), 'sometext appending test';
+is $comment.hash_tree.{'text'},'sometext';
+is $comment.value,'sometext';
+is $comment.value('boo'),'boo';
+is $comment.type('comment type'),'comment type';
+
+my $comment2 = Bio::Annotation::Comment.new( text => 'more text' , tagname => 'celluar');
+is $comment2.tagname,'celluar';
+
+
 $ac.add_Annotation('comment', $comment);
 
 my $target = Bio::Annotation::Target.new(target_id  => 'F321966.1',
