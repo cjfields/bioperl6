@@ -38,12 +38,11 @@ class Bio::Annotation::StructuredValue is Bio::AnnotationI {
 
 # =cut
 
-# method hash_tree{
-#    my ($self) = @_;
-
-#    my $h = {};
-#    $h.{'value'} = $self.value;
-# }
+method hash_tree(){
+   my %h;
+   %h{'value'} = self.value;
+   return %h;
+}
 
 # =head2 tagname
 
@@ -173,11 +172,9 @@ method !to_text(@arr,$joins,$brackets,$rec_n? is copy) {
 
 # =cut
 
-# method get_values{
-#     my $self = shift;
-
-#     return @{$self.{'values'}};
-# }
+method get_values(){
+    return @!values;
+}
 
 # =head2 get_all_values
 

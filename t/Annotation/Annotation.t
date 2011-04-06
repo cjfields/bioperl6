@@ -163,6 +163,7 @@ is($n, 3);
 # annotation of structured simple values (like swissprot''is GN line)
 my $ann = Bio::Annotation::StructuredValue.new();
 ok($ann ~~ Bio::AnnotationI);
+is $ann.hash_tree.{'value'},'';
 
 $ann.add_value([-1], "val1");
 is($ann.value(), "val1");
@@ -175,8 +176,11 @@ is($ann.value(joins => [" AND "]), "val1 AND val2");
 $ann.add_value([-1,-1], "val3", "val4");
 $ann.add_value([-1,-1], "val5", "val6");
 $ann.add_value([-1,-1], "val7");
+
 is($ann.value(joins => [" AND "]), "val1 AND val2 AND (val3 AND val4) AND (val5 AND val6) AND val7");
 is($ann.value(joins => [" AND ", " OR "]), "val1 AND val2 AND (val3 OR val4) AND (val5 OR val6) AND val7");
+is $ann.hash_tree.{'value'},'val1; val2; (val3; val4); (val5; val6); val7';
+ok($ann.get_values() ~~ Array);
 
 $n = 1;
 for ($ann.get_all_values()) {
