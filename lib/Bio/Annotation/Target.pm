@@ -1,6 +1,8 @@
 use Bio::AnnotationI;
-class Bio::Annotation::Target is Bio::AnnotationI {
-# use base qw(Bio::Annotation::DBLink Bio::AnnotationI Bio::Range);
+use Bio::Role::Range;
+
+class Bio::Annotation::Target is Bio::AnnotationI does Bio::Role::Range {
+# use base qw(Bio::Annotation::DBLink);
 
 
 # method new {
@@ -40,21 +42,19 @@ class Bio::Annotation::Target is Bio::AnnotationI {
 
 # =cut
 
-# method as_text{
-#   my ($self) = @_;
+method as_text(){
+  my $target = self.target_id || '';
+  my $start  = self.start     || '';
+  my $end    = self.end       || '';
+  my $strand = self.strand    || '';
 
-#   my $target = $self->target_id || '';
-#   my $start  = $self->start     || '';
-#   my $end    = $self->end       || '';
-#   my $strand = $self->strand    || '';
-
-#    return "Target=".$target." ".$start." ".$end." ".$strand;
-# }
+   return "Target=$target $start $end $strand";
+}
 
 # =head2 display_text
 
 #  Title   : display_text
-#  Usage   : my $str = $ann->display_text();
+#  Usage   : my $str = $ann.display_text();
 #  Function: returns a string. Unlike as_text(), this method returns a string
 #            formatted as would be expected for te specific implementation.
 
@@ -67,22 +67,20 @@ class Bio::Annotation::Target is Bio::AnnotationI {
 
 # =cut
 
-# {
-#   my $DEFAULT_CB = sub { $_[0]->as_text || ''};
 
-#   method display_text {
-#     my ($self, $cb) = @_;
-#     $cb ||= $DEFAULT_CB;
+my $DEFAULT_CB = sub ($self) { $self.as_text || ''};
+
+method display_text($cb? is copy) {
+    $cb ||= $DEFAULT_CB;
 #     $self->throw("Callback must be a code reference") if ref $cb ne 'CODE';
-#     return $cb->($self);
-#   }
+    return $cb.(self);
+}
 
-# }
 
 # =head2 tagname
 
 #  Title   : tagname
-#  Usage   : $obj->tagname($newval)
+#  Usage   : $obj.tagname($newval)
 #  Function: Get/set the tagname for this annotation value.
 
 #            Setting this is optional. If set, it obviates the need to
@@ -116,8 +114,8 @@ method tagname($value?){
 
 # =item Usage
 
-#   $obj->target_id()        #get existing value
-#   $obj->target_id($newval) #set new value
+#   $obj.target_id()        #get existing value
+#   $obj.target_id($newval) #set new value
 
 # =item Function
 
@@ -133,11 +131,13 @@ method tagname($value?){
 
 # =cut
 
-# method target_id {
-#     my $self = shift;
-#     return $self->{'target_id'} = shift if defined($_[0]);
-#     return $self->{'target_id'} || $self->primary_id();
-# }
+has $!target_id is rw;
+method target_id($value?) {
+    return $!target_id = $value if defined $value;
+    return $!target_id;
+    #where does primary_id come from? - takadonet
+#    return $!target_id || self.primary_id();
+}
 
 }
     
@@ -162,22 +162,22 @@ method tagname($value?){
 
 # =head1 SYNOPSIS
 
-#    $target1 = Bio::Annotation::Target->new(-target_id  => 'F321966.1',
-#                                           -start      => 1,
-#                                           -end        => 200,
-#                                           -strand     => 1,   # or -1
+#    $target1 = Bio::Annotation::Target.new(target_id  => 'F321966.1',
+#                                           start      => 1,
+#                                           end        => 200,
+#                                           strand     => 1,   # or -1
 #                                          );
 
 #    # or
 
-#    $target2 = Bio::Annotation::Target->new();
-#    $target2->target_id('Q75IM5');
-#    $target2->start(7);
+#    $target2 = Bio::Annotation::Target.new();
+#    $target2.target_id('Q75IM5');
+#    $target2.start(7);
 #    # ... etc ...
 
 #    # Target is-a Bio::AnnotationI object, can be added to annotation
 #    # collections, e.g. the one on features or seqs
-#    $feat->annotation->add_Annotation('Target', $target2);
+#    $feat.annotation.add_Annotation('Target', $target2);
 
 
 # =head1 DESCRIPTION

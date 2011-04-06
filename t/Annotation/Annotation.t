@@ -98,6 +98,15 @@ my $target = Bio::Annotation::Target.new(target_id  => 'F321966.1',
  					 );
 
 ok($target ~~ Bio::AnnotationI);
+is $target.tagname,Any;
+is $target.start,1;
+is $target.strand,1;
+is $target.end,200;
+is $target.target_id,'F321966.1';
+is $target.as_text(),'Target=F321966.1 1 200 1';
+is $target.display_text(),'Target=F321966.1 1 200 1';
+    
+
 ok $ac.add_Annotation('target', $target);
 
 
