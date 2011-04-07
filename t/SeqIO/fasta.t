@@ -5,14 +5,12 @@ BEGIN {
     @*INC.push('lib');
     @*INC.push('blib');    
 }
-
-
-
 eval_lives_ok 'use Bio::SeqIO', 'Can use Bio::SeqIO';
 eval_lives_ok 'use Bio::Role::FastaIO', 'Can use Bio::Role::FastaIO';
 
 use Bio::SeqIO;
 use Bio::Role::FastaIO;
+
 my $data_path ='t/data';
 my $format = 'fasta';
 my $file = "$data_path/test.fasta";
@@ -20,7 +18,7 @@ my $file = "$data_path/test.fasta";
 my $seqio_obj = Bio::SeqIO.new(file=> $file,format => $format);
 
 #type of Object seem to disappear right now 
-is($seqio_obj ~~ Bio::SeqIO,Bool::True,"Is a Bio::SeqIO object");
+ok($seqio_obj ~~ Bio::SeqIO,"Is a Bio::SeqIO object");
 
 my @methods = ("next_seq" , "write_seq");
 for @methods -> $method {
