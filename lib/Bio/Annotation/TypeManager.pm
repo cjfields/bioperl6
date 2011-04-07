@@ -59,19 +59,13 @@ method type_for_key($key){
 
 # =cut
 
-#method is_valid{
-#    my ($self,$key,$object) = @_;
-
-#    if( !defined $object || !ref $object ) {
-#        $self->throw("Cannot type an object [$object]!");
-#    }
-
-#    if( !$object->isa($self->type_for_key($key)) ) {
-#        return 0;
-#    } else {
-#        return 1;
-#    }
-#}
+method is_valid($key,$object){
+    if ( !$object ~~ self.type_for_key($key) ) {
+        return False;
+    } else {
+        return True;
+   }
+}
 
 
 # =head2 _add_type_map
