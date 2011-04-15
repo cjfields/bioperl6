@@ -92,10 +92,11 @@ is($seq_obj2.description(),'Rea guano ligand', 'description');
 
 #taking multiple fasta file
 my $in = Bio::SeqIO.new(file => "$data_path/multi_1.fa" , format => 'fasta');
+#my $in = Bio::SeqIO.new(file => "../scripts/sequence.fasta" , format => 'fasta');
 is($in ~~ Bio::SeqIO,Bool::True,"Is a Bio::SeqIO object");
 my $c=0;
 while ( my $seq = $in.next_seq() ) {
-    ok($seq);
+    ok($seq,"found $c seq");
     $c++;
 }
 is $c,6, "all sequences in the file";

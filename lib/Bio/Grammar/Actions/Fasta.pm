@@ -3,13 +3,14 @@ use Bio::PrimarySeq;
 
 class Bio::Grammar::Actions::Fasta {
 	method TOP($/){
-		#lazy list implementation
-		#reason 'for' loops are NOT lazy yet!
-		my @matches = gather for @($/<fasta>) -> $m {
-			take $m.ast;
-		};
+		# #lazy list implementation
+		# #reason 'for' loops are NOT lazy yet!
+		# my @matches = gather for @($/<fasta>) -> $m {
+		# 	take $m.ast;
+		# };
 
-		make @matches;		
+		# make @matches;
+            make $/<fasta>.ast;
 	}
 	
 	method fasta($/){

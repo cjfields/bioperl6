@@ -1,4 +1,4 @@
-class Bio::SeqIO;
+class Bio::SeqIO {
 
 has $!format;
 
@@ -17,7 +17,7 @@ method new(Str $format, $file,:$write?){
 			$obj.initial_write();
 		}
 		else {
-			$obj.initial_read();
+                    $obj!set_io(True,separator => '>');
 		}
 	}
 	else {
@@ -29,3 +29,4 @@ method new(Str $format, $file,:$write?){
 }
 
 
+}

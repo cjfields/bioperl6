@@ -1,6 +1,6 @@
 grammar Bio::Grammar::Fasta {
      token TOP  {
-        ^<fasta>+ $
+        ^<fasta>
         
     }
     token fasta {

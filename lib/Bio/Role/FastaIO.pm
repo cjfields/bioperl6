@@ -1,30 +1,20 @@
-
-
 use Bio::Grammar::Fasta;
 use Bio::Grammar::Actions::Fasta;
-role Bio::Role::FastaIO[$file]{
+use Bio::Role::IO;
 
-has @!results;
+role Bio::Role::FastaIO[$file] does Bio::Role::IO[$file]{
+
 has Int $!width=80;
 has $!fh;
 
 method next_seq() {
-  return shift(@!results);
+  my $record= self.next_record();
+  if (defined $record) {
+      return Bio::Grammar::Fasta.parse($record, :actions(Bio::Grammar::Actions::Fasta)).ast;
+  }
+  return Any;
 }
 
-#method will not be private and/or put in new buildmethod
-method initial_read() {    
-	
-	#perhaps a different role.... this should be in a ROOT::IO module and not here
-	if $file.WHAT ~~ IO {
- 		@!results = @(Bio::Grammar::Fasta.parse($file.slurp(), :actions(Bio::Grammar::Actions::Fasta)).ast);	
-	}
-	else {
-		#assuming this is a path to a file
-		@!results = @(Bio::Grammar::Fasta.parsefile($file, :actions(Bio::Grammar::Actions::Fasta)).ast);	
-	}
-
-}
 
 method initial_write() {    
  	#need error checking to ensure that we did indeed open a new file
