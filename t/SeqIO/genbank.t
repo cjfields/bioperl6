@@ -1,12 +1,14 @@
 use v6;
 use Test;
-plan 249;
+#plan 249;
+plan 1;
+
 BEGIN {
     @*INC.push('lib');
     @*INC.push('blib');    
 }
 #probably not final module path
-eval_lives_ok 'use Bio::SeqIO::Genbank', 'Can use Bio::SeqIO::Genbank';
+#eval_lives_ok 'use Bio::SeqIO::Genbank', 'Can use Bio::SeqIO::Genbank';
 eval_lives_ok 'use Bio::SeqIO', 'Can use Bio::SeqIO';
 
 use Bio::SeqIO;
