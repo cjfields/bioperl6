@@ -5,6 +5,7 @@ BEGIN {
 }
 
 use Test;
+plan 15;
 
 # replace throw/warn_not_implemented with built-in yada-yada variants
 
