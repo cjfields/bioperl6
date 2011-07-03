@@ -3,6 +3,6 @@
     "version" : "*",
     "description" : "Collection of Bioinformatics modules and objects",
     "depends" : [],
-    "repo-type" : "git",
+    "source-type" : "git",
     "source-url" : "git://github.com/cjfields/bioperl6.git"
 }
