@@ -4,5 +4,5 @@
     "description" : "Collection of Bioinformatics modules and objects",
     "depends" : [],
     "repo-type" : "git",
-    "repo-url" : "git://github.com/cjfields/bioperl6.git"
+    "source-url" : "git://github.com/cjfields/bioperl6.git"
 }
