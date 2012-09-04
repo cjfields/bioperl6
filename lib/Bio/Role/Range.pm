@@ -1,6 +1,6 @@
-subset RangeTest where .lc eq any <ignore weak strong>;
-
 role Bio::Role::Range {
+
+subset RangeTest of Str where .lc eq any <ignore weak strong>;
 
 has Int $.start               is rw;
 has Int $.end                 is rw;
@@ -12,22 +12,22 @@ our Int method length {
     return self.end - self.start + 1;
 }
 
-our Bool method overlaps (Bio::Role::Range $range, RangeTest :$test = 'ignore') {
+our Bool method overlaps (Bio::Role::Range $range, :$test) {
     (self!teststranded($range, :$test) && !((self.start() > $range.end() || self.end() < $range.start())))
     ?? True !! False;
 }
 
-our Bool method contains (Bio::Role::Range $range, RangeTest :$test = 'ignore') {
+our Bool method contains (Bio::Role::Range $range, :$test = 'ignore') {
     (self!teststranded($range, :$test) && $range.start() >= self.start() && $range.end() <= self.end())
     ?? True !! False;
 }
 
-our Bool method equals (Bio::Role::Range $range, RangeTest :$test = 'ignore')  {
+our Bool method equals (Bio::Role::Range $range, :$test = 'ignore')  {
     (self!teststranded($range, :$test) && self.start() == $range.start() && self.end() == $range.end())
     ?? True !! False;
 }
 
-our Bool method !teststranded (Bio::Role::Range $r, RangeTest :$test = 'ignore') {
+our Bool method !teststranded (Bio::Role::Range $self: Bio::Role::Range $r, :$test = 'ignore') {
     given $test {
         when 'ignore' {
             return True
@@ -54,7 +54,7 @@ our Bool method !teststranded (Bio::Role::Range $r, RangeTest :$test = 'ignore')
 #
 # May be rakudobug, may be the signature (and me), needs checking
 
-our Bio::Role::Range method intersection ( RangeTest :$test = 'ignore', *@ranges) {
+our Bio::Role::Range method intersection ( :$test = 'ignore', *@ranges) {
     my $intersect;
     while @ranges > 0 {
         $intersect //= self;
