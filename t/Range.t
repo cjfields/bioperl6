@@ -8,48 +8,48 @@ use Test;
 
 use Bio::Role::Range;
 
-##=begin Range tests
-##
-##Test out simple ranges.  Locations will expand on these...
-##
-## r0 |--------->
-## r1 |---------|
-## r2 <---------|
-##
-## r3    |-->
-## r4    |--|
-## r5    <--|
-##
-## r6       |-------->
-## r7       |--------|
-## r8       <--------|
-##
-## r9            |-------->
-## r10           |--------|
-## r11           <--------|
-##
-##Logic table for overlaps, contains, equals
-##
-##m = method, o = overlaps()  c = contains()  e = equals
-##st = strand tests,  i = ignore, w = weak, s = strong
-##
-##    r0       |r1       |r2       |r3       |r4       |r5       |r6       |r7       |r8       |r9       |r10      |r11
-##    o  c  e  |o  c  e  |o  c  e  |o  c  e  |o  c  e  |o  c  e  |o  c  e  |o  c  e  |o  c  e  |o  c  e  |o  c  e  |o  c  e
-##    iwsiwsiws|iwsiwsiws|iwsiwsiws|iwsiwsiws|iwsiwsiws|iwsiwsiws|iwsiwsiws|iwsiwsiws|iwsiwsiws|iwsiwsiws|iwsiwsiws|iwsiwsiws
-##r0  111111111|110110110|100100100|111111000|110110000|100100000|111000000|110000000|100000000|000000000|000000000|000000000
-##r1  xxxxxxxxx|110110110|110110110|110110000|110110000|110110000|110000000|110000000|110000000|000000000|000000000|000000000
-##r2  xxxxxxxxx|xxxxxxxxx|111111111|100100000|110110000|111111000|100000000|110000000|111000000|000000000|000000000|000000000
-##r3  xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|111111111|110110110|100100100|111000000|110000000|100000000|000000000|000000000|000000000
-##r4  xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|110110110|110110110|110000000|110000000|110000000|000000000|000000000|000000000
-##r5  xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|111111111|100000000|110000000|111000000|000000000|000000000|000000000
-##r6  xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|111111111|110110110|100100100|111000000|110000000|100000000
-##r7  xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|110110110|110110110|110000000|110000000|110000000
-##r8  xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|111111111|100000000|110000000|111000000
-##r9  xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|111111111|110110110|100100100
-##r10 xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|110110110|110110110
-##r11 xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|111111111
-##
-##=end Range tests
+#=begin Range tests
+#
+#Test out simple ranges.  Locations will expand on these...
+#
+# r0 |--------->
+# r1 |---------|
+# r2 <---------|
+#
+# r3    |-->
+# r4    |--|
+# r5    <--|
+#
+# r6       |-------->
+# r7       |--------|
+# r8       <--------|
+#
+# r9            |-------->
+# r10           |--------|
+# r11           <--------|
+#
+#Logic table for overlaps, contains, equals
+#
+#m = method, o = overlaps()  c = contains()  e = equals
+#st = strand tests,  i = ignore, w = weak, s = strong
+#
+#    r0       |r1       |r2       |r3       |r4       |r5       |r6       |r7       |r8       |r9       |r10      |r11
+#    o  c  e  |o  c  e  |o  c  e  |o  c  e  |o  c  e  |o  c  e  |o  c  e  |o  c  e  |o  c  e  |o  c  e  |o  c  e  |o  c  e
+#    iwsiwsiws|iwsiwsiws|iwsiwsiws|iwsiwsiws|iwsiwsiws|iwsiwsiws|iwsiwsiws|iwsiwsiws|iwsiwsiws|iwsiwsiws|iwsiwsiws|iwsiwsiws
+#r0  111111111|110110110|100100100|111111000|110110000|100100000|111000000|110000000|100000000|000000000|000000000|000000000
+#r1  xxxxxxxxx|110110110|110110110|110110000|110110000|110110000|110000000|110000000|110000000|000000000|000000000|000000000
+#r2  xxxxxxxxx|xxxxxxxxx|111111111|100100000|110110000|111111000|100000000|110000000|111000000|000000000|000000000|000000000
+#r3  xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|111111111|110110110|100100100|111000000|110000000|100000000|000000000|000000000|000000000
+#r4  xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|110110110|110110110|110000000|110000000|110000000|000000000|000000000|000000000
+#r5  xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|111111111|100000000|110000000|111000000|000000000|000000000|000000000
+#r6  xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|111111111|110110110|100100100|111000000|110000000|100000000
+#r7  xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|110110110|110110110|110000000|110000000|110000000
+#r8  xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|111111111|100000000|110000000|111000000
+#r9  xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|111111111|110110110|100100100
+#r10 xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|110110110|110110110
+#r11 xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|xxxxxxxxx|111111111
+#
+#=end Range tests
 
 class MyRange does Bio::Role::Range  {
     our method Str {

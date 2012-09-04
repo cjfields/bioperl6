@@ -27,7 +27,7 @@ our Bool method equals (Bio::Role::Range $range, :$test = 'ignore')  {
         (self.start == $range.start && self.end == $range.end))
 }
 
-our Bool method !teststranded (Bio::Role::Range $self: Bio::Role::Range $r, :$test = 'ignore') {
+our Bool method !teststranded (Bio::Role::Range $self: Bio::Role::Range $r, RangeTest :$test) {
     my ($s1, $s2) = (self.strand, $r.strand);
     given $test {
         when 'ignore' {
@@ -47,15 +47,7 @@ our Bool method !teststranded (Bio::Role::Range $self: Bio::Role::Range $r, :$te
     return False;
 }
 
-# TODO:
-# seeing an error when not using the named parameter version for test in
-# .union() and .intersection:
-#
-# Method '!teststranded' not found for invocant of class 'Str'
-#
-# May be rakudobug, may be the signature (and me), needs checking
-
-our Bio::Role::Range method intersection ( :$test = 'ignore', *@ranges) {
+our Bio::Role::Range method intersection ( *@ranges, :$test = 'ignore') {
     my $intersect;
     while @ranges > 0 {
         $intersect //= self;
@@ -84,7 +76,7 @@ our Bio::Role::Range method intersection ( :$test = 'ignore', *@ranges) {
     return $intersect;
 }
 
-our Bio::Role::Range method union ( RangeTest :$test = 'ignore', *@ranges) {
+our Bio::Role::Range method union (*@ranges, :$test = 'ignore') {
     my $union_strand = self.strand;  # Strand for the union range object.
 
     # beware the hyperoperator!
@@ -102,7 +94,7 @@ our Bio::Role::Range method union ( RangeTest :$test = 'ignore', *@ranges) {
 }
 
 # this should have a return type of Array of Bio::Role::Range, but NYI
-our method subtract (Bio::Role::Range $range, RangeTest :$test = 'ignore') {
+our method subtract (Bio::Role::Range $range, :$test = 'ignore') {
     if !(self!teststranded($range, :$test)) || !self.overlaps($range, :$test) {
         return self
     }
