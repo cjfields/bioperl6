@@ -13,32 +13,33 @@ our Int method length {
 }
 
 our Bool method overlaps (Bio::Role::Range $range, :$test = 'ignore') {
-    (self!teststranded($range, test => $test) && !((self.start() > $range.end() || self.end() < $range.start())))
-    ?? True !! False;
+    (self!teststranded($range, test => $test) &&
+        !((self.start() > $range.end() || self.end() < $range.start())))
 }
 
 our Bool method contains (Bio::Role::Range $range, :$test = 'ignore') {
-    (self!teststranded($range, :$test) && $range.start() >= self.start() && $range.end() <= self.end())
-    ?? True !! False;
+    (self!teststranded($range, :$test) &&
+        $range.start() >= self.start() && $range.end() <= self.end())
 }
 
 our Bool method equals (Bio::Role::Range $range, :$test = 'ignore')  {
-    (self!teststranded($range, :$test) && self.start() == $range.start() && self.end() == $range.end())
-    ?? True !! False;
+    (self!teststranded($range, :test($test)) &&
+        (self.start == $range.start && self.end == $range.end))
 }
 
 our Bool method !teststranded (Bio::Role::Range $self: Bio::Role::Range $r, :$test = 'ignore') {
+    my ($s1, $s2) = (self.strand, $r.strand);
     given $test {
         when 'ignore' {
             return True
         }
         when 'weak' {
-            if self.strand == 0 || $r.strand == 0 || self.strand == $r.strand {
+            if $s1 == 0 || $s2 == 0 || $s1 == $s2 {
                 return True
             }
         }
         when 'strong' {
-            if self.strand != 0 && self.strand == $r.strand {
+            if $s1 != 0 && $s1 == $s2 {
                 return True
             }
         }
