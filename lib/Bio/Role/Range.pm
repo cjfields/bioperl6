@@ -12,8 +12,8 @@ our Int method length {
     return self.end - self.start + 1;
 }
 
-our Bool method overlaps (Bio::Role::Range $range, :$test) {
-    (self!teststranded($range, :$test) && !((self.start() > $range.end() || self.end() < $range.start())))
+our Bool method overlaps (Bio::Role::Range $range, :$test = 'ignore') {
+    (self!teststranded($range, test => $test) && !((self.start() > $range.end() || self.end() < $range.start())))
     ?? True !! False;
 }
 
