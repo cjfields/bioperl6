@@ -5,13 +5,13 @@ has Bool    $.verbose   is rw = False;
 has Int     $.strict    is rw = 0;
 
 # not sure we need this yet
-our method throw (Str $string) {
+method throw (Str $string) {
     my $title = "------------- EXCEPTION -------------";
     my $footer = ('-' x $title.chars) ~ "\n";
     die "\n$title\n" ~ "MSG: $string\n" ~ "$footer\n";
 }
 
-our method warn (Str $string) {
+method warn (Str $string) {
     if self.verbose == 2 {
         return self.throw($string)
     }
@@ -24,7 +24,7 @@ our method warn (Str $string) {
     }
 }
 
-our method debug (Str $string? = '') {
+method debug (Str $string? = '') {
     ??? $string if self.verbose > 0;
 }
 
