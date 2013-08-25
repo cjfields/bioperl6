@@ -52,7 +52,7 @@ use Bio::Role::Range;
 #=end Range tests
 
 class MyRange does Bio::Role::Range  {
-    our method Str {
+    method Str {
         '(' ~ $.start ~ ', ' ~ $.end ~ ')' ~ ' strand=' ~ $.strand;
     }
 };
