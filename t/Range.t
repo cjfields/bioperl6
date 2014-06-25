@@ -103,7 +103,6 @@ r11 => '111111111',
 );
 
 for 0..@ranges.end -> $i {
-    next unless %map.exists("r$i");
     my @tests = %map{"r$i"}.comb(/\d/);
     for $i..@ranges.end -> $j {
         my $r1 = @ranges[$i];
