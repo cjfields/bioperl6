@@ -13,10 +13,10 @@ use Bio::PrimarySeq;
 #use Bio::Role::Location::Fuzzy;
 #
 my $seq = Bio::PrimarySeq.new(
-    seq              => 'TTGGTGGCGTCAACT',
-    display_id       => 'new-id',
-    alphabet         => 'dna',
-    accession_number => 'X677667',
+    seq                     => 'TTGGTGGCGTCAACT',
+    display_id              => 'new-id',
+    alphabet                => 'dna',
+    accession_number        => 'X677667',
     description             => 'Sample Bio::Seq object'
 );
 
@@ -26,11 +26,11 @@ ok($seq ~~ Bio::PrimarySeq, 'Bio::PrimarySeq object');
 is($seq.accession_number(), 'X677667','Retrieving accession number');
 
 is($seq.seq(),'TTGGTGGCGTCAACT','Retrieving sequence');
-#is($seq.display_id(),'new-id','Retrieving display_id');
-is($seq.alphabet(),'dna','Retrieving alphabet');
-is($seq.is_circular(),Any,'Determining if circular');
-is(($seq.is_circular=True),True,'Setting circular to True');
-is(($seq.is_circular=False), False,'Setting circular to False');
+is($seq.display_id,'new-id','Retrieving display_id');
+is($seq.alphabet,'dna','Retrieving alphabet');
+is($seq.is_circular, False,'Determining if circular');
+$seq.is_circular=True;
+is($seq.is_circular, True,'Setting circular to True');
 
 # check IdentifiableI and DescribableI interfaces
 ok($seq ~~ Bio::Role::Identify,'Has a Bio::Role::Identify');
@@ -49,13 +49,24 @@ is($seq.namespace_string(), "t:X677667.47",'Retrieving namespace_string');
 is($seq.description(), 'Sample Bio::Seq object','Has correct description');
 is($seq.display_name(), "new-id",'Has correct display_name');
 
+# length
+is($seq.length, 15, 'seq length');
+
+# revcom
+is( $seq.revcom.seq, 'AGTTGACGCCACCAA', 'revcom (simple)');
+
+# subseq
+is( $seq.subseq(start => 2, end => 5, strand => 1), 'TGGT', 'subseq normal');
+is( $seq.subseq(start => 2, end => 5, strand => -1), 'ACCA', 'subseq, revcom' );
+
 #my $location = Bio::Role::Location::Simple.new(
 #    start  => 2,
 #    end    => 5,
 #    strand => -1
 #);
+
 #is( $seq.subseq($location), 'ACCA' );
-#
+
 #my $splitlocation = Bio::Role::Location::Split.new();
 #$splitlocation.add_sub_Location(
 #    Bio::Role::Location::Simple.new(
@@ -111,23 +122,23 @@ is($seq.display_name(), "new-id",'Has correct display_name');
 ##         "t:X677667.47", 'namespace_string copied through revcom' );
 ##     is( $rev->is_circular(), 0,     'is_circular copied through revcom' );
 ## }
+
 #
-##
-## Translate
-##
+# Translate
 #
-#my $aa = $seq.translate();    # TTG GTG GCG TCA ACT
-#is($aa.seq, 'LVAST', "Translation: " ~ $aa.seq);
-#
-##believe we are not going to support the old non named parameter format
-## tests for non-standard initiator codon coding for
-## M by making translate() look for an initiator codon and
-## terminator codon ("complete", the 5th argument below)
-##$seq.seq ='TTGGTGGCGTCAACTTAA';    # TTG GTG GCG TCA ACT TAA
-##$aa = $seq.translate( Any, Any, Any, Any, 1 );
-##is($aa.seq, 'MVAST', "Translation: " ~ $aa.seq);
-#
-## same test as previous, but using named parameter
+
+my $aa = $seq.translate();    # TTG GTG GCG TCA ACT
+is($aa.seq, 'LVAST', "Translation: " ~ $aa.seq);
+
+#believe we are not going to support the old non named parameter format
+# tests for non-standard initiator codon coding for
+# M by making translate() look for an initiator codon and
+# terminator codon ("complete", the 5th argument below)
+#$seq.seq ='TTGGTGGCGTCAACTTAA';    # TTG GTG GCG TCA ACT TAA
+#$aa = $seq.translate( Any, Any, Any, Any, 1 );
+#is($aa.seq, 'MVAST', "Translation: " ~ $aa.seq);
+
+# same test as previous, but using named parameter
 #$aa = $seq.translate( complete => 1 );
 #is($aa.seq, 'MVAST', "Translation: " ~ $aa.seq);
 #
@@ -147,7 +158,7 @@ is($seq.display_name(), "new-id",'Has correct display_name');
 #    complete => 1
 #);
 #is($aa.seq, 'M', "Translation: " ~ $aa.seq);
-#
+
 ## ORF without termination codon
 ## should warn, let's change it into throw for testing
 ## $seq.verbose(2);
