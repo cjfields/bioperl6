@@ -1,3 +1,5 @@
+use v6;
+
 role Bio::Role::Identify;
 
 # these are the primary data available that are similar to the BioPerl
@@ -11,12 +13,13 @@ has Str $.authority                 is rw;
 has Str $.namespace                 is rw;
 has Str $.accession_number          is rw;
 
-method display_id($id?) {
-    return self.id($id);
+method display_id ($id?) {
+    self.id = $id if $id;
+    self.id
 }
 
 method lsid_string returns Str {
-  return join(':', self.authority.Str, self.namespace.Str, self.id.Str);
+  return join(':', ~self.authority, ~self.namespace, ~self.id || '');
 }
 
 method namespace_string returns Str {
