@@ -1,8 +1,9 @@
+use v6;
+
 class Bio::Tools::CodonTable {
 our %codons;
 our %trcol;
 our %iub;
-
 
 #BEGIN { 
 #    #%IUPAC_DNA = Bio::Tools::IUPAC->iupac_iub();    
@@ -12,7 +13,6 @@ our %iub;
 #}
 
 INIT {
-
     my @nucs = <t c a g>;
     my $x = 0;
     our %codons;
@@ -165,7 +165,7 @@ multi method translate($seq is copy) {
             if $triplet eq $.CODONGAP {
                 $protein ~= $.gap;
             }
-            if  %codons.exists($triplet) {
+            if  %codons{$triplet}:exists {
                 $protein ~= substr(@!TABLES[$id-1], %codons{$triplet}, 1);
             } else {
                 $protein ~= 'X';
