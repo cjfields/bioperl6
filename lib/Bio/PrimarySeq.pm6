@@ -7,8 +7,8 @@ class Bio::PrimarySeq
     does Bio::Role::Describe
     does Bio::Role::Identify {
 
-    has Str $.seq is rw;
-    has Str $.alphabet is rw;
+    has Str $.seq;
+    has Str $.alphabet;
     has Bool $.is_circular is rw;
 
     method new(*%args) {
