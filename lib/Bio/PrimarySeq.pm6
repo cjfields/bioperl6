@@ -7,7 +7,7 @@ use Bio::Tools::Codontable;
 class Bio::PrimarySeq does Bio::Role::Describe does Bio::Role::Identify;
 
 # needs some type-checking, just simple for now
-has Str $.seq;
+has Str $.seq          is rw;
 
 # limit to 'dna', 'rna', 'protein'
 has Str $.alphabet;

@@ -130,7 +130,7 @@ is( $seq.subseq(start => 2, end => 5, strand => -1), 'ACCA', 'subseq, revcom' );
 my $aa = $seq.translate();    # TTG GTG GCG TCA ACT
 is($aa.seq, 'LVAST', "Translation: " ~ $aa.seq);
 
-#believe we are not going to support the old non named parameter format
+# believe we are not going to support the old non named parameter format
 # tests for non-standard initiator codon coding for
 # M by making translate() look for an initiator codon and
 # terminator codon ("complete", the 5th argument below)
@@ -141,66 +141,66 @@ is($aa.seq, 'LVAST', "Translation: " ~ $aa.seq);
 # same test as previous, but using named parameter
 #$aa = $seq.translate( complete => 1 );
 #is($aa.seq, 'MVAST', "Translation: " ~ $aa.seq);
-#
-## find ORF, ignore codons outside the ORF or CDS
-#$seq.seq ='TTTTATGGTGGCGTCAACTTAATTT';    # ATG GTG GCG TCA ACT
-#$aa = $seq.translate( orf => 1 );
-#is($aa.seq, 'MVAST*', "Translation: " ~ $aa.seq);
-#
+
+# find ORF, ignore codons outside the ORF or CDS
+$seq.seq = 'TTTTATGGTGGCGTCAACTTAATTT';    # ATG GTG GCG TCA ACT
+$aa = $seq.translate( orf => 1 );
+is($aa.seq, 'MVAST*', "Translation: " ~ $aa.seq);
+
 ## smallest possible ORF
-#$seq.seq ="ggggggatgtagcccc";             # atg tga
-#$aa = $seq.translate( orf => 1 );
-#is($aa.seq, 'M*', "Translation: " ~ $aa.seq);
-#
-## same as previous but complete, so * is removed
+$seq.seq ="ggggggatgtagcccc";             # atg tga
+$aa = $seq.translate( orf => 1 );
+is($aa.seq, 'M*', "Translation: " ~ $aa.seq);
+
+# same as previous but complete, so * is removed
 #$aa = $seq.translate(
 #    orf      => 1,
 #    complete => 1
 #);
 #is($aa.seq, 'M', "Translation: " ~ $aa.seq);
 
-## ORF without termination codon
-## should warn, let's change it into throw for testing
-## $seq.verbose(2);
-## $seq.seq("ggggggatgtggcccc");    # atg tgg ccc
-## eval { $seq.translate( orf => 1 ); };
-## if ($@) {
-##     like( $@, qr/atgtggcccc\n/ );
-##     $seq.verbose(-1);
-##     $aa = $seq.translate( orf => 1 );
-##     is($aa.seq, 'MWP', "Translation: " ~ $aa.seq;
-## }
-## $seq.verbose(0);
-#
-## use non-standard codon table where terminator is read as Q
-#$seq.seq = 'ATGGTGGCGTCAACTTAG';    # ATG GTG GCG TCA ACT TAG
-#$aa = $seq.translate( codontable_id => 6 );
-#is($aa.seq, 'MVASTQ' , "Translation: " ~ $aa.seq );
-#
-## insert an odd character instead of terminating with *
-#$aa = $seq.translate( terminator => 'X' );
-#is($aa.seq, 'MVASTX' , "Translation: " ~ $aa.seq );
-#
-## change frame from default
+# ORF without termination codon
+# should warn, let's change it into throw for testing
+# $seq.verbose(2);
+# $seq.seq("ggggggatgtggcccc");    # atg tgg ccc
+# eval { $seq.translate( orf => 1 ); };
+# if ($@) {
+#     like( $@, qr/atgtggcccc\n/ );
+#     $seq.verbose(-1);
+#     $aa = $seq.translate( orf => 1 );
+#     is($aa.seq, 'MWP', "Translation: " ~ $aa.seq;
+# }
+# $seq.verbose(0);
+
+# use non-standard codon table where terminator is read as Q
+$seq.seq = 'ATGGTGGCGTCAACTTAG';    # ATG GTG GCG TCA ACT TAG
+$aa = $seq.translate( codontable_id => 6 );
+is($aa.seq, 'MVASTQ' , "Translation: " ~ $aa.seq );
+
+# insert an odd character instead of terminating with *
+$aa = $seq.translate( terminator => 'X' );
+is($aa.seq, 'MVASTX' , "Translation: " ~ $aa.seq );
+
+# change frame from default
 #$aa = $seq.translate( frame => 1 );    # TGG TGG CGT CAA CTT AG
 #is($aa.seq, 'WWRQL' , "Translation: " ~ $aa.seq );
 #
 #$aa = $seq.translate( frame => 2 );    # GGT GGC GTC AAC TTA G
 #is($aa.seq, 'GGVNL' , "Translation: " ~ $aa.seq );
-#
-## TTG is initiator in Standard codon table? Afraid so.
-#$seq.seq ="ggggggttgtagcccc";           # ttg tag
-#$aa = $seq.translate( orf => 1 );
-#is($aa.seq, 'L*' , "Translation: " ~ $aa.seq );
-#
-## Replace L at 1st position with M by setting complete to 1
+
+# TTG is initiator in Standard codon table? Afraid so.
+$seq.seq ="ggggggttgtagcccc";           # ttg tag
+$aa = $seq.translate( orf => 1 );
+is($aa.seq, 'L*' , "Translation: " ~ $aa.seq );
+
+# Replace L at 1st position with M by setting complete to 1
 #$seq.seq = "ggggggttgtagcccc";           # ttg tag
 #$aa = $seq.translate(
 #    orf      => 1,
 #    complete => 1
 #);
 #is($aa.seq, 'M' , "Translation: " ~ $aa.seq );
-#
+
 ## Ignore non-ATG initiators (e.g. TTG) in codon table
 #$seq.seq ="ggggggttgatgtagcccc";        # atg tag
 #$aa = $seq.translate(
@@ -209,32 +209,33 @@ is($aa.seq, 'LVAST', "Translation: " ~ $aa.seq);
 #    complete => 1
 #);
 #is($aa.seq, 'M' , "Translation: " ~ $aa.seq );
-#
-## test for character '?' in the sequence string
-##is($seq.seq('TTGGTGGCG?CAACT'), 'TTGGTGGCG?CAACT');
-#
-## test for some aliases
-#$seq = Bio::PrimarySeq.new(
-#    id          => 'aliasid',
-#    description => 'Alias desc'
-#);
-#is( $seq.description, 'Alias desc' );
-#is( $seq.desc('new desc'), 'new desc' );
-#is( $seq.display_id,  'aliasid' );
-#
+$seq.seq = 'TTGGTGGCG?CAACT';
+# test for character '?' in the sequence string
+is($seq.seq, 'TTGGTGGCG?CAACT');
+
+# test for some aliases
+$seq = Bio::PrimarySeq.new(
+    id          => 'aliasid' ,
+    description => 'Alias desc'
+);
+is( $seq.description, 'Alias desc' );
+is( $seq.desc('new desc'), 'new desc' );
+is( $seq.display_id,  'aliasid' );
+
 ## test that x's are ignored and n's are assumed to be 'dna' no longer true!
 ## See Bug 2438. There are protein sequences floating about which are all 'X'
 ## (unknown aa)
-#
-#$seq.seq('atgxxxxxx');
+
+#$seq.seq = 'atgxxxxxx';
 #is( $seq.alphabet, 'protein' );
-#$seq.seq('atgnnnnnn');
+#$seq.seq = 'atgnnnnnn';
 #is( $seq.alphabet, 'dna' );
-#
+
 ## Bug #2864:
-#
-#$seq = Bio::PrimarySeq.new( display_id => 0, seq => 'GATC' );
-#
-#is($seq.display_id, 0, "Bug #2864");
+
+# Note this is now type-checked as a string, so we need to stringify Ints
+$seq = Bio::PrimarySeq.new( display_id => ~ 0, seq => 'GATC' );
+
+is($seq.display_id, 0, "Bug #2864");
 
 done();

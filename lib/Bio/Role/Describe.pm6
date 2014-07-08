@@ -8,6 +8,7 @@ has Str $.description               is rw;
 #best way would to have aliased working again - takadonet
 #has Str $.description               is rw is aliased<desc>;
 
-method desc($desc?) {
-    return self.description($desc);
+method desc ($desc?) {
+    self.description = $desc if $desc;
+    return self.description;
 }

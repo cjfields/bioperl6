@@ -18,10 +18,14 @@ method display_id ($id?) {
     self.id
 }
 
+# these latter two methods may be obsoleted
 method lsid_string returns Str {
-  return join(':', ~self.authority, ~self.namespace, ~self.id || '');
+  return join(':',  ~self.authority,
+                    ~self.namespace,
+                    ~self.accession_number || ~self.id || '');
 }
 
 method namespace_string returns Str {
-  return join(':', ~self.namespace, ~self.id, ~(defined(self.version()) ?? "." ~ self.version !! ''));
+  return join(':', ~self.namespace,
+              (~self.accession_number || ~self.id || '') ~ (~(defined(self.version()) ?? "." ~ self.version !! '')));
 }
