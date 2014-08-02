@@ -207,17 +207,18 @@ $aa = $seq.translate(
 is($aa.seq, 'M' , "Translation: " ~ $aa.seq );
 
 # Ignore non-ATG initiators (e.g. TTG) in codon table
-#$seq.seq ="ggggggttgatgtagcccc";        # atg tag
-#$aa = $seq.translate(
-#    orf      => 1,
-#    start    => "atg",
-#    complete => True
-#);
-#is($aa.seq, 'M' , "Translation: " ~ $aa.seq );
-#$seq.seq = 'TTGGTGGCG?CAACT';
-## test for character '?' in the sequence string
-#is($seq.seq, 'TTGGTGGCG?CAACT');
-#
+$seq.seq ="ggggggttgatgtagcccc";        # atg tag
+$aa = $seq.translate(
+    orf      => 1,
+    start    => "atg",
+    complete => True
+);
+is($aa.seq, 'M' , "Translation: " ~ $aa.seq );
+$seq.seq = 'TTGGTGGCG?CAACT';
+
+# test for character '?' in the sequence string
+is($seq.seq, 'TTGGTGGCG?CAACT');
+
 # test for some aliases
 $seq = Bio::PrimarySeq.new(
     id          => 'aliasid' ,
@@ -227,14 +228,14 @@ is( $seq.description, 'Alias desc' );
 is( $seq.desc('new desc'), 'new desc' );
 is( $seq.display_id,  'aliasid' );
 
-## test that x's are ignored and n's are assumed to be 'dna' no longer true!
-## See Bug 2438. There are protein sequences floating about which are all 'X'
-## (unknown aa)
+# test that x's are ignored and n's are assumed to be 'dna' no longer true!
+# See Bug 2438. There are protein sequences floating about which are all 'X'
+# (unknown aa)
 
-#$seq.seq = 'atgxxxxxx';
-#is( $seq.alphabet, 'protein' );
-#$seq.seq = 'atgnnnnnn';
-#is( $seq.alphabet, 'dna' );
+$seq.seq = 'atgxxxxxx';
+is( $seq.alphabet, 'protein' );
+$seq.seq = 'atgnnnnnn';
+is( $seq.alphabet, 'dna' );
 
 ## Bug #2864:
 

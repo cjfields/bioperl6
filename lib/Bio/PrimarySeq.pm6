@@ -421,37 +421,38 @@ method translate(:$terminator = '*',
     ## Translate it
     my $output = $codonTable.translate($seq);
     
+    
+    # TODO: this is redundant and should be done in the CodonTable step
     # Use user-input terminator/unknown
     $output ~~ s:g/\*/$terminator/;
     $output ~~ s:g/X/$unknown/;
     
     # :g comment
-        
     ## Only if we are expecting to translate a complete coding region
     if ($complete) {
-                 my $id = self.display_id;
-                 # remove the terminator character
-                 if ( substr($output,-1,1) eq $terminator ) {
-                     $output =$output.chop;
-                 } else {
-    #     		 $throw && $self->throw("Seq [$id]: Not using a valid terminator codon!");
-    #     		 $self->warn("Seq [$id]: Not using a valid terminator codon!");
-                 }
-                 # test if there are terminator characters inside the protein sequence!
-                 if ($output ~~ /\*/) {
-    #     		 $throw && $self->throw("Seq [$id]: Terminator codon inside CDS!");
-    #     		 $self->warn("Seq [$id]: Terminator codon inside CDS!");
-                 }
-                 # if the initiator codon is not ATG, the amino acid needs to be changed to M
-                 if ( substr($output,0,1) ne 'M' ) {
-                         if ($codonTable.is_start_codon(substr($seq, 0, 3)) ) {
-                                 $output = 'M' ~ substr($output,1);
-                         }	elsif ($throw) {
-    #     			 $self->throw("Seq [$id]: Not using a valid initiator codon!");
-                         } else {
-    #     			 $self->warn("Seq [$id]: Not using a valid initiator codon!");
-                         }
-                 }
+        my $id = self.display_id;
+        # remove the terminator character
+        if ( substr($output, *-1, 1) eq $terminator ) {
+            $output =$output.chop;
+        } else {
+#     		 $throw && $self->throw("Seq [$id]: Not using a valid terminator codon!");
+#     		 $self->warn("Seq [$id]: Not using a valid terminator codon!");
+        }
+        # test if there are terminator characters inside the protein sequence!
+        if ($output ~~ /\*/) {
+#     		 $throw && $self->throw("Seq [$id]: Terminator codon inside CDS!");
+#     		 $self->warn("Seq [$id]: Terminator codon inside CDS!");
+        }
+        # if the initiator codon is not ATG, the amino acid needs to be changed to M
+        if ( substr($output,0,1) ne 'M' ) {
+                if ($codonTable.is_start_codon(substr($seq, 0, 3)) ) {
+                        $output = 'M' ~ substr($output,1);
+                }	elsif ($throw) {
+#     			 $self->throw("Seq [$id]: Not using a valid initiator codon!");
+                } else {
+#     			 $self->warn("Seq [$id]: Not using a valid initiator codon!");
+                }
+        }
     }
 
     my $seqclass;
@@ -486,7 +487,9 @@ method translate(:$terminator = '*',
 
 =end find_orf
 
-method !find_orf($sequence is copy,$codonTable,$start_codon) {
+method !find_orf($sequence is copy,
+                $codonTable,
+                $start_codon) {
     # find initiation codon and remove leading sequence
     while ($sequence) {
         my $codon = substr($sequence,0,3);
@@ -496,9 +499,9 @@ method !find_orf($sequence is copy,$codonTable,$start_codon) {
         else {
             last if ($codonTable.is_start_codon($codon));
         }
-                $sequence = substr($sequence,1);
+        $sequence = substr($sequence,1);
     }
-                
+
     return unless $sequence;
 
     # find termination codon and remove trailing sequence
@@ -507,8 +510,8 @@ method !find_orf($sequence is copy,$codonTable,$start_codon) {
         while ($offset < $len) {
                 my $codon = substr($sequence,$offset,3);
                 if ( $codonTable.is_ter_codon($codon) ) {
-                        $sequence = substr($sequence, 0, $offset + 3);
-                        return $sequence;
+                    $sequence = substr($sequence, 0, $offset + 3);
+                    return $sequence;
                 }
                 $offset += 3;
         }
