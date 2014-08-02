@@ -10,7 +10,7 @@ class Bio::PrimarySeq does Bio::Role::Describe does Bio::Role::Identify;
 has Str $.seq          is rw;
 
 # limit to 'dna', 'rna', 'protein'
-has Str $.alphabet;
+has Str $.alphabet     is rw;
 has Bool $.is_circular is rw = False;
 
 # this is mainly to deal with display_id being an alias for 'id', and 'desc' being shorthand for 'description'
@@ -31,43 +31,45 @@ method new(*%args) {
     return self.bless(|%args);
 }
 
-#method !guess_alphabet() {
-#   my $type;
-#
-#   my $str = $!seq;
-#   
-#   # Remove char's that clearly denote ambiguity
-#   $str ~~ s:g/<[\-\.\?]>//;
-#   #::g emacs syntax
-#
-#   my $total = $str.chars;
-#   if ( $total == 0 ) {
-#   #   if (!$self->{'_nowarnonempty'}) {
-#   #     $self->warn("Got a sequence with no letters in it ".
-#   #         "cannot guess alphabet");
-#   #   }
-#       return '';
-#   }
-#
-#   #counting the # of character were found in the string . Need a better way - takadonet
-#   my $u = $str.chars - $str.trans('U' => '','u' => '').chars;
-#   # The assumption here is that most of sequences comprised of mainly
-#   # ATGC, with some N, will be 'dna' despite the fact that N could
-#   # also be Asparagine
-#   my $atgc = $str.chars - $str.trans('A' => '' ,'T' => '','G'=> '','C'=> '','N'=> '','a'=> '',
-#                         't'=> '','g'=> '','c'=> '','n' => '' ).chars;
-#   
-#   if ( ($atgc / $total) > 0.85 ) {
-#       $type = 'dna';
-#   } elsif ( (($atgc + $u) / $total) > 0.85 ) {
-#       $type = 'rna';
-#   } else {
-#       $type = 'protein';
-#   }
-#
-#   $.alphabet =$type;
-#   return $type;
-#}
+# TODO: lazily set the alphabet; left here until we decide on proper semantics, but
+# the default 'always guess' is not really great for performance
+method set_alphabet() {
+   my $type;
+
+   my $str = $.seq;
+   
+   # Remove char's that clearly denote ambiguity
+   $str ~~ s:g/<[\-\.\?]>//;
+   #::g emacs syntax
+
+   my $total = $str.chars;
+   if ( $total == 0 ) {
+   #   if (!$self->{'_nowarnonempty'}) {
+   #     $self->warn("Got a sequence with no letters in it ".
+   #         "cannot guess alphabet");
+   #   }
+       return '';
+   }
+
+   #counting the # of character were found in the string . Need a better way - takadonet
+   my $u = $str.chars - $str.trans('U' => '','u' => '').chars;
+   # The assumption here is that most of sequences comprised of mainly
+   # ATGC, with some N, will be 'dna' despite the fact that N could
+   # also be Asparagine
+   my $atgc = $str.chars - $str.trans('A' => '' ,'T' => '','G'=> '','C'=> '','N'=> '','a'=> '',
+                         't'=> '','g'=> '','c'=> '','n' => '' ).chars;
+   
+   if ( ($atgc / $total) > 0.85 ) {
+       $type = 'dna';
+   } elsif ( (($atgc + $u) / $total) > 0.85 ) {
+       $type = 'rna';
+   } else {
+       $type = 'protein';
+   }
+
+   $.alphabet = $type;
+   return $type;
+}
 
 #method seq(Str $value?,Str $alphabet?) {
 #    return $!seq if ! defined $value;

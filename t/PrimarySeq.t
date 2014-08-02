@@ -154,25 +154,27 @@ $aa = $seq.translate( orf => 1 );
 is($aa.seq, 'M*', "Translation: " ~ $aa.seq);
 
 # same as previous but complete, so * is removed
-#$aa = $seq.translate(
-#    orf      => 1,
-#    complete => 1
-#);
-#is($aa.seq, 'M', "Translation: " ~ $aa.seq);
+$aa = $seq.translate(
+    orf      => 1,
+    complete => True
+);
+is($aa.seq, 'M', "Translation: " ~ $aa.seq);
 
 # ORF without termination codon
 # should warn, let's change it into throw for testing
-# $seq.verbose(2);
-# $seq.seq("ggggggatgtggcccc");    # atg tgg ccc
-# eval { $seq.translate( orf => 1 ); };
-# if ($@) {
-#     like( $@, qr/atgtggcccc\n/ );
-#     $seq.verbose(-1);
-#     $aa = $seq.translate( orf => 1 );
-#     is($aa.seq, 'MWP', "Translation: " ~ $aa.seq;
-# }
-# $seq.verbose(0);
 
+# TODO: check exceptions here
+#$seq.verbose(2);
+#$seq.seq("ggggggatgtggcccc");    # atg tgg ccc
+#eval { $seq.translate( orf => 1 ); };
+#
+#if $@ {
+#    like( $@, qr/atgtggcccc\n/ );
+#    $seq.verbose(-1);
+#    $aa = $seq.translate( orf => 1 );
+#    is($aa.seq, 'MWP', "Translation: " ~ $aa.seq;
+#}
+#$seq.verbose(0);
 
 # use non-standard codon table where terminator is read as Q
 $seq.seq = 'ATGGTGGCGTCAACTTAG';    # ATG GTG GCG TCA ACT TAG
@@ -233,8 +235,11 @@ is( $seq.display_id,  'aliasid' );
 # (unknown aa)
 
 $seq.seq = 'atgxxxxxx';
+$seq.set_alphabet;
 is( $seq.alphabet, 'protein' );
+
 $seq.seq = 'atgnnnnnn';
+$seq.set_alphabet;
 is( $seq.alphabet, 'dna' );
 
 ## Bug #2864:
