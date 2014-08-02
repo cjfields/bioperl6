@@ -187,37 +187,37 @@ $aa = $seq.translate( terminator => 'X' );
 is($aa.seq, 'MVASTX' , "Translation: " ~ $aa.seq );
 
 # change frame from default
-#$aa = $seq.translate( frame => 1 );    # TGG TGG CGT CAA CTT AG
-#is($aa.seq, 'WWRQL' , "Translation: " ~ $aa.seq );
+$aa = $seq.translate( frame => 1 );    # TGG TGG CGT CAA CTT AG
+is($aa.seq, 'WWRQL' , "Translation: " ~ $aa.seq );
 
-#$aa = $seq.translate( frame => 2 );    # GGT GGC GTC AAC TTA G
-#is($aa.seq, 'GGVNL' , "Translation: " ~ $aa.seq );
+$aa = $seq.translate( frame => 2 );    # GGT GGC GTC AAC TTA G
+is($aa.seq, 'GGVNL' , "Translation: " ~ $aa.seq );
 
 # TTG is initiator in Standard codon table? Afraid so.
-#$seq.seq ="ggggggttgtagcccc";           # ttg tag
-#$aa = $seq.translate( orf => 1 );
-#is($aa.seq, 'L*' , "Translation: " ~ $aa.seq );
+$seq.seq ="ggggggttgtagcccc";           # ttg tag
+$aa = $seq.translate( orf => 1 );
+is($aa.seq, 'L*' , "Translation: " ~ $aa.seq );
 
 # Replace L at 1st position with M by setting complete to 1
-#$seq.seq = "ggggggttgtagcccc";           # ttg tag
-#$aa = $seq.translate(
-#    orf      => 1,
-#    complete => 1
-#);
-#is($aa.seq, 'M' , "Translation: " ~ $aa.seq );
+$seq.seq = "ggggggttgtagcccc";           # ttg tag
+$aa = $seq.translate(
+    orf      => 1,
+    complete => True
+);
+is($aa.seq, 'M' , "Translation: " ~ $aa.seq );
 
-## Ignore non-ATG initiators (e.g. TTG) in codon table
+# Ignore non-ATG initiators (e.g. TTG) in codon table
 #$seq.seq ="ggggggttgatgtagcccc";        # atg tag
 #$aa = $seq.translate(
 #    orf      => 1,
 #    start    => "atg",
-#    complete => 1
+#    complete => True
 #);
 #is($aa.seq, 'M' , "Translation: " ~ $aa.seq );
-$seq.seq = 'TTGGTGGCG?CAACT';
-# test for character '?' in the sequence string
-is($seq.seq, 'TTGGTGGCG?CAACT');
-
+#$seq.seq = 'TTGGTGGCG?CAACT';
+## test for character '?' in the sequence string
+#is($seq.seq, 'TTGGTGGCG?CAACT');
+#
 # test for some aliases
 $seq = Bio::PrimarySeq.new(
     id          => 'aliasid' ,

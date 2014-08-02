@@ -362,13 +362,19 @@ method revcom() {
 
 method translate(:$terminator = '*',
                  :$unknown = 'X',
-                 :$frame = 0,
+                 Int :$frame = 0,
                  Bool :$complete = False,
                  :$throw? is copy,
                  Bio::Tools::CodonTable :$codonTable = Bio::Tools::CodonTable.new( id => 1 ),
                  :$orf? is copy,
                  :start($start_codon)? is copy,
-                 :$offset? is copy) {
+                 #:$offset? is copy
+                 ) {
+
+    # TODO:
+    # A CodonTable is arguably an object attribute, not an argument; same could
+    # be said for terminator and unknown strings (in fact, those probably belong
+    # in CodonTable and not here)
 
     ## Get a CodonTable, error if custom CodonTable is invalid
     #if ($codonTable) {
@@ -388,16 +394,17 @@ method translate(:$terminator = '*',
     #     		( $start_codon !~ /^[A-Z]{3}$/i );
     #     }
          
-    my $seq;
-    
-    if ($offset) {
-#     	$self->throw("Offset must be 1, 2, or 3.") if
-#     	    ( $offset !~ /^[123]$/ );
-           my ($start, $end) = ($offset, self.length);
-           ($seq) = self.subseq($start, $end);
-    } else {
-        ($seq) = self.seq();
-    }
+    #my $seq;
+#    
+#    if ($offset) {
+##     	$self->throw("Offset must be 1, 2, or 3.") if
+##     	    ( $offset !~ /^[123]$/ );
+#           my ($start, $end) = ($offset, self.length);
+#           ($seq) = self.subseq($start, $end);
+#    } else {
+        
+    my $seq = self.seq();
+    #}
 
     # ignore frame if an ORF is supposed to be found
     if ($orf) {
@@ -406,15 +413,18 @@ method translate(:$terminator = '*',
         ## use frame, error if frame is not 0, 1 or 2
         #     	 $self->throw("Valid values for frame are 0, 1, or 2, not $frame.")
         #     		unless ($frame == 0 or $frame == 1 or $frame == 2);
-        $seq = substr($seq,$frame);
+        
+        $seq = substr($seq, $frame);
     }
     
 
     ## Translate it
     my $output = $codonTable.translate($seq);
+    
     # Use user-input terminator/unknown
     $output ~~ s:g/\*/$terminator/;
     $output ~~ s:g/X/$unknown/;
+    
     # :g comment
         
     ## Only if we are expecting to translate a complete coding region
