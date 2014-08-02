@@ -49,11 +49,28 @@ is($seq.namespace_string(), "t:X677667.47",'Retrieving namespace_string');
 is($seq.description(), 'Sample Bio::Seq object','Has correct description');
 is($seq.display_name(), "new-id",'Has correct display_name');
 
-# length
+#
+# length (gapless)
+#
+
 is($seq.length, 15, 'seq length');
 
+#
 # revcom
-is( $seq.revcom.seq, 'AGTTGACGCCACCAA', 'revcom (simple)');
+#
+
+my $rev = $seq.revcom();
+ok($rev ~~ Bio::PrimarySeq, 'Bio::PrimarySeq object');
+
+is($rev.seq(), 'AGTTGACGCCACCAA', 'revcom() failed, was ' ~ $rev.seq());
+
+is($rev.display_id, 'new-id');
+is( $rev.alphabet(),    'dna', 'alphabet copied through revcom' );
+
+is( $rev.namespace, 't', 'namespace copied through revcom' );
+is( $rev.namespace_string(),
+    "t:X677667.47", 'namespace_string copied through revcom' );
+is( $rev.is_circular, True,     'is_circular copied through revcom' );
 
 # subseq
 is( $seq.subseq(start => 2, end => 5, strand => 1), 'TGGT', 'subseq normal');
@@ -105,23 +122,7 @@ is( $seq.subseq(start => 2, end => 5, strand => -1), 'ACCA', 'subseq, revcom' );
 #$trunc = $seq.trunc($fuzzy);
 #ok($trunc ~~ Bio::PrimarySeq, 'Bio::PrimarySeq object');
 #is( $trunc.seq(), 'GGTGGC' );
-#
-#my $rev = $seq.revcom();
-#ok($trunc ~~ Bio::PrimarySeq, 'Bio::PrimarySeq object');
-#
-#is($rev.seq(), 'AGTTGACGCCACCAA', 'revcom() failed, was ' ~ $rev.seq());
-#
-#is($rev.display_id, 'new-id');
-#is( $rev.alphabet(),    'dna', 'alphabet copied through revcom' );
-#
-## TODO: {
-##     local $TODO =
-##       'all attributes of primaryseqs are not currently copied through revcoms';
-##     is( $rev->namespace, 't', 'namespace copied through revcom' );
-##     is( $rev->namespace_string(),
-##         "t:X677667.47", 'namespace_string copied through revcom' );
-##     is( $rev->is_circular(), 0,     'is_circular copied through revcom' );
-## }
+
 
 #
 # Translate
@@ -172,9 +173,13 @@ is($aa.seq, 'M*', "Translation: " ~ $aa.seq);
 # }
 # $seq.verbose(0);
 
+
 # use non-standard codon table where terminator is read as Q
 $seq.seq = 'ATGGTGGCGTCAACTTAG';    # ATG GTG GCG TCA ACT TAG
-$aa = $seq.translate( codontable_id => 6 );
+
+my $ct =  Bio::Tools::CodonTable.new(id => 6);
+$aa = $seq.translate( codonTable => $ct );
+
 is($aa.seq, 'MVASTQ' , "Translation: " ~ $aa.seq );
 
 # insert an odd character instead of terminating with *
@@ -184,14 +189,14 @@ is($aa.seq, 'MVASTX' , "Translation: " ~ $aa.seq );
 # change frame from default
 #$aa = $seq.translate( frame => 1 );    # TGG TGG CGT CAA CTT AG
 #is($aa.seq, 'WWRQL' , "Translation: " ~ $aa.seq );
-#
+
 #$aa = $seq.translate( frame => 2 );    # GGT GGC GTC AAC TTA G
 #is($aa.seq, 'GGVNL' , "Translation: " ~ $aa.seq );
 
 # TTG is initiator in Standard codon table? Afraid so.
-$seq.seq ="ggggggttgtagcccc";           # ttg tag
-$aa = $seq.translate( orf => 1 );
-is($aa.seq, 'L*' , "Translation: " ~ $aa.seq );
+#$seq.seq ="ggggggttgtagcccc";           # ttg tag
+#$aa = $seq.translate( orf => 1 );
+#is($aa.seq, 'L*' , "Translation: " ~ $aa.seq );
 
 # Replace L at 1st position with M by setting complete to 1
 #$seq.seq = "ggggggttgtagcccc";           # ttg tag

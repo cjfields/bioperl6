@@ -351,67 +351,58 @@ method revcom() {
     #     $self->_attempt_to_load_Seq();
     # }
         
-    my $out = Bio::PrimarySeq.new( seq => $revseq,
-                                   display_id  => self.display_id,
-                                   accession_number => self.accession_number,
-                                   alphabet => self.alphabet,
-                                   description => self.description(),
-                               );
+    # TODO: I think there is a better clone
+    
+    my $out = self.clone( seq   => $revseq);
+    
     return $out;
 }
 
 
 
-method translate(:$terminator? is copy,
-                 :$unknown? is copy,
-                 :$frame? is copy,
-                 :codontable_id($codonTableId)? is copy,
-                 :$complete? is copy,
+method translate(:$terminator = '*',
+                 :$unknown = 'X',
+                 :$frame = 0,
+                 Bool :$complete = False,
                  :$throw? is copy,
-                 :$codonTable? is copy,
+                 Bio::Tools::CodonTable :$codonTable = Bio::Tools::CodonTable.new( id => 1 ),
                  :$orf? is copy,
                  :start($start_codon)? is copy,
                  :$offset? is copy) {
-    ## Initialize termination codon, unknown codon, codon table id, frame
-    $terminator = '*'    unless (defined($terminator) and $terminator ne '');
-    $unknown = "X"       unless (defined($unknown) and $unknown ne '');
-    $frame = 0           unless (defined($frame) and $frame ne '');
-    $codonTableId = 1    unless (defined($codonTableId) and $codonTableId ne '');
 
     ## Get a CodonTable, error if custom CodonTable is invalid
-    if ($codonTable) {
-    #     	 $self->throw("Need a Bio::Tools::CodonTable object, not ". $codonTable)
-    #     		unless $codonTable->isa('Bio::Tools::CodonTable');
-    } else {
-        $codonTable = Bio::Tools::CodonTable.new( id => $codonTableId);
-    }
+    #if ($codonTable) {
+    #    self.throw("Need a Bio::Tools::CodonTable object, not " ~ $codonTable)
+    #           unless $codonTable ~~ 'Bio::Tools::CodonTable';
+    #} else {
+    #    $codonTable = Bio::Tools::CodonTable.new( id => $codonTableId);
+    #}
 
-    ## Error if alphabet is "protein"
+    # TODO: Error if alphabet is "protein"
     # $self->throw("Can't translate an amino acid sequence.") if
     #     	($self->alphabet =~ /protein/i);
 
-    ## Error if -start parameter isn't a valid codon
-         if ($start_codon) {
+    # TODO: Error if -start parameter isn't a valid codon
+    #     if ($start_codon) {
     #     	 $self->throw("Invalid start codon: $start_codon.") if
     #     		( $start_codon !~ /^[A-Z]{3}$/i );
-         }
+    #     }
          
-         my $seq;
-         
-         if ($offset) {
-    #     	$self->throw("Offset must be 1, 2, or 3.") if
-    #     	    ( $offset !~ /^[123]$/ );
-                my ($start, $end) = ($offset, self.length);
-                ($seq) = self.subseq($start, $end);
-         } else {
-             ($seq) = self.seq();
-         }
+    my $seq;
+    
+    if ($offset) {
+#     	$self->throw("Offset must be 1, 2, or 3.") if
+#     	    ( $offset !~ /^[123]$/ );
+           my ($start, $end) = ($offset, self.length);
+           ($seq) = self.subseq($start, $end);
+    } else {
+        ($seq) = self.seq();
+    }
 
-    ## ignore frame if an ORF is supposed to be found
+    # ignore frame if an ORF is supposed to be found
     if ($orf) {
         $seq = self!find_orf($seq,$codonTable,$start_codon);
-    }
-    else {
+    } else {
         ## use frame, error if frame is not 0, 1 or 2
         #     	 $self->throw("Valid values for frame are 0, 1, or 2, not $frame.")
         #     		unless ($frame == 0 or $frame == 1 or $frame == 2);
