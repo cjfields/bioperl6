@@ -1,9 +1,18 @@
+=begin Synopsis
+
+General grammar for FASTA format. This can be attached to any action (e.g. parse
+and index a FASTA file, create a new Bio::PrimarySeq, etc).  Original grammar from
+Philip Mabon (takadonet)
+
+=end Synopsis
+
+use v6;
+
 grammar Bio::Grammar::Fasta {
     token TOP  {
-        ^<fasta>
-        
+        ^<record>*
     }
-    token fasta {
+    token record {
         <description_line> <sequence> 
     }
     
