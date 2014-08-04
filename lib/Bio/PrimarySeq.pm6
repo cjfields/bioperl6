@@ -3,15 +3,14 @@ use v6;
 use Bio::Role::Describe;
 use Bio::Role::Identify;
 use Bio::Tools::Codontable;
+use Bio::Type::Sequence;
 
 class Bio::PrimarySeq does Bio::Role::Describe does Bio::Role::Identify;
 
 # needs some type-checking, just simple for now
-has Str $.seq          is rw;
-
-# limit to 'dna', 'rna', 'protein'
-has Str $.alphabet     is rw;
-has Bool $.is_circular is rw = False;
+has Str $.seq                   is rw;
+has SequenceType $.alphabet     is rw = dna;
+has Bool $.is_circular          is rw = False;
 
 # this is mainly to deal with display_id being an alias for 'id', and 'desc' being shorthand for 'description'
 # This probabky should be re-thought, at least until we can create an 'is aliased' trait again
@@ -60,11 +59,11 @@ method set_alphabet() {
                          't'=> '','g'=> '','c'=> '','n' => '' ).chars;
    
    if ( ($atgc / $total) > 0.85 ) {
-       $type = 'dna';
+       $type = dna;
    } elsif ( (($atgc + $u) / $total) > 0.85 ) {
-       $type = 'rna';
+       $type = rna;
    } else {
-       $type = 'protein';
+       $type = protein;
    }
 
    $.alphabet = $type;
@@ -469,7 +468,7 @@ method translate(:$terminator = '*',
     my $out = Bio::PrimarySeq.new( seq => $output,
                                    display_id  => self.display_id,
                                    accession_number => self.accession_number,
-                                   alphabet => 'protein',
+                                   alphabet => protein,
                                    description => self.description(),
                                );
     

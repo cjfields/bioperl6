@@ -3,19 +3,13 @@ use v6;
 use Test;
 
 eval_lives_ok 'use Bio::PrimarySeq', 'Can use Bio::PrimarySeq';
-#eval_lives_ok 'use Bio::Role::Location::Simple';
-#eval_lives_ok 'use Bio::Role::Location::Split';
-#eval_lives_ok 'use Bio::Role::Location::Fuzzy';
 
 use Bio::PrimarySeq;
-#use Bio::Role::Location::Simple;
-#use Bio::Role::Location::Split;
-#use Bio::Role::Location::Fuzzy;
-#
+
 my $seq = Bio::PrimarySeq.new(
     seq                     => 'TTGGTGGCGTCAACT',
     display_id              => 'new-id',
-    alphabet                => 'dna',
+    alphabet                => dna,
     accession_number        => 'X677667',
     description             => 'Sample Bio::Seq object'
 );
@@ -27,7 +21,7 @@ is($seq.accession_number(), 'X677667','Retrieving accession number');
 
 is($seq.seq(),'TTGGTGGCGTCAACT','Retrieving sequence');
 is($seq.display_id,'new-id','Retrieving display_id');
-is($seq.alphabet,'dna','Retrieving alphabet');
+is($seq.alphabet,dna,'Retrieving alphabet');
 is($seq.is_circular, False,'Determining if circular');
 $seq.is_circular=True;
 is($seq.is_circular, True,'Setting circular to True');
@@ -65,7 +59,7 @@ ok($rev ~~ Bio::PrimarySeq, 'Bio::PrimarySeq object');
 is($rev.seq(), 'AGTTGACGCCACCAA', 'revcom() failed, was ' ~ $rev.seq());
 
 is($rev.display_id, 'new-id');
-is( $rev.alphabet(),    'dna', 'alphabet copied through revcom' );
+is( $rev.alphabet(),    dna, 'alphabet copied through revcom' );
 
 is( $rev.namespace, 't', 'namespace copied through revcom' );
 is( $rev.namespace_string(),
@@ -234,7 +228,7 @@ is( $seq.description, 'Alias desc' );
 is( $seq.desc('new desc'), 'new desc' );
 is( $seq.display_id,  'aliasid' );
 
-# test that x's are ignored and n's are assumed to be 'dna' no longer true!
+# test that x's are ignored and n's are assumed to be dna no longer true!
 # See Bug 2438. There are protein sequences floating about which are all 'X'
 # (unknown aa)
 
@@ -244,7 +238,7 @@ is( $seq.alphabet, 'protein' );
 
 $seq.seq = 'atgnnnnnn';
 $seq.set_alphabet;
-is( $seq.alphabet, 'dna' );
+is( $seq.alphabet, dna );
 
 ## Bug #2864:
 
