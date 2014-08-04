@@ -133,7 +133,9 @@ method tables() {
 }
 
 
-multi method translate($seq is copy, :$terminator? is copy, :$unknown is copy) {
+multi method translate($seq is copy,
+                       :$terminator? is copy,
+                       :$unknown is copy) {
     #    my ($self, $seq) = @_;
     #    $self->throw("Calling translate without a seq argument!") unless defined $seq;
     return '' unless $seq;

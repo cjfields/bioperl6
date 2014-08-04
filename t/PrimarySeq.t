@@ -135,13 +135,17 @@ is($aa.seq, 'LVAST', "Translation: " ~ $aa.seq);
 # tests for non-standard initiator codon coding for
 # M by making translate() look for an initiator codon and
 # terminator codon ("complete", the 5th argument below)
+
+# TODO: need to work out what we're testing; should focus on alternate starts
+# and not the old semantics of positional args, which won't be supported
+
 #$seq.seq ='TTGGTGGCGTCAACTTAA';    # TTG GTG GCG TCA ACT TAA
-#$aa = $seq.translate( Any, Any, Any, Any, 1 );
+#$aa = $seq.translate( start => 'ttg' );
 #is($aa.seq, 'MVAST', "Translation: " ~ $aa.seq);
 
 # same test as previous, but using named parameter
-#$aa = $seq.translate( complete => 1 );
-#is($aa.seq, 'MVAST', "Translation: " ~ $aa.seq);
+$aa = $seq.translate( complete => True );
+is($aa.seq, 'MVAST', "Translation: " ~ $aa.seq);
 
 # find ORF, ignore codons outside the ORF or CDS
 $seq.seq = 'TTTTATGGTGGCGTCAACTTAATTT';    # ATG GTG GCG TCA ACT
