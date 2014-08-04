@@ -21,7 +21,10 @@ is($seq.accession_number(), 'X677667','Retrieving accession number');
 
 is($seq.seq(),'TTGGTGGCGTCAACT','Retrieving sequence');
 is($seq.display_id,'new-id','Retrieving display_id');
+
 is($seq.alphabet,dna,'Retrieving alphabet');
+is($seq.alphabet.perl, 'SequenceType::dna', 'Alphabet is enum');
+
 is($seq.is_circular, False,'Determining if circular');
 $seq.is_circular=True;
 is($seq.is_circular, True,'Setting circular to True');
@@ -143,17 +146,17 @@ is($aa.seq, 'MVAST', "Translation: " ~ $aa.seq);
 
 # find ORF, ignore codons outside the ORF or CDS
 $seq.seq = 'TTTTATGGTGGCGTCAACTTAATTT';    # ATG GTG GCG TCA ACT
-$aa = $seq.translate( orf => 1 );
+$aa = $seq.translate( orf => True );
 is($aa.seq, 'MVAST*', "Translation: " ~ $aa.seq);
 
 ## smallest possible ORF
 $seq.seq ="ggggggatgtagcccc";             # atg tga
-$aa = $seq.translate( orf => 1 );
+$aa = $seq.translate( orf => True );
 is($aa.seq, 'M*', "Translation: " ~ $aa.seq);
 
 # same as previous but complete, so * is removed
 $aa = $seq.translate(
-    orf      => 1,
+    orf      => True,
     complete => True
 );
 is($aa.seq, 'M', "Translation: " ~ $aa.seq);
@@ -195,13 +198,13 @@ is($aa.seq, 'GGVNL' , "Translation: " ~ $aa.seq );
 
 # TTG is initiator in Standard codon table? Afraid so.
 $seq.seq ="ggggggttgtagcccc";           # ttg tag
-$aa = $seq.translate( orf => 1 );
+$aa = $seq.translate( orf => True );
 is($aa.seq, 'L*' , "Translation: " ~ $aa.seq );
 
 # Replace L at 1st position with M by setting complete to 1
 $seq.seq = "ggggggttgtagcccc";           # ttg tag
 $aa = $seq.translate(
-    orf      => 1,
+    orf      => True,
     complete => True
 );
 is($aa.seq, 'M' , "Translation: " ~ $aa.seq );
@@ -209,7 +212,7 @@ is($aa.seq, 'M' , "Translation: " ~ $aa.seq );
 # Ignore non-ATG initiators (e.g. TTG) in codon table
 $seq.seq ="ggggggttgatgtagcccc";        # atg tag
 $aa = $seq.translate(
-    orf      => 1,
+    orf      => True,
     start    => "atg",
     complete => True
 );

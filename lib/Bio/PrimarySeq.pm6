@@ -307,12 +307,12 @@ method revcom() {
     # check the type is good first.
     my $t = self.alphabet;
     
-    if  $t eq 'protein'  {
+    if  $t eq protein  {
     #todo throw error
     #$self->throw("Sequence is a protein. Cannot revcom");
     }
  
-    # if( $t ne 'dna' && $t ne 'rna' ) {
+    #if $t ~~ protein {
     #     if( $self->can('warn') ) {
     #         $self->warn("Sequence is not dna or rna, but [$t]. ".
     #      	       "Attempting to revcom, but unsure if this is right");
@@ -320,7 +320,7 @@ method revcom() {
     #         warn("[$self] Sequence is not dna or rna, but [$t]. ".
     #      	"Attempting to revcom, but unsure if this is right");
     #     }
-    # }
+    #}
  
     # yank out the sequence string
  
@@ -328,7 +328,7 @@ method revcom() {
  
     # if is RNA - map to DNA then map back
  
-    if  $t eq 'rna'  {
+    if  $t eq rna  {
         $str .= trans('u' => 't' , 'U' => 'T');
     }
  
@@ -339,7 +339,7 @@ method revcom() {
 
     my $revseq =  $str.flip;
  
-    if $t eq 'rna'  {
+    if $t eq rna  {
         $revseq.=trans('t' => 'u', 'T' => 'U');
     }
  
@@ -352,9 +352,7 @@ method revcom() {
     #     $self->_attempt_to_load_Seq();
     # }
         
-    # TODO: I think there is a better clone
-    
-    my $out = self.clone( seq   => $revseq);
+    my $out = self.clone( seq   => $revseq );
     
     return $out;
 }
@@ -363,17 +361,20 @@ method revcom() {
 
 method translate(:$terminator = '*',
                  :$unknown = 'X',
-                 Int :$frame = 0,
+                 Int :$frame where { 0 <= $^n <= 2 } = 0,
                  Bool :$complete = False,
-                 :$throw? is copy,
                  Bio::Tools::CodonTable :$codonTable = Bio::Tools::CodonTable.new( id => 1 ),
-                 :$orf? is copy,
+                 Bool :$orf = False,
                  :start($start_codon)? is copy,
+                 :$throw is copy, 
+                 # TODO: decide whether offset is really needed or not (I think
+                 # we added this due to GFF3 phase, so maybe it should be phase
+                 # instead?)
                  #:$offset? is copy
                  ) {
 
     # TODO:
-    # A CodonTable is arguably an object attribute, not an argument; same could
+    # A CodonTable is probably an object attribute, not an argument; same could
     # be said for terminator and unknown strings (in fact, those probably belong
     # in CodonTable and not here)
 
@@ -394,9 +395,7 @@ method translate(:$terminator = '*',
     #     	 $self->throw("Invalid start codon: $start_codon.") if
     #     		( $start_codon !~ /^[A-Z]{3}$/i );
     #     }
-         
-    #my $seq;
-#    
+
 #    if ($offset) {
 ##     	$self->throw("Offset must be 1, 2, or 3.") if
 ##     	    ( $offset !~ /^[123]$/ );
@@ -405,16 +404,14 @@ method translate(:$terminator = '*',
 #    } else {
         
     my $seq = self.seq();
-    #}
 
+#   }
+    
+    
     # ignore frame if an ORF is supposed to be found
     if ($orf) {
         $seq = self!find_orf($seq,$codonTable,$start_codon);
     } else {
-        ## use frame, error if frame is not 0, 1 or 2
-        #     	 $self->throw("Valid values for frame are 0, 1, or 2, not $frame.")
-        #     		unless ($frame == 0 or $frame == 1 or $frame == 2);
-        
         $seq = substr($seq, $frame);
     }
     
