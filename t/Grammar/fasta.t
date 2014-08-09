@@ -40,11 +40,12 @@ is($/.to, 804);
 
 # subparse a string, parse a file a record at a time
 ok( Bio::Grammar::Fasta.subparse( $fasta, :rule<record>, :$actions));
+
 is($/.from, 0);
 is($/.to, 411);
 
 # TODO: not working, likely :pos is NYI in Rakudo
-ok( Bio::Grammar::Fasta.subparse( $fasta, :rule<record>, :pos<$/.to>, :$actions));
+ok( Bio::Grammar::Fasta.subparse( $fasta, :rule<record>, :p($/.to), :$actions));
 is($/.from, 411);
 is($/.to, 804);
 
