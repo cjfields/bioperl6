@@ -1,5 +1,8 @@
+#PERL6=perl-j
 PERL6=perl6-m
 
+#TARGET=jar
+#EXT=jar
 TARGET=mbc
 EXT=moarvm
 
