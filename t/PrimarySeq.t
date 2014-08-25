@@ -10,14 +10,14 @@ my $seq = Bio::PrimarySeq.new(
     seq                     => 'TTGGTGGCGTCAACT',
     display_id              => 'new-id',
     alphabet                => dna,
-    accession_number        => 'X677667',
+    accession        => 'X677667',
     description             => 'Sample Bio::Seq object'
 );
 
 ok($seq ~~ Bio::PrimarySeq, 'Bio::PrimarySeq object');
 
 
-is($seq.accession_number(), 'X677667','Retrieving accession number');
+is($seq.accession(), 'X677667','Retrieving accession number');
 
 is($seq.seq(),'TTGGTGGCGTCAACT','Retrieving sequence');
 is($seq.display_id,'new-id','Retrieving display_id');
