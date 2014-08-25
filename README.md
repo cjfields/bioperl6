@@ -7,13 +7,16 @@ addressing many of the problems faced with the perl5 BioPerl version, namely
 class/interface structure, overly complex class hierarchy, etc.  
 
 So, keep in mind that nothing is set in stone yet and things may change under
-your feet. **Hic sunt dracones**. 
+your feet. **Hic sunt dracones**.
+
+Also, just a note: this repository may eventually be moved under the BioPerl
+umbrella.  If so, I'll leave stub repo here pointing to the correct location.
 
 # Participation
 
-If you have an itech to scratch and want to try it out, fork the code and hack
+If you have an itch to scratch and want to try it out, fork the code and hack
 away. Even better, *I can add you as a developer!*  Drop me a note, I'm more than
-happy to have help.
+happy to have help.  The more the better!
 
 # Targeting
 
