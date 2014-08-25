@@ -12,7 +12,7 @@ your feet. **Hic sunt dracones**.
 # Participation
 
 If you have an itech to scratch and want to try it out, fork the code and hack
-away. Even better, I can add you as a developer!  Drop me a note, I'm more than
+away. Even better, *I can add you as a developer!*  Drop me a note, I'm more than
 happy to have help.
 
 # Targeting
