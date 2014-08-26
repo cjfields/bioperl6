@@ -4,7 +4,7 @@ role Bio::Role::Identify {
 
 # these are the primary data available that are similar to the BioPerl
 # Bio::IdentifiableI interface. I've included the primary accession
-# (accession_number) in this implementation.
+# (accession) in this implementation.
 
     # Do we need other IDs here? Or should we use a simple key-value store with
     # custom ID types allowed?
