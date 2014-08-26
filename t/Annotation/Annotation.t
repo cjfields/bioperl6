@@ -4,6 +4,13 @@ BEGIN {
     @*INC.push('./lib');
 }
 
+=begin NOTE
+
+A bit on Bio::Annotation: this is a demo case that shows an Annotation class can
+be ported easily. The question now is: should it?
+
+=end NOTE
+
 use Test;
 #eval_lives_ok('Bio::Annotation::Collection','Can load Bio::Annotation::Collection');
 #eval_lives_ok('Bio::Annotation::DBLink','Can load Bio::Annotation::DBLink');
@@ -46,7 +53,7 @@ $simple.value = 0;
 is $simple.value, 0;
 is $simple.display_text, 0;
 
-## link
+# link
 #my $link1 = Bio::Annotation::DBLink.new(database => 'TSC',
 #					 primary_id => 'TSC0000030',
 #					);
