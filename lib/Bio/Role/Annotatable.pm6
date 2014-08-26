@@ -1,4 +1,4 @@
-role Bio::Role::Annotate;
+role Bio::Role::Annotatable;
 
 our Str method as_text {...}
 
