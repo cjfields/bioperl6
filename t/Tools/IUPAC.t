@@ -84,7 +84,7 @@ my %IUP = ('A' => [<A>],
 
 
 my $ambiseq = Bio::PrimarySeq.new(seq => 'ARTCGTTGR',
-			    alphabet => 'dna'); 
+				  alphabet => dna); 
 
 my $stream  = Bio::Tools::IUPAC.new(seq => $ambiseq);
 is $stream.count(), 4;
@@ -94,12 +94,9 @@ is_deeply($stream.iupac_iub(),%IUB,'Can access IUB hash from method call');
 is_deeply($stream.iupac_rev_iub(),%REV_IUB,'Can access REV_IUB hash from method call');
 is_deeply($stream.iupac_iup(),%IUP,'Can access IUP hash from method call');
 
-
-
 is_deeply(%Bio::Tools::IUPAC::IUB,%IUB,'Can access IUB hash as a class variable');
 is_deeply(%Bio::Tools::IUPAC::REV_IUB,%REV_IUB,'Can access REV_IUB hash as a class variable');
 is_deeply(%Bio::Tools::IUPAC::IUP,%IUP,'Can access IUP hash as a class variable');
-
 
 my $b = 1; 
 while (my $uniqueseq = $stream.next_seq()) {

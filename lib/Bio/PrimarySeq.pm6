@@ -464,7 +464,7 @@ method translate(:$terminator = '*',
 
     my $out = Bio::PrimarySeq.new( seq => $output,
                                    display_id  => self.display_id,
-                                   accession_number => self.accession_number,
+                                   accession => self.accession,
                                    alphabet => protein,
                                    description => self.description(),
                                );

@@ -1,3 +1,219 @@
+use Bio::Type::Sequence;
+
+class Bio::Tools::IUPAC {
+    our %IUB;
+    our %REV_IUB;
+    our %IUP;
+    
+    INIT {     
+        our %IUB = ( 'A' => [< A >],
+                  'C' => [< C >],
+                  'G' => [< G >],
+                  'T' => [< T >],
+                  'U' => [< U >],
+                  'M' => [<A C>],
+                  'R' => [<A G>],
+                  'W' => [<A T>],
+                  'S' => [<C G>],
+                  'Y' => [<C T>],
+                  'K' => [<G T>],
+                  'V' => [<A C G>],
+                  'H' => [<A C T>],
+                  'D' => [<A G T>],
+                  'B' => [<C G T>],
+                  'X' => [<G A T C>],
+                  'N' => [<G A T C>]
+              );    
+
+    our  %REV_IUB =
+                 ('A'   => 'A',
+                  'T'   => 'T',
+                  'C'   => 'C',
+                  'G'   => 'G',
+                  'AC'  => 'M',
+                  'AG'  => 'R',
+                  'AT'  => 'W',
+                  'CG'  => 'S',
+                  'CT'  => 'Y',
+                  'GT'  => 'K',
+                  'ACG' => 'V',
+                  'ACT' => 'H',
+                  'AGT' => 'D',
+                  'CGT' => 'B',
+                  'ACGT'  => 'N',
+                  'N'   => 'N'
+              );
+
+
+    our %IUP = ('A' => [<A>],
+              'B' => [<D N>],
+              'C' => [<C>],
+              'D' => [<D>],
+              'E' => [<E>],
+              'F'=> [<F>],
+              'G' => [<G>],
+              'H' => [<H>],
+              'I' => [<I>],
+              'J' => [<I L>],
+              'K' => [<K>],
+              'L' => [<L>],
+              'M' => [<M>],
+              'N' => [<N>],
+              'O' => [<O>],
+              'P' => [<P>],
+              'Q' => [<Q>],
+              'R' => [<R>],
+              'S' => [<S>],
+              'T' => [<T>],
+              'U' => [<U>],
+              'V' => [<V>],
+              'W' => [<W>],
+              'X' => [<X>],
+              'Y' => [<Y>],
+              'Z' => [<E Q>],
+              '*' => ['*']
+              );
+    }
+    
+    has $.seqobj;
+    has @.alpha;
+    has @.string;
+
+    # should be BUILD?  
+    method new( :$seq ) {
+        
+        my @alpha;
+        my @string;
+        
+        given $seq.alphabet {
+            when ( dna | rna ) {
+                @alpha =  map { %IUB{uc($_)} } , split('', $seq.seq);        
+            }
+            
+            when (protein) {
+                @alpha =  map { %IUP{uc($_)} } , split('', $seq.seq);        
+            }
+            
+            default {
+                die "No alphabet can be determine from seq object";
+            }
+        }
+        @string = 0 xx $seq.seq.chars;
+    
+        @string.elems == 0 && die "Sequence is length 0";
+        @string[0] = -1;
+        
+        my $obj= self.bless(seqobj => $seq, alpha => @alpha , string => @string);
+        
+        return $obj;
+    }
+    
+    #being next_seq
+    
+     # Title   : next_seq
+     # Usage   : $iupac.next_seq()
+     # Function: returns the next unique Seq object
+     # Returns : a Seq.pm object
+     # Args    : none.
+    
+   
+    #end
+    
+    method next_seq {
+    
+        for 0..@!string.end() -> $i {
+            next unless @!string[$i] || @!alpha[$i] > 1;
+            if ( @!string[$i] == @!alpha[$i].end ) { # rollover
+                if ( $i == @!string.end ) { # end of possibilities
+                    return;
+                } else {
+                    @!string[$i] = 0;
+                    next;
+                }
+            }
+            else {
+                @!string[$i]++;
+                my $j = -1;
+                $!seqobj.seq = join('', map { $j++; @!alpha[$j][$_]; } ,@!string);
+                my $desc = $!seqobj.description();
+                if ( !defined $desc ) { $desc = ""; }
+    
+                # no idea why this is needed. No tests are depend on it and seems to have no value to convert
+                # leaving it commented for now
+                # $self->{'_num'}++;
+                # 1 while $self->{'_num'} =~ s/(\d)(\d\d\d)(?!\d)/$1,$2/;
+                # $desc =~ s/( \[Bio::Tools::IUPAC-generated\sunique sequence # [^\]]*\])|$/ \[Bio::Tools::IUPAC-generated unique sequence # $self->{'_num'}\]/;
+                # $self->{'_SeqObj'}->desc($desc);
+                # $self->{'_num'} =~ s/,//g;
+                return $!seqobj;
+            }
+        }
+    }
+    
+    #begin iupac_iup
+    
+     # Title   : iupac_iup
+     # Usage   : my %aasymbols = $iupac.iupac_iup
+     # Function: Returns a hash of PROTEIN symbols -> symbol components
+     # Returns : Hash
+     # Args    : none
+    
+    #end
+    
+    method iupac_iup {
+       return %IUP;
+    }
+    
+    #begin iupac_iub
+    
+     # Title   : iupac_iub
+     # Usage   : my %dnasymbols = $iupac.iupac_iub
+     # Function: Returns a hash of DNA symbols -> symbol components
+     # Returns : Hash
+     # Args    : none
+    
+    #end
+    
+    method iupac_iub {
+       return %IUB;
+    }
+    
+    #begin iupac_rev_iub
+    
+     # Title   : iupac_rev_iub
+     # Usage   : my %dnasymbols = $iupac.iupac_rev_iub
+     # Function: Returns a hash of nucleotide combinations -> IUPAC code
+     #           (a reverse of the iupac_iub hash).
+     # Returns : Hash
+     # Args    : none
+    
+    #end
+    
+    method iupac_rev_iub {
+       return %REV_IUB;
+    }
+    
+    #begin count
+    
+     # Title   : count
+     # Usage   : my $total = $iupac.count();
+     # Function: Calculates the number of unique, unambiguous sequences that
+     #           this ambiguous sequence could generate
+     # Return  : int
+     # Args    : none
+    
+    #end
+    
+    method count {
+        my $count = 1;
+        $count *= $_.elems() for @!alpha;
+        return $count;
+    }
+
+
+
+}
+
 # # $Id: IUPAC.pm 15549 2009-02-21 00:48:48Z maj $
 # #
 # # BioPerl module for IUPAC
@@ -142,233 +358,3 @@
 
 
 # Let the code begin...
-
-class Bio::Tools::IUPAC {
-    our %IUB;
-    our %REV_IUB;
-    our %IUP;
-    
-INIT {     
-    our %IUB = ( 'A' => [< A >],
-              'C' => [< C >],
-              'G' => [< G >],
-              'T' => [< T >],
-              'U' => [< U >],
-              'M' => [<A C>],
-              'R' => [<A G>],
-              'W' => [<A T>],
-              'S' => [<C G>],
-              'Y' => [<C T>],
-              'K' => [<G T>],
-              'V' => [<A C G>],
-              'H' => [<A C T>],
-              'D' => [<A G T>],
-              'B' => [<C G T>],
-              'X' => [<G A T C>],
-              'N' => [<G A T C>]
-          );    
-
-  our  %REV_IUB = ('A'	=> 'A',
-                'T'	=> 'T',
-                'C'	=> 'C',
-                'G' 	=> 'G',
-                'AC'	=> 'M',
-                'AG'	=> 'R',
-                'AT'	=> 'W',
-                'CG'	=> 'S',
-                'CT'	=> 'Y',
-                'GT'	=> 'K',
-                'ACG'	=> 'V',
-                'ACT'	=> 'H',
-                'AGT'	=> 'D',
-                'CGT'	=> 'B',
-                'ACGT'  => 'N',
-                'N'	=> 'N'
-            );
-
-
-  our %IUP = ('A' => [<A>],
-	    'B' => [<D N>],
-	    'C' => [<C>],
-	    'D' => [<D>],
-	    'E' => [<E>],
-	    'F'=> [<F>],
-	    'G' => [<G>],
-	    'H' => [<H>],
-	    'I' => [<I>],
-            'J' => [<I L>],
-	    'K' => [<K>],
-	    'L' => [<L>],
-	    'M' => [<M>],
-	    'N' => [<N>],
-            'O' => [<O>],
-	    'P' => [<P>],
-	    'Q' => [<Q>],
-	    'R' => [<R>],
-	    'S' => [<S>],
-	    'T' => [<T>],
-	    'U' => [<U>],
-	    'V' => [<V>],
-	    'W' => [<W>],
-	    'X' => [<X>],
-	    'Y' => [<Y>],
-	    'Z' => [<E Q>],
-	    '*' => ['*']
-	    );
-}
-
-
-#begin new
-
- # Title   : new
- # Usage   : Bio::Tools::IUPAC.new( $seq)
- # Function: returns a new seq stream (akin to SeqIO)
- # Returns : a Bio::Tools::IUPAC stream object that will produce unique
- #           Seq objects on demand.
- # Args    : an ambiguously coded Seq.pm object that has a specified 'alphabet'
-
-
-#end
-    
-has $!seqobj;
-has @!alpha;    
-has @!string;
-
-
-#getting the following error: Illegal redeclaration of symbol 'Bio::Tools::IUPAC'
-#Bio::PrimarySeq uses Codontable.pm which in turns uses IUPAC.pm . Thought it would load it once and not try it twice
-#use Bio::PrimarySeq;
-#should be method new(Bio::PrimarySeq $seq ) {
-    
-method new( $seq ){
-    
-    my @alpha;
-    my @string;
-    
-    if ($seq.alphabet() ~~ /^<[dr]>na$/) {
-        #nucleotide seq obj
-        @alpha =  map { %IUB{uc($_)} } , split('', $seq.seq);        
-    }
-    elsif ($seq.alphabet() ~~ /^protein$/) {
-        # amino acid seq object
-        @alpha =  map { %IUP{uc($_)} } , split('', $seq.seq);        
-    }
-    else {
-        #throw here
-        die "No alphabet can be determine from seq object";
-    }
-    @string = 0 xx $seq.seq.chars;
-
-    @string.elems == 0 && die "Sequence is length 0";
-    @string[0] = -1;
-    
-    my $obj= self.bless(*, seqobj => $seq, alpha => @alpha , string => @string);
-    
-    return $obj;
-}
-
-#being next_seq
-
- # Title   : next_seq
- # Usage   : $iupac.next_seq()
- # Function: returns the next unique Seq object
- # Returns : a Seq.pm object
- # Args    : none.
-
-
-#end
-
-method next_seq {
-
-    for 0..@!string.end() -> $i {
-        next unless @!string[$i] || @!alpha[$i] > 1;
-        if ( @!string[$i] == @!alpha[$i].end ) { # rollover
-            if ( $i == @!string.end ) { # end of possibilities
-                return;
-            } else {
-                @!string[$i] = 0;
-                next;
-            }
-        }
-        else {
-            @!string[$i]++;
-            my $j = -1;
-            $!seqobj.seq = join('', map { $j++; @!alpha[$j][$_]; } ,@!string);
-            my $desc = $!seqobj.description();
-            if ( !defined $desc ) { $desc = ""; }
-
-            # no idea why this is needed. No tests are depend on it and seems to have no value to convert
-            # leaving it commented for now
-            # $self->{'_num'}++;
-            # 1 while $self->{'_num'} =~ s/(\d)(\d\d\d)(?!\d)/$1,$2/;
-            # $desc =~ s/( \[Bio::Tools::IUPAC-generated\sunique sequence # [^\]]*\])|$/ \[Bio::Tools::IUPAC-generated unique sequence # $self->{'_num'}\]/;
-            # $self->{'_SeqObj'}->desc($desc);
-            # $self->{'_num'} =~ s/,//g;
-            return $!seqobj;
-        }
-    }
-}
-
-#begin iupac_iup
-
- # Title   : iupac_iup
- # Usage   : my %aasymbols = $iupac.iupac_iup
- # Function: Returns a hash of PROTEIN symbols -> symbol components
- # Returns : Hash
- # Args    : none
-
-#end
-
-method iupac_iup {
-   return %IUP;
-}
-
-#begin iupac_iub
-
- # Title   : iupac_iub
- # Usage   : my %dnasymbols = $iupac.iupac_iub
- # Function: Returns a hash of DNA symbols -> symbol components
- # Returns : Hash
- # Args    : none
-
-#end
-
-method iupac_iub {
-   return %IUB;
-}
-
-#begin iupac_rev_iub
-
- # Title   : iupac_rev_iub
- # Usage   : my %dnasymbols = $iupac.iupac_rev_iub
- # Function: Returns a hash of nucleotide combinations -> IUPAC code
- #           (a reverse of the iupac_iub hash).
- # Returns : Hash
- # Args    : none
-
-#end
-
-method iupac_rev_iub {
-   return %REV_IUB;
-}
-
-#begin count
-
- # Title   : count
- # Usage   : my $total = $iupac.count();
- # Function: Calculates the number of unique, unambiguous sequences that
- #           this ambiguous sequence could generate
- # Return  : int
- # Args    : none
-
-#end
-
-method count {
-    my $count = 1;
-    $count *= $_.elems() for (@!alpha);
-    return $count;
-}
-
-
-
-}
