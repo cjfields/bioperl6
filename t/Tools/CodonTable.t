@@ -1,14 +1,12 @@
 use v6;
 
-BEGIN {
-    @*INC.push('./lib');
-}
+use lib './lib';
 
 use Test;
 
-eval_lives_ok 'use Bio::Tools::CodonTable', 'Can use Bio::Tools::CodonTable';
+#eval_lives_ok 'use Bio::Tools::CodonTable', 'Can use Bio::Tools::CodonTable';
 
-use Bio::Tools::CodonTable; 
+use Bio::PrimarySeq; 
 
 # create a table object by giving an ID
 # my $DEBUG = test_debug();
@@ -171,7 +169,6 @@ is $myCodonTable.translate('atgaaraayacmacracwacka'), 'MKXXTTT';
 
 # test doing this via Bio::PrimarySeq object
 
-use Bio::PrimarySeq;
 #ok $seq = Bio::PrimarySeq.new(seq=>'atgaaraayacmacracwacka', alphabet=>'dna');
 #is $seq.translate().seq, 'MKNTTTT','Bio::PrimarySeq translate';
 #is $seq.translate(codonTable => $myCodonTable).seq, 'MKXXTTT';
