@@ -1,6 +1,6 @@
 use v6;
 
-class Bio::Tools::CodonTable {
+class Bio::Tools::CodonTable;
 our %codons;
 our %trcol;
 our %iub;
@@ -363,5 +363,3 @@ method !unambiquous_codons($value) {
     return @codons;
 }
 
-    
-}
