@@ -374,6 +374,9 @@ method translate(:$terminator = '*',
                  ) {
 
     # TODO:
+    # EMBOSS and others use a frame of 1-3, not 0-2.  Maybe change this?
+    
+    # TODO:
     # A CodonTable is probably an object attribute, not an argument; same could
     # be said for terminator and unknown strings (in fact, those probably belong
     # in CodonTable and not here)
@@ -452,15 +455,6 @@ method translate(:$terminator = '*',
                 }
         }
     }
-
-    my $seqclass;
-    # if ($self->can_call_new()) {
-    #     	 $seqclass = ref($self);
-    # } else {
-    #     	 $seqclass = 'Bio::PrimarySeq';
-    #     	 $self->_attempt_to_load_Seq();
-    # }
-
 
     my $out = Bio::PrimarySeq.new( seq => $output,
                                    display_id  => self.display_id,

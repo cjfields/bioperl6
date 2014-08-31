@@ -133,9 +133,9 @@ method tables() {
 }
 
 
-multi method translate($seq is copy,
-                       :$terminator? is copy,
-                       :$unknown is copy) {
+method translate($seq is copy,
+                :$terminator? is copy,
+                :$unknown is copy) {
     #    my ($self, $seq) = @_;
     #    $self->throw("Calling translate without a seq argument!") unless defined $seq;
     return '' unless $seq;
@@ -180,17 +180,18 @@ multi method translate($seq is copy,
         }
     }
 
-    if $partial == 2 { # 2 overhanging nucleotides
-        my $triplet = $seq ~ "n";
-        if $triplet eq $.CODONGAP {
-            $protein ~= $.gap;
-        }
-        if  %codons{$triplet}:exists {
-            $protein ~= substr(@!TABLES[$id-1], %codons{$triplet}, 1);
-        } else {
-            $protein ~= self!translate_ambiguous_codon($triplet,$partial);                
-        }                
-    }
+    #if $partial == 2 { # 2 overhanging nucleotides
+    #    my $triplet = $seq ~ "n";
+    #    
+    #    if $triplet eq $.CODONGAP {
+    #        $protein ~= $.gap;
+    #    }
+    #    if  %codons{$triplet}:exists {
+    #        $protein ~= substr(@!TABLES[$id-1], %codons{$triplet}, 1);
+    #    } else {
+    #        $protein ~= self!translate_ambiguous_codon($triplet,$partial);                
+    #    }
+    #}
 
     return $protein;
 }
