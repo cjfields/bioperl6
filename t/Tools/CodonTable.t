@@ -5,11 +5,10 @@ BEGIN {
 }
 
 use Test;
-plan 43;
+
 eval_lives_ok 'use Bio::Tools::CodonTable', 'Can use Bio::Tools::CodonTable';
 
 use Bio::Tools::CodonTable; 
-
 
 # create a table object by giving an ID
 # my $DEBUG = test_debug();
@@ -172,16 +171,16 @@ is $myCodonTable.translate('atgaaraayacmacracwacka'), 'MKXXTTT';
 
 # test doing this via Bio::PrimarySeq object
 
-use Bio::PrimarySeq;
-ok $seq = Bio::PrimarySeq.new(seq=>'atgaaraayacmacracwacka', alphabet=>'dna');
-is $seq.translate().seq, 'MKNTTTT','Bio::PrimarySeq translate';
-is $seq.translate(codonTable => $myCodonTable).seq, 'MKXXTTT';
-
-# test gapped translated
-
-ok $seq = Bio::PrimarySeq.new(seq      => 'atg---aar------aay',
-			                   alphabet => 'dna');
-is $seq.translate.seq, 'M-K--N';
+#use Bio::PrimarySeq;
+#ok $seq = Bio::PrimarySeq.new(seq=>'atgaaraayacmacracwacka', alphabet=>'dna');
+#is $seq.translate().seq, 'MKNTTTT','Bio::PrimarySeq translate';
+#is $seq.translate(codonTable => $myCodonTable).seq, 'MKXXTTT';
+#
+## test gapped translated
+#
+#ok $seq = Bio::PrimarySeq.new(seq      => 'atg---aar------aay',
+#			                   alphabet => 'dna');
+#is $seq.translate.seq, 'M-K--N';
 
 # NYI
 # ok $seq = Bio::PrimarySeq.new(seq =>'ASDFGHKL');
