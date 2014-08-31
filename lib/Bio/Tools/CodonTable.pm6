@@ -202,7 +202,7 @@ method revtranslate($value is copy,$coding?){
 
     if ($value.chars == 3 ) {
         $value = lc $value;
-        $value = ucfirst $value;
+        $value = $value.tc;
         #hash comes from SeqUtil.pm crap!
 #         $value = %THREELETTERSYMBOLS{$value};
      }
