@@ -171,7 +171,7 @@ is $myCodonTable.translate('atgaaraayacmacracwacka'), 'MKXXTTT';
 
 # test doing this via Bio::PrimarySeq object
 
-#use Bio::PrimarySeq;
+use Bio::PrimarySeq;
 #ok $seq = Bio::PrimarySeq.new(seq=>'atgaaraayacmacracwacka', alphabet=>'dna');
 #is $seq.translate().seq, 'MKNTTTT','Bio::PrimarySeq translate';
 #is $seq.translate(codonTable => $myCodonTable).seq, 'MKXXTTT';
