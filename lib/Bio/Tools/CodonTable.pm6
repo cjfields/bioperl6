@@ -5,6 +5,8 @@ our %codons;
 our %trcol;
 our %iub;
 
+# my $dna = "ttaagg"; sub translate($dna) { "FFLLSSSSYY!!CC!WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG".comb[map { :4($_) }, $dna.trans("tcag" => "0123").comb(/.../)] }; say translate($dna)
+
 #BEGIN { 
 #    #%IUPAC_DNA = Bio::Tools::IUPAC->iupac_iub();    
 #    #%IUPAC_AA = Bio::Tools::IUPAC->iupac_iup();
