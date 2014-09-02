@@ -129,37 +129,32 @@ method tables() {
 method translate($seq is copy,
                 :$terminator? is copy,
                 :$unknown is copy) {
-    #    my ($self, $seq) = @_;
-    #    $self->throw("Calling translate without a seq argument!") unless defined $seq;
     return '' unless $seq;
 
     my $tbl = @!TABLES[self.id - 1];
     
-    # my $dna = "ttaagg"; sub translate($dna) { "FFLLSSSSYY!!CC!WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG".comb[map { :4($_) }, $dna.trans("tcag" => "0123").comb(/.../)] }; say translate($dna)
-    
     my $protein = '';
 
-    # grab each non-gapped 3-mer
-    # TODO: should we deal with gaps?
-    if $seq ~~ /<-[actugACTUG]>/  { #ambiguous chars
-        for $seq.comb( /<-[-]>**3/) -> $codon {
-            if ($codon ~~ /<-[ATUGCatugc]>/) {
+    if $seq ~~ /^^<[actugACTUG]>$$/  { 
+        $protein = $tbl.comb[ map { :4($_) }, $seq.trans('TUCAGtucag'  => '0012300123').comb( /.**3/ ) ].join('');
+    } else { #ambiguous chars, gaps
+        for $seq.comb( /.**3/) -> $codon {
+            if $codon eq $.CODONGAP {
+                $protein ~= '-';
+            } elsif $codon ~~ /<-[ATUGCatugc]>/ {
                 # TODO: rewrite this to be more consistent
                 $protein ~= self!translate_ambiguous_codon($codon);
             } else {
                 $protein ~= $tbl.substr( unbase( 4, $codon.trans('TUCAGtucag'  => '0012300123') ), 1 );
             }
         }
-    } else {
-        $protein = $tbl.comb[ map { :4($_) }, $seq.trans('TUCAGtucag'  => '0012300123').comb( /<-[-]>**3/ ) ].join('');
     }
     
     # any leftover?  TODO: this doesn't account for possible gaps
     my $partial = $seq.chars % CODONSIZE;
     
     if $partial == 2 {
-        my $codon = $seq.substr(*-2, 2).lc ~ 'n';
-        $protein ~= self!translate_ambiguous_codon($codon);
+        $protein ~= self!translate_ambiguous_codon( $seq.substr(*-2, 2).lc ~ 'n' );
     }
 
     return $protein;

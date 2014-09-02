@@ -44,7 +44,7 @@ my @ii  = <ACT acu ATN gt ytr sar>;
 my @res = <T   T   X   V  L   Z  >;
 my $test = 1;
 for @ii Z @res -> $dna,$aa {
-    is($myCodonTable.translate($dna), $aa, $dna ~ ":" ~ $aa);
+    is($myCodonTable.translate($dna), $aa, "$dna: $aa");
 }
 ok ($test);
 is $myCodonTable.translate('ag'), '';
