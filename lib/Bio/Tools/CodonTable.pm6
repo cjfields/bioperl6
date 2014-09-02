@@ -158,6 +158,69 @@ method translate($seq is copy,
     return $protein;
 }
 
+method translate_orig($seq is copy,
+                :$terminator? is copy,
+                :$unknown is copy) {
+    #    my ($self, $seq) = @_;
+    #    $self->throw("Calling translate without a seq argument!") unless defined $seq;
+    return '' unless $seq;
+
+    my $id = self.id;
+    my ($partial) = 0;
+    $partial = 2 if $seq.chars() % CODONSIZE == 2;
+    
+    # TODO: should the standard be uc or lc?  This is pretty inconsistent...
+    $seq = lc $seq;
+    $seq = $seq.trans('u' => 't');
+    
+    my $protein = "";
+    
+    # TODO: lots of redundant code here!
+    
+    # TODO: some funkiness with negative ranges and variable interpolation
+    if $seq ~~ /<-[actg]>/  { #ambiguous chars
+        loop (my $i = 0; $i < ($seq.chars - (CODONSIZE -1)); $i+=CODONSIZE) {
+            my $triplet = substr($seq, $i, CODONSIZE);
+            if $triplet eq $.CODONGAP {
+                $protein ~= $.gap;
+            }
+            elsif  %codons{$triplet}:exists {
+                $protein ~= substr(@!TABLES[$id-1], %codons{$triplet}, 1);
+            } else {
+                $protein ~= self!translate_ambiguous_codon($triplet);                
+            }
+        }
+        
+    } else { # simple, strict translation
+        loop (my $i = 0; $i < ($seq.chars - (CODONSIZE -1)); $i+=CODONSIZE) {
+            my $triplet = substr($seq, $i, CODONSIZE); 
+            if $triplet eq $.CODONGAP {
+                $protein ~= $.gap;
+            }
+            if  %codons{$triplet}:exists {
+                $protein ~= substr(@!TABLES[$id-1], %codons{$triplet}, 1);
+            } else {
+                $protein ~= 'X';
+            }
+        }
+    }
+
+    #if $partial == 2 { # 2 overhanging nucleotides
+    #    my $triplet = $seq ~ "n";
+    #    
+    #    if $triplet eq $.CODONGAP {
+    #        $protein ~= $.gap;
+    #    }
+    #    if  %codons{$triplet}:exists {
+    #        $protein ~= substr(@!TABLES[$id-1], %codons{$triplet}, 1);
+    #    } else {
+    #        $protein ~= self!translate_ambiguous_codon($triplet,$partial);                
+    #    }
+    #}
+
+    return $protein;
+}
+
 method revtranslate($value is copy,$coding?){
     my ($id) = self.id;
     my (@aas,  $p);
