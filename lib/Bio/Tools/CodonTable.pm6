@@ -117,14 +117,13 @@ method name() {
 }
 
 method tables() {
-  my %tables;
-  for  1 .. @!NAMES ->  $id {
-    my $name = @!NAMES[$id-1];
-    %tables{$id} = $name if $name;
-  }
-  return %tables;
+    my %tables;
+    for  1 .. @!NAMES ->  $id {
+      my $name = @!NAMES[$id-1];
+      %tables{$id} = $name if $name;
+    }
+    return %tables;
 }
-
 
 method translate($seq is copy,
                 :$terminator? is copy,
@@ -151,10 +150,9 @@ method translate($seq is copy,
     }
     
     # any leftover?  TODO: this doesn't account for possible gaps
-    my $partial = $seq.chars % CODONSIZE;
-    
-    if $partial == 2 {
-        $protein ~= self!translate_ambiguous_codon( $seq.substr(*-2, 2).lc ~ 'n' );
+    if $seq.chars % CODONSIZE == 2 {
+        my $aa = self!translate_ambiguous_codon( $seq.substr(*-2, 2).lc ~ 'n' );
+        $protein ~= $aa if $aa ne 'X';
     }
 
     return $protein;

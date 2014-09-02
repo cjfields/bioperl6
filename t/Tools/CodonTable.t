@@ -47,11 +47,11 @@ for @ii Z @res -> $dna,$aa {
     is($myCodonTable.translate($dna), $aa, "$dna: $aa");
 }
 ok ($test);
-is $myCodonTable.translate('ag'), '';
-is $myCodonTable.translate('jj'), '';
-is $myCodonTable.translate('jjg'), 'X';
-is $myCodonTable.translate('gt'), 'V';
-is $myCodonTable.translate('g'), '';
+is $myCodonTable.translate('ag'), '', 'ag:';
+is $myCodonTable.translate('jj'), '', 'jj:';
+is $myCodonTable.translate('jjg'), 'X', 'jjg:Z';
+is $myCodonTable.translate('gt'), 'V', 'gt:V';
+is $myCodonTable.translate('g'), '', 'gt:V';
 
 # a more comprehensive test on ambiguous codes
 my $seq = "
