@@ -5,15 +5,6 @@ our %codons;
 our %trcol;
 our %iub;
 
-# my $dna = "ttaagg"; sub translate($dna) { "FFLLSSSSYY!!CC!WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG".comb[map { :4($_) }, $dna.trans("tcag" => "0123").comb(/.../)] }; say translate($dna)
-
-#BEGIN { 
-#    #%IUPAC_DNA = Bio::Tools::IUPAC->iupac_iub();    
-#    #%IUPAC_AA = Bio::Tools::IUPAC->iupac_iup();
-#    #%THREELETTERSYMBOLS = Bio::SeqUtils->valid_aa(2);
-#    #$VALID_PROTEIN = '['.join('',Bio::SeqUtils->valid_aa(0)).']';
-#}
-
 INIT {
     my @nucs = <t c a g>;
     my $x = 0;
@@ -40,12 +31,12 @@ INIT {
 has Str $.gap = '-';
     
 #has Str $.terminator is rw where { $_.chars == 1 } = '*';
-has Str $.terminator is rw = '*';    
+has Str $.terminator = '*';    
 
 #has $.CODONGAP = $GAP x CODONSIZE;
 has $.CODONGAP is rw = '---';
 #constant NYI    
-has Int $.CODONSIZE = 3 ;
+constant CODONSIZE = 3 ;
 
 has $.id is rw = 1;
 
@@ -142,58 +133,34 @@ method translate($seq is copy,
     #    $self->throw("Calling translate without a seq argument!") unless defined $seq;
     return '' unless $seq;
 
-    my $id = self.id;
-    my ($partial) = 0;
-    $partial = 2 if $seq.chars() % $.CODONSIZE == 2;
+    my $tbl = @!TABLES[self.id - 1];
     
-    # TODO: should the standard be uc or lc?  This is pretty inconsistent...
-    $seq = lc $seq;
-    $seq = $seq.trans('u' => 't');
+    # my $dna = "ttaagg"; sub translate($dna) { "FFLLSSSSYY!!CC!WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG".comb[map { :4($_) }, $dna.trans("tcag" => "0123").comb(/.../)] }; say translate($dna)
     
-    my $protein = "";
-    
-    # TODO: lots of redundant code here!
-    
-    # TODO: some funkiness with negative ranges and variable interpolation
-    if $seq ~~ /<-[actg]>/  { #ambiguous chars
-        loop (my $i = 0; $i < ($seq.chars - ($.CODONSIZE -1)); $i+=$.CODONSIZE) {
-            my $triplet = substr($seq, $i, $.CODONSIZE);
-            if $triplet eq $.CODONGAP {
-                $protein ~= $.gap;
-            }
-            elsif  %codons{$triplet}:exists {
-                $protein ~= substr(@!TABLES[$id-1], %codons{$triplet}, 1);
-            } else {
-                $protein ~= self!translate_ambiguous_codon($triplet);                
-            }
-        }
-        
-    } else { # simple, strict translation
-        loop (my $i = 0; $i < ($seq.chars - ($.CODONSIZE -1)); $i+=$.CODONSIZE) {
-            my $triplet = substr($seq, $i, $.CODONSIZE); 
-            if $triplet eq $.CODONGAP {
-                $protein ~= $.gap;
-            }
-            if  %codons{$triplet}:exists {
-                $protein ~= substr(@!TABLES[$id-1], %codons{$triplet}, 1);
-            } else {
-                $protein ~= 'X';
-            }
-        }
-    }
+    my $protein = '';
 
-    #if $partial == 2 { # 2 overhanging nucleotides
-    #    my $triplet = $seq ~ "n";
-    #    
-    #    if $triplet eq $.CODONGAP {
-    #        $protein ~= $.gap;
-    #    }
-    #    if  %codons{$triplet}:exists {
-    #        $protein ~= substr(@!TABLES[$id-1], %codons{$triplet}, 1);
-    #    } else {
-    #        $protein ~= self!translate_ambiguous_codon($triplet,$partial);                
-    #    }
-    #}
+    # grab each non-gapped 3-mer
+    # TODO: should we deal with gaps?
+    if $seq ~~ /<-[actugACTUG]>/  { #ambiguous chars
+        for $seq.comb( /<-[-]>**3/) -> $codon {
+            if ($codon ~~ /<-[ATUGCatugc]>/) {
+                # TODO: rewrite this to be more consistent
+                $protein ~= self!translate_ambiguous_codon($codon);
+            } else {
+                $protein ~= $tbl.substr( unbase( 4, $codon.trans('TUCAGtucag'  => '0012300123') ), 1 );
+            }
+        }
+    } else {
+        $protein = $tbl.comb[ map { :4($_) }, $seq.trans('TUCAGtucag'  => '0012300123').comb( /<-[-]>**3/ ) ].join('');
+    }
+    
+    # any leftover?  TODO: this doesn't account for possible gaps
+    my $partial = $seq.chars % CODONSIZE;
+    
+    if $partial == 2 {
+        my $codon = $seq.substr(*-2, 2).lc ~ 'n';
+        $protein ~= self!translate_ambiguous_codon($codon);
+    }
 
     return $protein;
 }

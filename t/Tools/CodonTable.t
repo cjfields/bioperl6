@@ -6,22 +6,22 @@ use Test;
 
 #eval_lives_ok 'use Bio::Tools::CodonTable', 'Can use Bio::Tools::CodonTable';
 
-use Bio::PrimarySeq; 
+use Bio::PrimarySeq;
 
 # create a table object by giving an ID
 # my $DEBUG = test_debug();
 my $myCodonTable = Bio::Tools::CodonTable.new( id => 16);
 ok  $myCodonTable;
-is $myCodonTable.id(), 16;
+is $myCodonTable.id(), 16, '.id';
 ok($myCodonTable ~~ Bio::Tools::CodonTable, 'Bio::Tools::CodonTable object');
 
 # defaults to ID 1 "Standard"
 $myCodonTable = Bio::Tools::CodonTable.new();
-is $myCodonTable.id(), 1;
+is $myCodonTable.id(), 1, '.id';
 
 # change codon table
-$myCodonTable.id =10;
-is $myCodonTable.id, 10;
+$myCodonTable.id = 10;
+is $myCodonTable.id, 10, 'change .id';
 is $myCodonTable.name(), 'Euplotid Nuclear';
 
 # enumerate tables as object method
@@ -36,7 +36,7 @@ is %table{11}, qw<"Bacterial">;
 # is %table{23}, 'Thraustochytrium Mitochondrial';
 
 # translate codons
-$myCodonTable.id =1;
+$myCodonTable.id = 1;
 
 is $myCodonTable.translate(''), '', 'Empty sequence translate';
 
@@ -44,17 +44,13 @@ my @ii  = <ACT acu ATN gt ytr sar>;
 my @res = <T   T   X   V  L   Z  >;
 my $test = 1;
 for @ii Z @res -> $dna,$aa {
-     if $aa ne $myCodonTable.translate($dna)  {
-	$test = 0; 
-#	print @ii[$i], ": |", @res[$i], "| ne |", $myCodonTable.translate(@ii[$i]), "|\n" if( $DEBUG);
-	last ;
-     }
+    is($myCodonTable.translate($dna), $aa, $dna ~ ":" ~ $aa);
 }
 ok ($test);
 is $myCodonTable.translate('ag'), '';
 is $myCodonTable.translate('jj'), '';
 is $myCodonTable.translate('jjg'), 'X';
-is $myCodonTable.translate('gt'), 'V'; 
+is $myCodonTable.translate('gt'), 'V';
 is $myCodonTable.translate('g'), '';
 
 # a more comprehensive test on ambiguous codes
@@ -84,16 +80,10 @@ $prot ~~ s:g/\s//;
 # print join (' ', @res), "\n" if( $DEBUG );
 $test = 1;
 for @ii Z @res -> $dna,$aa {
-    if $aa ne $myCodonTable.translate($dna) {
-	$test = 0; 
-# 	print $ii[$i], ": |", $res[$i], "| ne |", 
-# 	  $myCodonTable.translate($ii[$i]),  "| @ $i\n" if( $DEBUG);
-	last ;
-    }
+    is($myCodonTable.translate($dna), $aa, "$dna: $aa");
 }
-ok $test;
 
-# reverse translate amino acids 
+## reverse translate amino acids 
 
 is $myCodonTable.revtranslate('U'), ();
 is $myCodonTable.revtranslate('O'), ();
@@ -169,15 +159,14 @@ is $myCodonTable.translate('atgaaraayacmacracwacka'), 'MKXXTTT';
 
 # test doing this via Bio::PrimarySeq object
 
-#ok $seq = Bio::PrimarySeq.new(seq=>'atgaaraayacmacracwacka', alphabet=>'dna');
-#is $seq.translate().seq, 'MKNTTTT','Bio::PrimarySeq translate';
-#is $seq.translate(codonTable => $myCodonTable).seq, 'MKXXTTT';
-#
-## test gapped translated
-#
-#ok $seq = Bio::PrimarySeq.new(seq      => 'atg---aar------aay',
-#			                   alphabet => 'dna');
-#is $seq.translate.seq, 'M-K--N';
+ok $seq = Bio::PrimarySeq.new(seq=>'atgaaraayacmacracwacka', alphabet=> dna);
+is $seq.translate().seq, 'MKNTTTT','Bio::PrimarySeq translate';
+is $seq.translate(codonTable => $myCodonTable).seq, 'MKXXTTT';
+
+# test gapped translated
+ok $seq = Bio::PrimarySeq.new(seq      => 'atg---aar------aay',
+			      alphabet => dna);
+is $seq.translate.seq, 'M-K--N';
 
 # NYI
 # ok $seq = Bio::PrimarySeq.new(seq =>'ASDFGHKL');
