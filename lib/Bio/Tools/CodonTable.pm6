@@ -124,8 +124,8 @@ method tables() {
 }
 
 method translate($seq is copy,
-                :$terminator? is copy,
-                :$unknown is copy) {
+                :$terminator?,
+                :$unknown) {
     return '' unless $seq;
     
     $seq .= trans('uU' => 'tt');
@@ -134,15 +134,25 @@ method translate($seq is copy,
     
     my $protein = '';
 
-    loop (my $i = 0; $i < ($seq.chars - (CODONSIZE -1)); $i+=CODONSIZE) {
-        my $codon = substr($seq, $i, CODONSIZE).lc;
-        if $codon eq $.CODONGAP {
-            $protein ~= '-';
-        } elsif $codon ~~ /<-[ATUGCatugc]>/ {
-            # TODO: rewrite this to be more consistent
-            $protein ~= self!translate_ambiguous_codon($codon);
-        } else {
-            $protein ~= @!TABLES[self.id-1].substr(%codons{$codon}, 1);
+    # special case most common scenario
+    if $seq ~~ /^^<[atgc]>+$$/ {
+        loop (my $i = 0; $i < ($seq.chars - (CODONSIZE - 1)); $i+=CODONSIZE) {
+            $protein ~= @!TABLES[self.id-1].substr(%codons{ substr($seq, $i, CODONSIZE).lc }, 1);
+        }
+    } else {
+        loop (my $i = 0; $i < ($seq.chars - (CODONSIZE - 1)); $i+=CODONSIZE) {
+            given substr($seq, $i, CODONSIZE).lc {
+                when $.CODONGAP {
+                    $protein ~= '-';
+                }
+                when /<-[ATUGCatugc]>/ {
+                    # TODO: rewrite this to be more consistent
+                    $protein ~= self!translate_ambiguous_codon($_);
+                }
+                default {
+                    $protein ~= @!TABLES[self.id-1].substr(%codons{$_}, 1);
+                }
+            }
         }
     }
     # any leftover?  TODO: this doesn't account for possible gaps
