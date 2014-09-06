@@ -12,9 +12,9 @@ SOURCES= \
     ./lib/Bio/Role/Range.pm6 \
     ./lib/Bio/Role/Describe.pm6 \
     ./lib/Bio/Role/Identify.pm6 \
+    ./lib/Bio/Type/Sequence.pm6 \
     ./lib/Bio/Tools/IUPAC.pm6 \
     ./lib/Bio/Tools/CodonTable.pm6 \
-    ./lib/Bio/Type/Sequence.pm6 \
     ./lib/Bio/PrimarySeq.pm6 
 
 TARGETS=$(SOURCES:.pm6=.pm6.${EXT})
