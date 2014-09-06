@@ -8,8 +8,6 @@ our %iub;
 INIT {
     my @nucs = <t c a g>;
     my $x = 0;
-    our %codons;
-    our %trcol;
     
     for @nucs -> $i {
         for @nucs -> $j {
@@ -22,7 +20,7 @@ INIT {
         }
     }
     use Bio::Tools::IUPAC;
-    our %iub = %Bio::Tools::IUPAC::IUB;
+    %iub = %Bio::Tools::IUPAC::IUB;
 }
 
 # first set internal values for all translation tables
@@ -129,94 +127,29 @@ method translate($seq is copy,
                 :$terminator? is copy,
                 :$unknown is copy) {
     return '' unless $seq;
+    
+    $seq .= trans('uU' => 'tt');
 
     my $tbl = @!TABLES[self.id - 1];
     
     my $protein = '';
 
-    if $seq ~~ /^^<[actugACTUG]>$$/  { 
-        $protein = $tbl.comb[ map { :4($_) }, $seq.trans('TUCAGtucag'  => '0012300123').comb( /.**3/ ) ].join('');
-    } else { #ambiguous chars, gaps
-        for $seq.comb( /.**3/) -> $codon {
-            if $codon eq $.CODONGAP {
-                $protein ~= '-';
-            } elsif $codon ~~ /<-[ATUGCatugc]>/ {
-                # TODO: rewrite this to be more consistent
-                $protein ~= self!translate_ambiguous_codon($codon);
-            } else {
-                $protein ~= $tbl.substr( unbase( 4, $codon.trans('TUCAGtucag'  => '0012300123') ), 1 );
-            }
+    loop (my $i = 0; $i < ($seq.chars - (CODONSIZE -1)); $i+=CODONSIZE) {
+        my $codon = substr($seq, $i, CODONSIZE).lc;
+        if $codon eq $.CODONGAP {
+            $protein ~= '-';
+        } elsif $codon ~~ /<-[ATUGCatugc]>/ {
+            # TODO: rewrite this to be more consistent
+            $protein ~= self!translate_ambiguous_codon($codon);
+        } else {
+            $protein ~= @!TABLES[self.id-1].substr(%codons{$codon}, 1);
         }
     }
-    
     # any leftover?  TODO: this doesn't account for possible gaps
     if $seq.chars % CODONSIZE == 2 {
         my $aa = self!translate_ambiguous_codon( $seq.substr(*-2, 2).lc ~ 'n' );
         $protein ~= $aa if $aa ne 'X';
     }
-
-    return $protein;
-}
-
-method translate_orig($seq is copy,
-                :$terminator? is copy,
-                :$unknown is copy) {
-    #    my ($self, $seq) = @_;
-    #    $self->throw("Calling translate without a seq argument!") unless defined $seq;
-    return '' unless $seq;
-
-    my $id = self.id;
-    my ($partial) = 0;
-    $partial = 2 if $seq.chars() % CODONSIZE == 2;
-    
-    # TODO: should the standard be uc or lc?  This is pretty inconsistent...
-    $seq = lc $seq;
-    $seq = $seq.trans('u' => 't');
-    
-    my $protein = "";
-    
-    # TODO: lots of redundant code here!
-    
-    # TODO: some funkiness with negative ranges and variable interpolation
-    if $seq ~~ /<-[actg]>/  { #ambiguous chars
-        loop (my $i = 0; $i < ($seq.chars - (CODONSIZE -1)); $i+=CODONSIZE) {
-            my $triplet = substr($seq, $i, CODONSIZE);
-            if $triplet eq $.CODONGAP {
-                $protein ~= $.gap;
-            }
-            elsif  %codons{$triplet}:exists {
-                $protein ~= substr(@!TABLES[$id-1], %codons{$triplet}, 1);
-            } else {
-                $protein ~= self!translate_ambiguous_codon($triplet);                
-            }
-        }
-        
-    } else { # simple, strict translation
-        loop (my $i = 0; $i < ($seq.chars - (CODONSIZE -1)); $i+=CODONSIZE) {
-            my $triplet = substr($seq, $i, CODONSIZE); 
-            if $triplet eq $.CODONGAP {
-                $protein ~= $.gap;
-            }
-            if  %codons{$triplet}:exists {
-                $protein ~= substr(@!TABLES[$id-1], %codons{$triplet}, 1);
-            } else {
-                $protein ~= 'X';
-            }
-        }
-    }
-
-    #if $partial == 2 { # 2 overhanging nucleotides
-    #    my $triplet = $seq ~ "n";
-    #    
-    #    if $triplet eq $.CODONGAP {
-    #        $protein ~= $.gap;
-    #    }
-    #    if  %codons{$triplet}:exists {
-    #        $protein ~= substr(@!TABLES[$id-1], %codons{$triplet}, 1);
-    #    } else {
-    #        $protein ~= self!translate_ambiguous_codon($triplet,$partial);                
-    #    }
-    #}
 
     return $protein;
 }
