@@ -3,14 +3,16 @@ use v6;
 use lib './lib';
 
 use Test;
-use Bio::Role::Identify;
+use Bio::Role::Identifiable;
 
-class Id does Bio::Role::Identify {  };
+class Id does Bio::Role::Identifiable {  };
 
 my $s = Id.new(accession   => 'Foo',
                authority   => 'BioPerl6',
                namespace   => 'GenBank',
                version     => 12);
+
+ok($s ~~ Bio::Role::Identifiable,'Has a Bio::Role::Identifiable');
 
 is($s.object_id, 'Foo');
 is($s.accession, 'Foo');
