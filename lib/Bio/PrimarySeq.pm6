@@ -1,11 +1,11 @@
 use v6;
 
-use Bio::Role::Describe;
-use Bio::Role::Identify;
+use Bio::Role::Describable;
+use Bio::Role::Identifiable;
 use Bio::Tools::Codontable;
 use Bio::Type::Sequence;
 
-class Bio::PrimarySeq does Bio::Role::Describe does Bio::Role::Identify;
+class Bio::PrimarySeq does Bio::Role::Describable does Bio::Role::Identifiable;
 
 # needs some type-checking, just simple for now
 has Str $.seq                   is rw;

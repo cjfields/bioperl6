@@ -32,8 +32,8 @@ $seq.is_circular=True;
 is($seq.is_circular, True,'Setting circular to True');
 
 # check IdentifiableI and DescribableI interfaces
-ok($seq ~~ Bio::Role::Identify,'Has a Bio::Role::Identify');
-ok($seq ~~ Bio::Role::Describe,'Has a Bio::Role::Describe');
+ok($seq ~~ Bio::Role::Identifiable,'Has a Bio::Role::Identifiable');
+ok($seq ~~ Bio::Role::Describable,'Has a Bio::Role::Describe');
 
 # make sure all methods are implemented
 is(($seq.authority="bioperl.org") , "bioperl.org",'Setting authority');

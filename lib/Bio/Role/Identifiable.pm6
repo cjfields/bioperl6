@@ -1,6 +1,6 @@
 use v6;
 
-role Bio::Role::Identify {
+role Bio::Role::Identifiable {
 
 # these are the primary data available that are similar to the BioPerl
 # Bio::IdentifiableI interface. I've included the primary accession
