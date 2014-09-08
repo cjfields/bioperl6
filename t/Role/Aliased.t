@@ -11,8 +11,6 @@ class Stub {
  
 my $test = Stub.new(:a<hi there>, :long_name<Long time no see>);
 
-Stub.^methods.say;
-
 is($test.a, 'hi there', '');
 ok($test.can('foo'), 'adds alias');
 ok($test.can('baz'), 'adds alias');
