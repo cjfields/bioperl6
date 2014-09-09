@@ -1,6 +1,7 @@
-role Bio::Role::Range {
+role Bio::Role::Range;
 
 subset RangeTest of Str where .lc eq any <ignore weak strong>;
+#enum RangeTest <ignore weak strong>;
 
 has Int $.start               is rw;
 has Int $.end                 is rw;
@@ -12,17 +13,17 @@ method length {
     return self.end - self.start + 1;
 }
 
-method overlaps (Bio::Role::Range $range, :$test = 'ignore') {
+method overlaps (Bio::Role::Range $range, RangeTest :$test = 'ignore') {
     (self!teststranded($range, test => $test) &&
         !((self.start() > $range.end() || self.end() < $range.start())))
 }
 
-method contains (Bio::Role::Range $range, :$test = 'ignore') {
+method contains (Bio::Role::Range $range, RangeTest :$test = 'ignore') {
     (self!teststranded($range, :$test) &&
         $range.start() >= self.start() && $range.end() <= self.end())
 }
 
-method equals (Bio::Role::Range $range, :$test = 'ignore')  {
+method equals (Bio::Role::Range $range, RangeTest :$test = 'ignore')  {
     (self!teststranded($range, :test($test)) &&
         (self.start == $range.start && self.end == $range.end))
 }
@@ -47,7 +48,7 @@ method !teststranded (Bio::Role::Range $self: Bio::Role::Range $r, RangeTest :$t
     return False;
 }
 
-method intersection ( *@ranges, :$test = 'ignore') {
+method intersection ( *@ranges, RangeTest :$test = 'ignore') {
     my $intersect;
     while @ranges > 0 {
         $intersect //= self;
@@ -76,7 +77,7 @@ method intersection ( *@ranges, :$test = 'ignore') {
     return $intersect;
 }
 
-method union (*@ranges, :$test = 'ignore') {
+method union (*@ranges, RangeTest :$test = 'ignore') {
     my $union_strand = self.strand;  # Strand for the union range object.
 
     # beware the hyperoperator!
@@ -94,7 +95,7 @@ method union (*@ranges, :$test = 'ignore') {
 }
 
 # this should have a return type of Array of Bio::Role::Range, but NYI
-method subtract (Bio::Role::Range $range, :$test = 'ignore') {
+method subtract (Bio::Role::Range $range, RangeTest :$test = 'ignore') {
     if !(self!teststranded($range, :$test)) || !self.overlaps($range, :$test) {
         return self
     }
@@ -128,8 +129,6 @@ method subtract (Bio::Role::Range $range, :$test = 'ignore') {
     }
     return @outranges;
 }
-
-};
 
 =begin start
 
