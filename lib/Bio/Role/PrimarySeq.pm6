@@ -1,6 +1,6 @@
 role Bio::Role::PrimarySeq;
 use Bio::Type::Sequence;
-use Bio::Tools::Codontable;
+use Bio::Tools::CodonTable;
 
 # below is intended to disambiguate seq (raw sequence) from # needs some type-checking, just simple for now
 has Str $.seq                   is rw;
