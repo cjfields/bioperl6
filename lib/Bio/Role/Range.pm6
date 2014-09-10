@@ -8,28 +8,28 @@ has Int $.end                 is rw;
 has Int $.strand              is rw;
 
 method length {
-    die "Must define both start and end" if !self.start.defined | !self.end.defined;
-    die "End must be larger than start" if $.start > $.end;
-    return self.end - self.start + 1;
+    die "Must define both start and end" if !$!start.defined | !$!end.defined;
+    die "End must be larger than start" if $!start > $!end;
+    return $!end - $!start + 1;
 }
 
 method overlaps (Bio::Role::Range $range, RangeTest :$test = 'ignore') {
     (self!teststranded($range, test => $test) &&
-        !((self.start() > $range.end() || self.end() < $range.start())))
+        !(($!start > $range.end || $!end < $range.start)))
 }
 
 method contains (Bio::Role::Range $range, RangeTest :$test = 'ignore') {
     (self!teststranded($range, :$test) &&
-        $range.start() >= self.start() && $range.end() <= self.end())
+        $range.start >= $!start && $range.end <= $!end)
 }
 
 method equals (Bio::Role::Range $range, RangeTest :$test = 'ignore')  {
     (self!teststranded($range, :test($test)) &&
-        (self.start == $range.start && self.end == $range.end))
+        ($!start == $range.start && $!end == $range.end))
 }
 
 method !teststranded (Bio::Role::Range $self: Bio::Role::Range $r, RangeTest :$test) {
-    my ($s1, $s2) = (self.strand, $r.strand);
+    my ($s1, $s2) = ($!strand, $r.strand);
     given $test {
         when 'ignore' {
             return True
@@ -61,8 +61,8 @@ method intersection ( *@ranges, RangeTest :$test = 'ignore') {
             return; # this returns a Failure (via the signature)
         }
 
-        my $start = ($intersect.start(), $compare.start()).max; # larger of the 2 starts
-        my $end = ($intersect.end(), $compare.end()).min;   # smaller of the 2 ends
+        my $start = ($intersect.start, $compare.start).max; # larger of the 2 starts
+        my $end = ($intersect.end, $compare.end).min;   # smaller of the 2 ends
         my $intersect_strand = ($intersect.strand == $compare.strand) ??
             $compare.strand !! 0;
 
@@ -111,20 +111,20 @@ method subtract (Bio::Role::Range $range, RangeTest :$test = 'ignore') {
 
     #Subtract intersection from $self
     my @outranges = ();
-    if (self.start < $start) {
+    if ($!start < $start) {
         @outranges.push(
             self.new(
-                start   => self.start,
+                start   => $!start,
                 end     => $start - 1,
-                strand  => self.strand,
+                strand  => $!strand,
                ));
     }
-    if (self.end > $end) {
+    if ($!end > $end) {
         @outranges.push(
             self.new(
                 start   => $end + 1,
-                end     => self.end,
-                strand  => self.strand,
+                end     => $!end,
+                strand  => $!strand,
                ));
     }
     return @outranges;
