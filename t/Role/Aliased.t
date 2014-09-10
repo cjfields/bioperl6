@@ -22,4 +22,6 @@ is($test.baz, 'hi there');
 is($test.long_name, 'Long time no see');
 is($test.bar, 'Long time no see');
 
+# TODO: add role tests...
+
 done();
