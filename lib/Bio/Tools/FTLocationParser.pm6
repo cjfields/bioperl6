@@ -40,14 +40,17 @@ grammar Bio::Grammar::Location {
     token functional_operator { 'join' | 'order' | 'complement' }
     
     #base_position ::= <integer> | <low_base_bound> | <high_base_bound> |  <two_base_bound> 
-    token base_position { <abs_base_position> | <low_base_bound> | <high_base_bound> |  <two_base_bound> }
+    token base_position { <abs_base_position> | <low_base_bound> | <high_base_bound> |  <uncertain_bound> | <two_base_bound> }
     
     # my addition
     token abs_base_position { \d+ }
     
     # low_base_bound ::= > <integer>
     token low_base_bound { '>' <abs_base_position> }
+    
     token high_base_bound { '<' <abs_base_position> }
+    
+    token uncertain_bound { '?' <abs_base_position>? }
     
     # two_base_bound ::= <base_position>.<base_position>
     token two_base_bound { '('? <abs_base_position>'.'<abs_base_position> ')'? }

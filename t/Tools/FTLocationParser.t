@@ -41,27 +41,27 @@ my %testcases =
     #     122, 133, "WITHIN", 204, 221, "WITHIN", "EXACT", 0, 1, Nil],
 
     # UNCERTAIN locations and positions (Swissprot)
-    #"?2465..2774" => [0,
-    #    2465, 2465, "UNCERTAIN", 2774, 2774, "EXACT", "EXACT", 0, 1, Nil],
-    #"22..?64" => [0,
-    #    22, 22, "EXACT", 64, 64, "UNCERTAIN", "EXACT", 0, 1, Nil],
-    #"?22..?64" => [0,
-    #    22, 22, "UNCERTAIN", 64, 64, "UNCERTAIN", "EXACT", 0, 1, Nil],
-    #"?..>393" => [0,
-    #    Nil, Nil, "UNCERTAIN", 393, Nil, "AFTER", "EXACT", 0, 1, Nil],
-    #"<1..?" => [0,
-    #    Nil, 1, "BEFORE", Nil, Nil, "UNCERTAIN", "EXACT", 0, 1, Nil],
-    #"?..536" => [0,
-    #    Nil, Nil, "UNCERTAIN", 536, 536, "EXACT", "EXACT", 0, 1, Nil],
-    #"1..?" => [0,
-    #    1, 1, "EXACT", Nil, Nil, "UNCERTAIN", "EXACT", 0, 1, Nil],
-    #"?..?" => [0,
-    #    Nil, Nil, "UNCERTAIN", Nil, Nil, "UNCERTAIN", "EXACT", 0, 1, Nil],
-    #"1..?12" => [0,
-    #    1, 1, "EXACT", 12, 12, "UNCERTAIN", "EXACT", 0, 1, Nil],
-    ## Not sure if this is legal...
-    #"?" => [0,
-    #    Nil, Nil, "UNCERTAIN", Nil, Nil, "EXACT", "EXACT", 0, 1, Nil],
+    "?2465..2774" => [0,
+        2465, 2465, "UNCERTAIN", 2774, 2774, "EXACT", "EXACT", 0, 1, Nil],
+    "22..?64" => [0,
+        22, 22, "EXACT", 64, 64, "UNCERTAIN", "EXACT", 0, 1, Nil],
+    "?22..?64" => [0,
+        22, 22, "UNCERTAIN", 64, 64, "UNCERTAIN", "EXACT", 0, 1, Nil],
+    "?..>393" => [0,
+        Nil, Nil, "UNCERTAIN", 393, Nil, "AFTER", "EXACT", 0, 1, Nil],
+    "<1..?" => [0,
+        Nil, 1, "BEFORE", Nil, Nil, "UNCERTAIN", "EXACT", 0, 1, Nil],
+    "?..536" => [0,
+        Nil, Nil, "UNCERTAIN", 536, 536, "EXACT", "EXACT", 0, 1, Nil],
+    "1..?" => [0,
+        1, 1, "EXACT", Nil, Nil, "UNCERTAIN", "EXACT", 0, 1, Nil],
+    "?..?" => [0,
+        Nil, Nil, "UNCERTAIN", Nil, Nil, "UNCERTAIN", "EXACT", 0, 1, Nil],
+    "1..?12" => [0,
+        1, 1, "EXACT", 12, 12, "UNCERTAIN", "EXACT", 0, 1, Nil],
+    # Not sure if this is legal...
+    "?" => [0,
+        Nil, Nil, "UNCERTAIN", Nil, Nil, "EXACT", "EXACT", 0, 1, Nil],
 
     # Split locations (now collections of locations)
 
@@ -123,9 +123,7 @@ for %testcases.keys -> $locstr {
     
     Bio::Grammar::Location.parse($locstr);
     
-    say "$locstr" if !$/.defined;
-    say $/.gist;
-    
+    ok($/.defined, $locstr);
 }
 
 done();
