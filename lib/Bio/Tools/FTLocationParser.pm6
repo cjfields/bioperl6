@@ -37,12 +37,12 @@ grammar Bio::Grammar::Location {
     token location_list { <location> [','<location_list> ]* }
     
     #functional_operator ::= <symbol>
-    token functional_operator { 'join' | 'order' | 'complement' }
+    token functional_operator { 'join' | 'order' | 'complement' | 'gap' }
     
     #base_position ::= <integer> | <low_base_bound> | <high_base_bound> |  <two_base_bound> 
     token base_position { <abs_base_position> | <low_base_bound> | <high_base_bound> |  <uncertain_bound> | <two_base_bound> }
     
-    # my addition
+    # my addition :)
     token abs_base_position { \d+ }
     
     # low_base_bound ::= > <integer>
@@ -50,6 +50,7 @@ grammar Bio::Grammar::Location {
     
     token high_base_bound { '<' <abs_base_position> }
     
+    # Added, for swissprot seqs
     token uncertain_bound { '?' <abs_base_position>? }
     
     # two_base_bound ::= <base_position>.<base_position>
