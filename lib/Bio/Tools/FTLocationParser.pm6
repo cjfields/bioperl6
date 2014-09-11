@@ -1,33 +1,63 @@
 use v6;
 
-# Perl6 has a decen balanced bracket grammar in Rosetta Code, strating here though
-grammar BalancedBrackets {
+# Using a variation on the old NCBI FT BNF, but perl6-ized
 
-    # probably need some look-aheads 
-    token TOP {
-        ^ '('? <simple-location> ')'? $
-    }
-    
-    token simple-location {
-        <remote-location>? <start-location> <range-type>? <end-location>?
-    }
-    
-    token remote-location { <seqid> ':' }
-    
-    token seqid { <-[:]>+ }
-    
-    token start-location { <fuzzy>? <position> }
-    
-    token end-location { <position> <fuzzy>? }
-    
-    token fuzzy { <[ <>? ]> }
-    
-    token range-type { '..' | '^' }
+grammar Bio::Grammar::Location {
 
-    token position { '('? <coord> ('.' <coord>)? ')'? }
+    token TOP { <location> }
     
-    token coord { \d+ }
+    #location ::= <absolute_location> | <feature_name> |  <functional_operator>(<location_list>)
+    token location { <absolute_location> | <feature_name> |  <functional_operator>'('<location_list>')' }
+    
+    #absolute_location ::= <local_location> | <path> : <local_location>
+    token absolute_location { <local_location> | <path> ':' <local_location> }
+    
+    #path ::= <database> :: <primary_accession> | <primary_accession>
+    token path { <database> '::' <primary_accession> | <primary_accession> }
+
+    #feature_name ::= <path>:<feature_label> | <feature_label>
+    token feature_name { <path>':'<feature_label> | <feature_label> }
+    
+    #feature_label :== <symbol>
+    token feature_label { <symbol>+ }
+    
+    #local_location ::= <base_position> | <between_position> | <base_range> 
+    token local_location { <base_position> | <between_position> | <base_range> }
+    
+    #location_list ::= <location> | <location_list>,<location>
+    token location_list { <location> | <location_list>','<location> }
+    
+    #functional_operator ::= <symbol>
+    token functional_operator { <.symbol>+ }
+    
+    #base_position ::= <integer> | <low_base_bound> | <high_base_bound> |  <two_base_bound> 
+    token base_position { <abs_base_position> | <low_base_bound> | <high_base_bound> |  <two_base_bound> }
+    
+    token abs_base_position { \d+ }
+    
+    #low_base_bound ::= > <integer>
+    token low_base_bound { '>' <abs_base_position> }
+    token high_base_bound { '<' <abs_base_position> }
+    
+    #two_base_bound ::= <base_position>.<base_position>
+    token two_base_bound { '('? <abs_base_position>'.'<abs_base_position> ')'? }
+    
+    #between_position ::= <base_position>^<base_position>
+    token between_position { <abs_base_position>'^'<abs_base_position> }
+    
+    #base_range ::= <base_position>..<base_position>
+    token base_range { <base_position>'..'<base_position> }
+    
+    #database  ::= <symbol>
+    token database { <.symbol>+ }
+    
+    #primary_accession ::= <symbol>
+    token primary_accession { <.symbol>+ }
+    
+    token symbol { [<+alpha+digit+[_\-'*]>] }
+
 }
+
 
 class Bio::Tools::FTLocationParser {
     

@@ -34,10 +34,11 @@ my %testcases =
     # these variants are not really allowed by the FT definition
     # document but we want to be able to cope with it
 
-    "J00194:(100..202)" => ['J00194:100..202',
-         100, 100, "EXACT", 202, 202, "EXACT", "EXACT", 0, 1, 'J00194'],
-    "((122.133)..(204.221))" => ['(122.133)..(204.221)',
-         122, 133, "WITHIN", 204, 221, "WITHIN", "EXACT", 0, 1, Nil],
+    # Not supported with grammar
+    #"J00194:(100..202)" => ['J00194:100..202',
+    #     100, 100, "EXACT", 202, 202, "EXACT", "EXACT", 0, 1, 'J00194'],
+    #"((122.133)..(204.221))" => ['(122.133)..(204.221)',
+    #     122, 133, "WITHIN", 204, 221, "WITHIN", "EXACT", 0, 1, Nil],
 
     # UNCERTAIN locations and positions (Swissprot)
     #"?2465..2774" => [0,
@@ -68,8 +69,8 @@ my %testcases =
     # locations), though it is handled. In this case the parent location can't
     # be used in any location-based analyses (has no start, end, etc.)
     
-    #"join(AY016290.1:108..185,AY016291.1:1546..1599)"=> [0,
-    #    Nil, Nil, "EXACT", Nil, Nil, "EXACT", "JOIN", 2, 0, Nil],
+    "join(AY016290.1:108..185,AY016291.1:1546..1599)"=> [0,
+        Nil, Nil, "EXACT", Nil, Nil, "EXACT", "JOIN", 2, 0, Nil],
     #"complement(join(3207..4831,5834..5902,8881..8969,9276..9403,29535..29764))",
     #    [0, 3207, 3207, "EXACT", 29764, 29764, "EXACT", "JOIN", 5, -1, Nil],
     #"join(complement(29535..29764),complement(9276..9403),complement(8881..8969),complement(5834..5902),complement(3207..4831))",
@@ -94,9 +95,9 @@ my %testcases =
 
     # complex, technically not legal FT types but we handle and resolve these as needed
 
-    'join(11025..11049,join(complement(239890..240081),complement(241499..241580),complement(251354..251412),complement(315036..315294)))'
-        => ['join(11025..11049,complement(join(315036..315294,251354..251412,241499..241580,239890..240081)))',
-            11025,11025, 'EXACT', 315294, 315294, 'EXACT', 'JOIN', 2, 0, Nil],
+    #'join(11025..11049,join(complement(239890..240081),complement(241499..241580),complement(251354..251412),complement(315036..315294)))'
+    #    => ['join(11025..11049,complement(join(315036..315294,251354..251412,241499..241580,239890..240081)))',
+    #        11025,11025, 'EXACT', 315294, 315294, 'EXACT', 'JOIN', 2, 0, Nil],
     #'join(11025..11049,complement(join(315036..315294,251354..251412,241499..241580,239890..240081)))'
     #    => [0, 11025,11025, 'EXACT', 315294, 315294, 'EXACT', 'JOIN', 2, 0, Nil],
     #'join(20464..20694,21548..22763,complement(join(314652..314672,232596..232990,231520..231669)))'
@@ -120,9 +121,11 @@ ok($p ~~ Bio::Tools::FTLocationParser);
 # sorting is to keep the order constant from one run to the next
 for %testcases.keys -> $locstr {    
     
-    BalancedBrackets.parse($locstr);
+    print "$locstr:";
     
-    say "$locstr:" ~ ($/.gist || '');
+    Bio::Grammar::Location.parse($locstr);
+    
+    say $/.gist;
     
 }
 
