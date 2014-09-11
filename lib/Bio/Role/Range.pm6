@@ -1,7 +1,15 @@
+subset RangeTest of Str where .lc eq any <ignore weak strong>;
+
 role Bio::Role::Range;
 
-subset RangeTest of Str where .lc eq any <ignore weak strong>;
-#enum RangeTest <ignore weak strong>;
+role doc { has $.doc is rw };
+multi trait_mod:<is>(Attribute $a, doc, $arg) {
+    $a.container.VAR does doc($arg);
+}
+
+has $.dog is doc('barks') is rw;
+has @.birds is doc('tweet');
+has %.cows is doc('moooo');
 
 has Int $.start               is rw;
 has Int $.end                 is rw;
