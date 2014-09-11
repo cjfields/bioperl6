@@ -155,7 +155,7 @@ ok($p ~~ Bio::Tools::FTLocationParser);
 # sorting is to keep the order constant from one run to the next
 for %testcases.keys -> $locstr {    
     
-    Bio::Grammar::Location.parse($locstr);
+    Bio::Grammar::FTLocation.parse($locstr);
     
     ok($/.defined, $locstr);
 }
