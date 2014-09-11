@@ -34,7 +34,7 @@ my %testcases =
     # these variants are not really allowed by the FT definition
     # document but we want to be able to cope with it
 
-    # Not supported with grammar
+    # Not supported!!!
     #"J00194:(100..202)" => ['J00194:100..202',
     #     100, 100, "EXACT", 202, 202, "EXACT", "EXACT", 0, 1, 'J00194'],
     #"((122.133)..(204.221))" => ['(122.133)..(204.221)',
@@ -71,47 +71,47 @@ my %testcases =
     
     "join(AY016290.1:108..185,AY016291.1:1546..1599)"=> [0,
         Nil, Nil, "EXACT", Nil, Nil, "EXACT", "JOIN", 2, 0, Nil],
-    #"complement(join(3207..4831,5834..5902,8881..8969,9276..9403,29535..29764))",
-    #    [0, 3207, 3207, "EXACT", 29764, 29764, "EXACT", "JOIN", 5, -1, Nil],
-    #"join(complement(29535..29764),complement(9276..9403),complement(8881..8969),complement(5834..5902),complement(3207..4831))",
-    #    ["complement(join(3207..4831,5834..5902,8881..8969,9276..9403,29535..29764))",
-    #    3207, 3207, "EXACT", 29764, 29764, "EXACT", "JOIN", 5, -1, Nil],
-    #"join(12..78,134..202)" => [0,
-    #    12, 12, "EXACT", 202, 202, "EXACT", "JOIN", 2, 1, Nil],
-    #"join(<12..78,134..202)" => [0,
-    #    Nil, 12, "BEFORE", 202, 202, "EXACT", "JOIN", 2, 1, Nil],
-    #"complement(join(2691..4571,4918..5163))" => [0,
-    #    2691, 2691, "EXACT", 5163, 5163, "EXACT", "JOIN", 2, -1, Nil],
-    #"complement(join(4918..5163,2691..4571))" => [0,
-    #    2691, 2691, "EXACT", 5163, 5163, "EXACT", "JOIN", 2, -1, Nil],
-    #"join(complement(4918..5163),complement(2691..4571))" => [
-    #    'complement(join(2691..4571,4918..5163))',
-    #    2691, 2691, "EXACT", 5163, 5163, "EXACT", "JOIN", 2, -1, Nil],
-    #"join(complement(2691..4571),complement(4918..5163))" => [
-    #    'complement(join(4918..5163,2691..4571))',
-    #    2691, 2691, "EXACT", 5163, 5163, "EXACT", "JOIN", 2, -1, Nil],
-    #"complement(34..(122.126))" => [0,
-    #    34, 34, "EXACT", 122, 126, "WITHIN", "EXACT", 0, -1, Nil],
+    "complement(join(3207..4831,5834..5902,8881..8969,9276..9403,29535..29764))",
+        [0, 3207, 3207, "EXACT", 29764, 29764, "EXACT", "JOIN", 5, -1, Nil],
+    "join(complement(29535..29764),complement(9276..9403),complement(8881..8969),complement(5834..5902),complement(3207..4831))",
+        ["complement(join(3207..4831,5834..5902,8881..8969,9276..9403,29535..29764))",
+        3207, 3207, "EXACT", 29764, 29764, "EXACT", "JOIN", 5, -1, Nil],
+    "join(12..78,134..202)" => [0,
+        12, 12, "EXACT", 202, 202, "EXACT", "JOIN", 2, 1, Nil],
+    "join(<12..78,134..202)" => [0,
+        Nil, 12, "BEFORE", 202, 202, "EXACT", "JOIN", 2, 1, Nil],
+    "complement(join(2691..4571,4918..5163))" => [0,
+        2691, 2691, "EXACT", 5163, 5163, "EXACT", "JOIN", 2, -1, Nil],
+    "complement(join(4918..5163,2691..4571))" => [0,
+        2691, 2691, "EXACT", 5163, 5163, "EXACT", "JOIN", 2, -1, Nil],
+    "join(complement(4918..5163),complement(2691..4571))" => [
+        'complement(join(2691..4571,4918..5163))',
+        2691, 2691, "EXACT", 5163, 5163, "EXACT", "JOIN", 2, -1, Nil],
+    "join(complement(2691..4571),complement(4918..5163))" => [
+        'complement(join(4918..5163,2691..4571))',
+        2691, 2691, "EXACT", 5163, 5163, "EXACT", "JOIN", 2, -1, Nil],
+    "complement(34..(122.126))" => [0,
+        34, 34, "EXACT", 122, 126, "WITHIN", "EXACT", 0, -1, Nil],
 
     # complex, technically not legal FT types but we handle and resolve these as needed
 
-    #'join(11025..11049,join(complement(239890..240081),complement(241499..241580),complement(251354..251412),complement(315036..315294)))'
-    #    => ['join(11025..11049,complement(join(315036..315294,251354..251412,241499..241580,239890..240081)))',
-    #        11025,11025, 'EXACT', 315294, 315294, 'EXACT', 'JOIN', 2, 0, Nil],
-    #'join(11025..11049,complement(join(315036..315294,251354..251412,241499..241580,239890..240081)))'
-    #    => [0, 11025,11025, 'EXACT', 315294, 315294, 'EXACT', 'JOIN', 2, 0, Nil],
-    #'join(20464..20694,21548..22763,complement(join(314652..314672,232596..232990,231520..231669)))'
-    #    => [0, 20464,20464, 'EXACT', 314672, 314672, 'EXACT', 'JOIN', 3, 0, Nil],
-    #'join(20464..20694,21548..22763,join(complement(231520..231669),complement(232596..232990),complement(314652..314672)))'
-    #    => ['join(20464..20694,21548..22763,complement(join(314652..314672,232596..232990,231520..231669)))',
-    #        20464,20464, 'EXACT', 314672, 314672, 'EXACT', 'JOIN', 3, 0, Nil],
-    #
-    #'join(1000..2000,join(3000..4000,join(5000..6000,7000..8000)),9000..10000)'
-    #    => [0, 1000,1000,'EXACT', 10000, 10000, 'EXACT', 'JOIN', 3, 1, Nil],
-    #
-    ## not passing completely yet, working out 'order' semantics
-    #'order(S67862.1:72..75,1..788,S67864.1:1..19)'
-    #    => [0,  Nil, Nil, 'EXACT', Nil, Nil, 'EXACT', 'ORDER', 3, 0, Nil],
+    'join(11025..11049,join(complement(239890..240081),complement(241499..241580),complement(251354..251412),complement(315036..315294)))'
+        => ['join(11025..11049,complement(join(315036..315294,251354..251412,241499..241580,239890..240081)))',
+            11025,11025, 'EXACT', 315294, 315294, 'EXACT', 'JOIN', 2, 0, Nil],
+    'join(11025..11049,complement(join(315036..315294,251354..251412,241499..241580,239890..240081)))'
+        => [0, 11025,11025, 'EXACT', 315294, 315294, 'EXACT', 'JOIN', 2, 0, Nil],
+    'join(20464..20694,21548..22763,complement(join(314652..314672,232596..232990,231520..231669)))'
+        => [0, 20464,20464, 'EXACT', 314672, 314672, 'EXACT', 'JOIN', 3, 0, Nil],
+    'join(20464..20694,21548..22763,join(complement(231520..231669),complement(232596..232990),complement(314652..314672)))'
+        => ['join(20464..20694,21548..22763,complement(join(314652..314672,232596..232990,231520..231669)))',
+            20464,20464, 'EXACT', 314672, 314672, 'EXACT', 'JOIN', 3, 0, Nil],
+    
+    'join(1000..2000,join(3000..4000,join(5000..6000,7000..8000)),9000..10000)'
+        => [0, 1000,1000,'EXACT', 10000, 10000, 'EXACT', 'JOIN', 3, 1, Nil],
+    
+    # not passing completely yet, working out 'order' semantics
+    'order(S67862.1:72..75,1..788,S67864.1:1..19)'
+        => [0,  Nil, Nil, 'EXACT', Nil, Nil, 'EXACT', 'ORDER', 3, 0, Nil],
 ;
 
 my $p = Bio::Tools::FTLocationParser.new();
@@ -121,10 +121,9 @@ ok($p ~~ Bio::Tools::FTLocationParser);
 # sorting is to keep the order constant from one run to the next
 for %testcases.keys -> $locstr {    
     
-    print "$locstr:";
-    
     Bio::Grammar::Location.parse($locstr);
     
+    say "$locstr" if !$/.defined;
     say $/.gist;
     
 }
