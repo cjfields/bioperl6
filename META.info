@@ -1,8 +1,9 @@
 {
-    "name" : "bioperl6",
-    "version" : "*",
-    "description" : "Collection of Bioinformatics modules and objects",
-    "depends" : [],
+    "name" : "BioPerl6",
+    "version" : "0.0.1",
+    "description" : "Collection of Bioinformatics classes, roles, and modules",
+    "author" : "Chris Fields",
+    "depends" : [ ],
     "source-type" : "git",
     "source-url" : "git://github.com/cjfields/bioperl6.git"
 }
