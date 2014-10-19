@@ -6,7 +6,7 @@ use Bio::Role::RecordFormat;
 
 class Bio::SeqIO does Bio::Role::Pluggable['SeqIO'] does Bio::Role::RecordFormat does Bio::Role::SeqStream {
     
-    submethod BUILD(:$!format!) {
+    submethod BUILD(:$!format!, :$!format-variant, :$!format-version) {
         
         if $!format ~~ / <[-]> / {
             ($!format, $!format-variant) = $!format.split: '-', 2;
@@ -21,9 +21,9 @@ class Bio::SeqIO does Bio::Role::Pluggable['SeqIO'] does Bio::Role::RecordFormat
         if ::($plugin) ~~ Failure {
             die "Can't load $plugin: $!";
         } else {
+            # mix in the plugin module
             self does ::($plugin);
         }
-        # mix in the plugin module
     }
     
     method next-Seq { ... }
