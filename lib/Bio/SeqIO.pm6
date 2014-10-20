@@ -4,7 +4,9 @@ use Bio::Role::Pluggable;
 use Bio::Role::SeqStream;
 use Bio::Role::RecordFormat;
 
-class Bio::SeqIO does Bio::Role::Pluggable['SeqIO'] does Bio::Role::RecordFormat does Bio::Role::SeqStream {
+class Bio::SeqIO does Bio::Role::Pluggable['SeqIO']
+                 does Bio::Role::RecordFormat
+                 does Bio::Role::SeqStream {
     
     submethod BUILD(:$!format!, :$!format-variant, :$!format-version) {
         
