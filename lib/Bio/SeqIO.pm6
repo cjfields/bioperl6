@@ -1,22 +1,22 @@
 use v6;
 
 use Bio::Role::Pluggable;
-use Bio::Role::SeqStream;
 use Bio::Role::RecordFormat;
-use Bio::Role::IO;
 
 class Bio::SeqIO does Bio::Role::Pluggable['SeqIO']
                  does Bio::Role::RecordFormat
-                 does Bio::Role::SeqStream
-                 does Bio::Role::IO {
+                 {
     
-    submethod BUILD(:$!format!, :$!format-variant, :$!format-version) {
+    submethod BUILD(*%args) {
+        die "Must provide format" unless %args<format>:exists;
         
-        if $!format ~~ / <[-]> / {
-            ($!format, $!format-variant) = $!format.split: '-', 2;
+        if %args<format> ~~ / <[-]> / {
+            ($!format, $!format-variant) = %args<format>.split: '-', 2;
+        } else {
+            $!format = %args<format>.lc;
         }
-        
-        my $plugin = "Bio::SeqIO::" ~ $!format.lc;
+
+        my $plugin = "Bio::SeqIO::" ~ $!format;
         
         try {
             require $plugin;
@@ -28,6 +28,7 @@ class Bio::SeqIO does Bio::Role::Pluggable['SeqIO']
             # mix in the plugin module
             self does ::($plugin);
         }
+        self.initialize_io(|%args);
     }
     
     method next-Seq { ... }

@@ -1,6 +1,8 @@
 use v6;
 
-role Bio::Role::SeqStream;
+use Bio::Role::IO;
+
+role Bio::Role::SeqStream does Bio::Role::IO;
 
 method next-Seq { ... }
 
