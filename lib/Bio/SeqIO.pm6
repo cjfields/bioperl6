@@ -3,10 +3,12 @@ use v6;
 use Bio::Role::Pluggable;
 use Bio::Role::SeqStream;
 use Bio::Role::RecordFormat;
+use Bio::Role::IO;
 
 class Bio::SeqIO does Bio::Role::Pluggable['SeqIO']
                  does Bio::Role::RecordFormat
-                 does Bio::Role::SeqStream {
+                 does Bio::Role::SeqStream
+                 does Bio::Role::IO {
     
     submethod BUILD(:$!format!, :$!format-variant, :$!format-version) {
         
