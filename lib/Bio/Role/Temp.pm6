@@ -4,13 +4,35 @@ use File::Temp;
 
 role Bio::Role::Temp;
 
-has Bool $save-tempfiles = False;
+has Bool $.cleanup-tmpdir = True;
+has Bool $.cleanup-tmpfiles = True;
+has @!tmpdirs;
+my $tmpcounter = 0;
 
 method tmpfile(*%args) {
-    if ?$save-tempfiles && (%args{'unlink'}:exists) {
+    
+    # local passed arguments should override the global settings, not ignore them
+    
+    if %args{'unlink'}:!exists {
         %args{'unlink'} = False ;
     }
     tempfile(|%args);
+}
+
+method tmpdir(Bool :$cleanup) {
+    $!cleanup-tmpdir = $cleanup if $cleanup;
+    my $tdir = $*SPEC.catfile( $*TMPDIR,
+                             sprintf("dir_%s-%s-%s",
+                                       %*ENV{'USER'} || 'unknown',
+                                       $*PID,
+                                       $tmpcounter++));
+    mkdir($tdir, 0o755);
+    @!tmpdirs.push: $tdir;
+    return $tdir;
+}
+
+submethod DESTROY {
+    say "Destroyed!!!";
 }
 
 #sub tempfile { 
@@ -87,28 +109,5 @@ method tmpfile(*%args) {
 #    return wantarray ? ($tfh,$file) : $tfh;
 #}
 
-method tmpdir {
-    ...
-}
 
-#sub tempdir {
-#    my ($self, @args) = @_;
-#    if ($FILETEMPLOADED && File::Temp->can('tempdir')) {
-#        return File::Temp::tempdir(@args);
-#    }
-#
-#    # we have to do this ourselves, not good
-#    # we are planning to cleanup temp files no matter what
-#    my %params = @args;
-#    print "cleanup is " . $params{CLEANUP} . "\n";
-#    $self->{'_cleanuptempdir'} = ( defined $params{CLEANUP} &&
-#                                   $params{CLEANUP} == 1);
-#    my $tdir = $self->catfile( $TEMPDIR,
-#                               sprintf("dir_%s-%s-%s",
-#                                       $ENV{USER} || 'unknown',
-#                                       $$,
-#                                       $TEMPCOUNTER++));
-#    mkdir($tdir, 0755);
-#    push @{$self->{'_rootio_tempdirs'}}, $tdir;
-#    return $tdir;
-#}
+
