@@ -4,8 +4,19 @@ use Bio::Role::SeqStream;
 use Bio::Grammar::Fasta;
 use Bio::PrimarySeq;
 
+class Bio::Grammar::Fasta::Actions::PrimarySeq {
+    method record($/) {
+        make Bio::PrimarySeq.new(
+            seq             => ~$<sequence>,
+            description     => ~$<description_line><description>,
+            display_id      => ~$<description_line><id>
+        );
+    }
+}
+
 role Bio::SeqIO::fasta does Bio::Role::SeqStream {
     has $!buffer;
+    has $!actions = Bio::Grammar::Fasta::Actions::PrimarySeq.new();
     
     # TODO: this is a temporary iterator to return one sequence record at a
     # time; two future optimizations require implementation in Rakudo:
@@ -38,13 +49,8 @@ role Bio::SeqIO::fasta does Bio::Role::SeqStream {
     method next-Seq {
         my $chunk = self!chunkify;
         return if !?$chunk.defined;
-        my $t = Bio::Grammar::Fasta.parse($chunk, rule => 'record');
-        my $seq = Bio::PrimarySeq.new(
-            seq             => ~$t<sequence>,
-            description     => ~$t<description_line><description>,
-            display_id      => ~$t<description_line><id>
-        );
-        return $seq;
+        my $t = Bio::Grammar::Fasta.subparse($chunk, actions => $!actions, rule => 'record').ast;
+        return $t;
     }
     
     method write-Seq(Bio::PrimarySeq $seq) {
