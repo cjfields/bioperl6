@@ -15,8 +15,16 @@ class Bio::Grammar::Fasta::Actions::PrimarySeq {
 }
 
 role Bio::SeqIO::fasta does Bio::Role::SeqStream {
-    has $!buffer;
+    has $.buffer  is rw;
     has $!actions = Bio::Grammar::Fasta::Actions::PrimarySeq.new();
+    has $.width = 60;
+    has $.block = $!width;  # NYI
+    
+    # Note multimethod signature
+    multi method initialize_io(:$width?, *%args) {
+        $!width = $width;
+        nextsame();
+    }
     
     # TODO: this is a temporary iterator to return one sequence record at a
     # time; two future optimizations require implementation in Rakudo:
@@ -26,14 +34,14 @@ role Bio::SeqIO::fasta does Bio::Role::SeqStream {
     method !chunkify {
         return if $.eof();
         my $current_record;
-        while $.get() -> $line {
-            if $!buffer {
-                $current_record = $!buffer;
-                $!buffer = Nil;
+        while $.get -> $line {
+            if $.buffer {
+                $current_record = $.buffer;
+                $.buffer = Nil;
             }
             if $line ~~ /^^\>/ {
                 if $current_record.defined {
-                    $!buffer = "$line\n";
+                    $.buffer = "$line\n";
                     last;
                 } else {
                     $current_record = "$line\n";
@@ -45,7 +53,6 @@ role Bio::SeqIO::fasta does Bio::Role::SeqStream {
         return $current_record;
     };
     
-    
     method next-Seq {
         my $chunk = self!chunkify;
         return if !?$chunk.defined;
@@ -54,7 +61,7 @@ role Bio::SeqIO::fasta does Bio::Role::SeqStream {
     }
     
     method write-Seq(Bio::PrimarySeq $seq) {
-        #self.fh.print(">");
+        self.fh.say(sprintf(">%s %s", $seq.display_id, $seq.description));
+        self.fh.say($seq.seq.subst( /(.** {$.width})/, { "$0\n" }, :g));
     }
-
 }

@@ -5,13 +5,13 @@ use Bio::Role::Temp;
 role Bio::Role::IO does Bio::Role::Temp {
     has IO::Handle $.fh handles <close encoding eof fileno flush get getc ins p print read say seek t tell write>;
     
-    # initializer; I'm not sure if we can have a BUILD method in the role, but might be worth testing
-    method initialize_io(*%args) {
+    # generic IO initializer; more specific ones (e.g. has unique parameter
+    # settings) should create a new multimethod with a distinct signature.
+    # See Bio::SeqIO::fasta for an example
+    multi method initialize_io(*%args) {
         if %args{'file'}:exists {
-            # really, what we need to do is make it so a subset of the named
-            # args passed in are then passed along (e.g. :r, :w, etc).
             $!fh = %args<file>.IO.open(|%args) orelse die "Can't open file: $!";
-        }
+        } 
         $!fh //= %args{'fh'};
     }
     
