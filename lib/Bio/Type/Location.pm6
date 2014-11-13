@@ -4,9 +4,9 @@ enum Location-Join-Symbol <. .. ^>;
 
 # this could probably be made a trait on start/end
 enum Location-Pos-Symbol < < > . ? ..>;
-enum Location-Pos-Type < EXACT-POS BEFORE AFTER WITHIN UNCERTAIN >;
-enum Simple-Location-Type <EXACT IN-BETWEEN WITHIN>;
-enum Split-Location-Type <JOIN ORDER BOND>;
+enum Location-Pos-Type < EXACT-POS BEFORE AFTER WITHIN-POS UNCERTAIN >;
+enum Simple-Location-Type < EXACT IN-BETWEEN WITHIN >;
+enum Split-Location-Type < JOIN ORDER BOND >;
 
 my %VALID-LOCATION-SYMBOL = 
     '.'          => 'WITHIN',
