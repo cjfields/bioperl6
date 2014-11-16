@@ -5,13 +5,17 @@ use Bio::Role::Temp;
 role Bio::Role::IO does Bio::Role::Temp {
     has IO::Handle $.fh handles <close encoding eof fileno flush get getc ins p print read say seek t tell write>;
 
+    # At the moment we force all IO consumers to initialize-io if they have this
+    # simple signature
     submethod BUILD(:$fh?, :$file?) {
-        self.initialize_io(:$fh, :$file);
+        self.initialize-io(:$fh, :$file);
     }
+    
     # generic IO initializer; more specific ones (e.g. has unique parameter
-    # settings) should create a new multimethod with a distinct signature.
-    # See Bio::SeqIO::fasta for an example
-    multi method initialize_io(:$fh?, :$file?, *%args) {
+    # settings) should create a new multimethod with a distinct signature and
+    # run 'nextsame'. See Bio::SeqIO::fasta for an example.
+
+    multi method initialize-io(:$fh?, :$file?, *%args) {
         if $file {
             $!fh = $file.IO.open(|%args) orelse die "Can't open file: $!";
         }

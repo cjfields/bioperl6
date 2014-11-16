@@ -7,15 +7,17 @@ class Bio::SeqIO does Bio::Role::Pluggable['SeqIO']
                  does Bio::Role::RecordFormat
                  {
     
-    submethod BUILD(*%args) {
-        die "Must provide format" unless %args<format>:exists;
+    submethod BUILD(:$!format,
+                    :$!format-version?,
+                    :$!format-variant?,
+                    *%args) {
         
-        if %args<format> ~~ / <[-]> / {
-            ($!format, $!format-variant) = %args<format>.split: '-', 2;
+        if $!format ~~ / <[-]> / {
+            ($!format, $!format-variant) = $!format.split: '-', 2;
         } else {
-            $!format = %args<format>.lc;
+            $!format = $!format.lc;
         }
-    
+        
         my $plugin = "Bio::SeqIO::" ~ $!format;
         
         try {
@@ -28,7 +30,6 @@ class Bio::SeqIO does Bio::Role::Pluggable['SeqIO']
             # mix in the plugin module
             self does ::($plugin);
         }
-        #self.initialize_io(|%args);
     }
     
     method next-Seq { ... }
