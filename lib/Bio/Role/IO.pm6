@@ -7,8 +7,8 @@ role Bio::Role::IO does Bio::Role::Temp {
 
     # At the moment we force all IO consumers to initialize-io if they have this
     # simple signature
-    submethod BUILD(:$fh?, :$file?) {
-        self.initialize-io(:$fh, :$file);
+    submethod BUILD(:$fh?, :$file?, *%args) {
+        self.initialize-io(:$fh, :$file, |%args);
     }
     
     # generic IO initializer; more specific ones (e.g. has unique parameter

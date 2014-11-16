@@ -21,7 +21,7 @@ role Bio::SeqIO::fasta does Bio::Role::SeqStream {
     has $.block = $!width;  # NYI
     
     # Note multimethod signature
-    multi method initialize_io(:$width?, *%args) {
+    multi method initialize-io(:$width?, *%args) {
         $!width = $width;
         nextsame;
     }

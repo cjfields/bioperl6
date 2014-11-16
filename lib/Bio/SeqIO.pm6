@@ -30,6 +30,7 @@ class Bio::SeqIO does Bio::Role::Pluggable['SeqIO']
             # mix in the plugin module
             self does ::($plugin);
         }
+        self.initialize-io(|%args);
     }
     
     method next-Seq { ... }
