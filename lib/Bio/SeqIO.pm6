@@ -15,7 +15,7 @@ class Bio::SeqIO does Bio::Role::Pluggable['SeqIO']
         } else {
             $!format = %args<format>.lc;
         }
-
+    
         my $plugin = "Bio::SeqIO::" ~ $!format;
         
         try {
@@ -28,7 +28,7 @@ class Bio::SeqIO does Bio::Role::Pluggable['SeqIO']
             # mix in the plugin module
             self does ::($plugin);
         }
-        self.initialize_io(|%args);
+        #self.initialize_io(|%args);
     }
     
     method next-Seq { ... }

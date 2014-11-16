@@ -23,7 +23,7 @@ role Bio::SeqIO::fasta does Bio::Role::SeqStream {
     # Note multimethod signature
     multi method initialize_io(:$width?, *%args) {
         $!width = $width;
-        nextsame();
+        nextsame;
     }
     
     # TODO: this is a temporary iterator to return one sequence record at a

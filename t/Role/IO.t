@@ -9,7 +9,8 @@ use Bio::Role::IO;
 ok(1);
 
 {
-    class MyIO does Bio::Role::IO { }
+    class MyIO does Bio::Role::IO {
+    }
 }
 
 # simple file input
@@ -17,6 +18,7 @@ my $in = MyIO.new( file => $*SPEC.catfile('t','data','test.fasta'), :r);
 
 ok($in ~~ Bio::Role::IO, 'does Bio::Role::IO');
 is($in.file, 't/data/test.fasta'); # De-UNIX this
+
 isa_ok($in.fh, 'IO::Handle');
 
 todo('Mode NYI', 1);
