@@ -14,16 +14,16 @@ class Bio::Grammar::Fasta::Actions::PrimarySeq {
     }
 }
 
-role Bio::SeqIO::fasta does Bio::Role::SeqStream {
+class Bio::SeqIO::fasta does Bio::Role::SeqStream {
     has $.buffer  is rw;
     has $!actions = Bio::Grammar::Fasta::Actions::PrimarySeq.new();
     has $.width = 60;
     has $.block = $!width;  # NYI
     
-    # Note multimethod signature
-    multi method initialize-io(:$width?, *%args) {
-        $!width = $width;
+    # Note multi method signature
+    multi method initialize-io(:$!width?, :$fh?, :$file?, *%args) {
         nextsame;
+        #callwith(:nl("\n>"), :$fh, :$file, |%args);
     }
     
     # TODO: this is a temporary iterator to return one sequence record at a

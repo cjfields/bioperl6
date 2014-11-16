@@ -7,6 +7,8 @@ class Bio::SeqIO does Bio::Role::Pluggable['SeqIO']
                  does Bio::Role::RecordFormat
                  {
     
+    has $!plugin handles <next-Seq write-Seq>;
+
     submethod BUILD(:$!format,
                     :$!format-version?,
                     :$!format-variant?,
@@ -27,15 +29,9 @@ class Bio::SeqIO does Bio::Role::Pluggable['SeqIO']
         if ::($plugin) ~~ Failure {
             die "Can't load $plugin: $!";
         } else {
-            # mix in the plugin module
-            self does ::($plugin);
+            $!plugin = ::($plugin).new(|%args);
         }
-        self.initialize-io(|%args);
     }
-    
-    method next-Seq { ... }
-    
-    method write-Seq { ... }
     
     method guess-format { ... }
 }
