@@ -2,7 +2,7 @@
     "name" : "BioPerl6",
     "version" : "0.0.1",
     "description" : "Collection of Bioinformatics classes, roles, and modules",
-    "author" : "Chris Fields",
+    "author" : "git:cjfields",
     "depends" : [ 'File::Temp' ],
     "source-type" : "git",
     "source-url" : "git://github.com/cjfields/bioperl6.git"
