@@ -34,7 +34,7 @@ class Bio::SeqIO::fasta does Bio::Role::SeqStream {
     method !chunkify {
         return if $.eof();
         my $current_record;
-        while $.get -> $line {
+        while $.fh.get -> $line {
             if $.buffer {
                 $current_record = $.buffer;
                 $.buffer = Nil;
