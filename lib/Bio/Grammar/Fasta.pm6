@@ -24,7 +24,7 @@ grammar Bio::Grammar::Fasta {
         | <generic_id>    
     }
     token identifier   {
-        #assume we going to parse NCIB specific id for reference number and gi numbers
+        #assume we going to parse NCBI specific id for reference number and gi numbers
         \S+ 
     }    
     token generic_id {
