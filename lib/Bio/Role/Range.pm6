@@ -1,5 +1,10 @@
 subset RangeTest of Str where .lc eq any <ignore weak strong>;
 
+# NOTE: much of this is a direct translation of the Bioperl (v5) class. It could
+# be feasibly replaced by something infinitely smarter or even reimplemented
+# using Perl 6 Range class (though the benefits may not be immediately obvious
+# yet for that).
+
 role Bio::Role::Range;
 
 has Int $.start               is rw;
