@@ -1,10 +1,6 @@
 role Bio::Role::Annotatable;
 
-our Str method as_text {...}
+our Hash method hash-tree {...}
 
-our Str method display_text {...}
-
-our Hash method hash_tree {...}
-
-our Str method tag_name {...}
+our Str method tag-name {...}
 
