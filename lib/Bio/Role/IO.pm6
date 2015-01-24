@@ -3,7 +3,7 @@ use v6;
 use Bio::Role::Temp;
 
 role Bio::Role::IO does Bio::Role::Temp {
-    has IO::Handle $.fh;
+    has IO::Handle $.fh handles <get getc eof lines read write seek tell slurp spurt close>;
 
     # At the moment we force all IO consumers to initialize-io if they have this
     # simple signature

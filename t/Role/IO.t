@@ -17,7 +17,7 @@ ok(1);
 my $in = MyIO.new( file => $*SPEC.catfile('t','data','test.fasta'), :r);
 
 ok($in ~~ Bio::Role::IO, 'does Bio::Role::IO');
-is($in.file, 't/data/test.fasta'); # De-UNIX this
+is($in.file, $*SPEC.catfile('t','data','test.fasta')); # De-UNIX this
 
 isa_ok($in.fh, 'IO::Handle');
 
@@ -52,5 +52,5 @@ is(MyIO.catdir('a', 'b', 'c'), $*SPEC.catdir('a', 'b', 'c'), 'catdir');
 done();
 
 END {
-    unlink('hi.txt') if 'hi.txt'.IO ~~ :e;
+    unlink('hi.txt') if 'hi.txt'.IO:e;
 }
