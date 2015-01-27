@@ -2,9 +2,11 @@ use v6;
 
 use Bio::Role::Pluggable;
 use Bio::Role::RecordFormat;
+use Bio::Role::IO;
 
 class Bio::SeqIO does Bio::Role::Pluggable['SeqIO']
                  does Bio::Role::RecordFormat
+                 does Bio::Role::IO
                  {
     
     has $!plugin handles <next-Seq write-Seq>;

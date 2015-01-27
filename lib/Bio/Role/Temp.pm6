@@ -10,16 +10,15 @@ has @!tmpdirs;
 my $tmpcounter = 0;
 
 method tmpfile(*%args) {
-    
     # local passed arguments should override the global settings, not ignore them
-    
     if %args{'unlink'}:!exists {
         %args{'unlink'} = False ;
     }
     tempfile(|%args);
 }
 
-# a hack for temp directories; we need to get a version working for File::Temp
+# a hack for temp directories; a version is working for File::Temp but is stuck
+# in a pull request
 method tmpdir(Bool :$cleanup) {
     $!cleanup-tmpdir = $cleanup if $cleanup;
     my $tdir = $*SPEC.catfile( $*TMPDIR,
