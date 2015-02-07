@@ -16,7 +16,7 @@ grammar Bio::Grammar::GFF {
         | <directive-line>
         | <comment>
         ]+
-        <fasta>?
+        #<fasta>?
     }
 
     token comment {
@@ -114,7 +114,7 @@ grammar Bio::Grammar::GFF {
     }
 
     token value {
-        <-[\s;=&,]>+
+        <-[;=&,]>+
     }
     
     # not sure if there is a way to use a Grammar within another grammar (yet)
