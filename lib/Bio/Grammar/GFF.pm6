@@ -12,31 +12,33 @@ grammar Bio::Grammar::GFF {
     
     rule TOP  {
         [
+         <gff-line>
+        ]+
+        <fasta>?
+    }
+    
+    rule gff-line {
+        ^^
+        [
         | <feature-line>
         | <directive-line>
         | <comment>
-        ]+
-        #<fasta>?
+        ]
+        $$
     }
 
     token comment {
-        ^^
         '#'<-[#]> <-[\n]>+
-        $$
     }
 
     token directive-line {
-        ^^
         '##'
         <directive-name>
         <directive-data>?
-        $$ 
     }
 
     token resolution-line {
-        ^^
         '###'
-        $$
     }
 
     # TODO: break out into handling specific directives
@@ -86,21 +88,16 @@ grammar Bio::Grammar::GFF {
         <-[\t]>+
     }
 
+    # TODO: optimize this?
     token strand {
-        | '-'1
-        | 0
-        | 1
-        | '-'
-        | '+'
-        | '.'
+        < -1  0  1 - + . >
     }
     
     token phase {
-        | <[012]>
-        | '.'
+        <[012\.]>
     }
     
-    # TODO: expand into canonical vs custom, URI-encoding, etc.
+    # TODO: expand into canonical vs custom, URI-encoding, etc.?
     token attributes {
         <tag-value>+ % ';'
     }
@@ -114,7 +111,7 @@ grammar Bio::Grammar::GFF {
     }
 
     token value {
-        <-[;=&,]>+
+        <-[\n;=&,]>+
     }
     
     # not sure if there is a way to use a Grammar within another grammar (yet)
@@ -127,21 +124,21 @@ grammar Bio::Grammar::GFF {
     }
     
     token description_line    {
-        ^^\> <id> [<.ws> <description>]? $$
+        ^^\> <seq-id> [<.ws> <seq-description>]? $$
     }
-    token id           {
-        | <identifier>     
-        | <generic_id>    
+    token seq-id {
+        | <seq-identifier>
+        | <seq-generic-id>
     }
-    token identifier   {
-        #assume we going to parse NCBI specific id for reference number and gi numbers
+    
+    token seq-identifier   {
         \S+ 
     }    
-    token generic_id {
+    token seq-generic-id {
         \S+
     }    
     
-    token description  {
+    token seq-description  {
         \N+
     }
     token sequence     {
@@ -149,4 +146,3 @@ grammar Bio::Grammar::GFF {
     }
     
 }
-
