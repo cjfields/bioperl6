@@ -4,7 +4,7 @@
     "description" : "Collection of Bioinformatics classes, roles, and modules",
     "authors" : "git:cjfields",
     "depends" : [ "File::Temp" ],
-    "provides" : [
+    "provides" : {
         "Bio::Annotation::SimpleValue"      : "lib/Bio/Annotation/SimpleValue.pm6",
         "Bio::Grammar::Actions::Default"    : "lib/Bio/Grammar/Actions/Default.pm6",
         "Bio::Grammar::Actions::Fasta"      : "lib/Bio/Grammar/Actions/Fasta.pm6",
@@ -35,7 +35,7 @@
         "Bio::Tools::IUPAC"                 : "lib/Bio/Tools/IUPAC.pm6",
         "Bio::Type::Location"               : "lib/Bio/Type/Location.pm6",
         "Bio::Type::Sequence"               : "lib/Bio/Type/Sequence.pm6"    
-    ],
+    },
     "source-type" : "git",
     "source-url" : "git://github.com/cjfields/bioperl6.git"
 }
