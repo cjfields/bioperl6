@@ -101,14 +101,17 @@ r11 => '111111111',
 );
 
 for 0..@ranges.end -> $i {
-    my @tests = %map{"r$i"}.comb(/\d/);
-    for $i..@ranges.end -> $j {
-        my $r1 = @ranges[$i];
-        my $r2 = @ranges[$j];
-        for <overlaps contains equals> -> $method {
-            for <ignore weak strong> -> $test {
-                my $current = ?@tests.shift;
-                is($r1."$method"($r2, :test($test) ), $current, "$r1 $method $r2, $test: $current");
+    if %map{"r$i"}:exists  {
+        # must numerify match and then make it Bool
+        my @tests = %map{"r$i"}.comb(/\d/).map: { ?+$_ };
+        for $i..@ranges.end -> $j {
+            my $r1 = @ranges[$i];
+            my $r2 = @ranges[$j];
+            for <overlaps contains equals> -> $method {
+                for <ignore weak strong> -> $test {
+                    my $current = @tests.shift;
+                    is($r1."$method"($r2, :test($test) ), $current, "$r1 $method $r2, $test: $current");
+                }
             }
         }
     }
