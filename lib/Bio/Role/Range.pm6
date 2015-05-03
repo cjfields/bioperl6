@@ -36,14 +36,17 @@ method !teststranded (Bio::Role::Range $self: Bio::Role::Range $r, RangeTest :$t
     my ($s1, $s2) = ($!strand, $r.strand);
     given $test {
         when 'ignore' {
+            # strand doesn't matter
             return True
         }
         when 'weak' {
+            # strand matters only when set
             if $s1 == 0 || $s2 == 0 || $s1 == $s2 {
                 return True
             }
         }
         when 'strong' {
+            # strand matters and must be set
             if $s1 != 0 && $s1 == $s2 {
                 return True
             }
