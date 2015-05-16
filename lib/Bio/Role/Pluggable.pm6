@@ -17,10 +17,14 @@ role Bio::Role::Pluggable[Str $pd] # does Pluggable
         $class   ~~ s:g/'::'/\//;
         my $plugin = $!plugin-dir;
         for (@*INC) -> $dir, {
+            my ($type, $path) = $dir.split('#', 2);
             try {
-                my Str $start = "{$dir.Str.IO.path}/$class/$plugin".IO.absolute;
+                my Str $start = "{$path.Str.IO.path}/$class/$plugin".IO.absolute;
                 for self!search($start, base => $start.chars + 1, baseclass => "{$class}::{$plugin}::") -> $t {
-                    try {
+                    when Failure {  # can't read directory for whatever reason
+                        ();
+                    }
+                    default {
                         my $m = $t;
                         $m ~~ s:g/\//::/;
                         require ::("$m");
