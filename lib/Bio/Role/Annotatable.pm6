@@ -1,6 +1,7 @@
-role Bio::Role::Annotatable;
+role Bio::Role::Annotatable {
 
-our Hash method hash-tree {...}
+    our Hash method hash-tree {...}
+    
+    our Str method tag-name {...}
 
-our Str method tag-name {...}
-
+}

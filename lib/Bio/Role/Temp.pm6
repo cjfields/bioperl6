@@ -2,31 +2,33 @@ use v6;
 
 use File::Temp;
 
-role Bio::Role::Temp;
-
-has Bool $.cleanup-tmpdir = True;
-has Bool $.cleanup-tmpfiles = True;
-has @!tmpdirs;
-my $tmpcounter = 0;
-
-method tmpfile(*%args) {
-    # local passed arguments should override the global settings, not ignore them
-    if %args{'unlink'}:!exists {
-        %args{'unlink'} = False ;
+role Bio::Role::Temp {
+    
+    has Bool $.cleanup-tmpdir = True;
+    has Bool $.cleanup-tmpfiles = True;
+    has @!tmpdirs;
+    my $tmpcounter = 0;
+    
+    method tmpfile(*%args) {
+        # local passed arguments should override the global settings, not ignore them
+        if %args{'unlink'}:!exists {
+            %args{'unlink'} = False ;
+        }
+        tempfile(|%args);
     }
-    tempfile(|%args);
-}
+    
+    # a hack for temp directories; a version is working for File::Temp but is stuck
+    # in a pull request
+    method tmpdir(Bool :$cleanup) {
+        $!cleanup-tmpdir = $cleanup if $cleanup;
+        my $tdir = $*SPEC.catfile( $*TMPDIR,
+            sprintf("dir_%s-%s-%s",
+                      %*ENV{'USER'} || 'unknown',
+                      $*PID,
+                      $tmpcounter++));
+        mkdir($tdir, 0o755);
+        @!tmpdirs.push: $tdir;
+        return $tdir;
+    }
 
-# a hack for temp directories; a version is working for File::Temp but is stuck
-# in a pull request
-method tmpdir(Bool :$cleanup) {
-    $!cleanup-tmpdir = $cleanup if $cleanup;
-    my $tdir = $*SPEC.catfile( $*TMPDIR,
-        sprintf("dir_%s-%s-%s",
-                  %*ENV{'USER'} || 'unknown',
-                  $*PID,
-                  $tmpcounter++));
-    mkdir($tdir, 0o755);
-    @!tmpdirs.push: $tdir;
-    return $tdir;
 }
