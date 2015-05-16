@@ -1,6 +1,7 @@
-role Bio::Role::PrimarySeq;
 use Bio::Type::Sequence;
 use Bio::Tools::CodonTable;
+
+role Bio::Role::PrimarySeq {
 
 # below is intended to disambiguate seq (raw sequence) from # needs some type-checking, just simple for now
 has Str $.seq                   is rw;
@@ -101,36 +102,6 @@ method set_alphabet() {
 #    return $!seq;
 #}
 
-
-
-=begin length
-
- Title   : length
- Usage   : $len = $seq.length();
- Function: Get the length of the sequence in number of symbols (bases
-           or amino acids).
-
-           You can also set this attribute, even to a number that does
-           not match the length of the sequence string. This is useful
-           if you don''t want to set the sequence too, or if you want
-           to free up memory by unsetting the sequence. In the latter
-           case you could do e.g.
-
-               $seq.length($seq->length);
-               #todo will not be undef but Mu I believe
-               #$seq.seq(undef);
-
-           Note that if you set the sequence to a value other than
-           undef at any time, the length attribute will be
-           invalidated, and the length of the sequence string will be
-           reported again. Also, we won''t let you lie about the length.
-
- Example :
- Returns : integer representing the length of the sequence.
- Args    : Optionally, the value on set
-
-=end length
-
 multi method length() {
     # we do not cache values, but simply report back the length of the sequence
     return $.seq.chars;
@@ -195,25 +166,7 @@ multi method length() {
 #}
 
 
-=begin subseq
 
-  Title   : subseq
-  Usage   : $substring = $obj.subseq(10,40);
-            $substring = $obj.subseq(10,40,True)
-            $substring = $obj.subseq(start=>10,end=>40,replace_with=>'tga')
-  Function: returns the subseq from start to end, where the first sequence
-            character has coordinate 1 number is inclusive, ie 1-2 are the 
-            first two characters of the sequence
-  Returns : a string
-  Args    : integer for start position
-            integer for end position
-                  OR
-            Bio::LocationI location for subseq (strand honored) (NYI)
-            Specify 'nogap => True' to return subseq with gap characters removed
-            Specify 'replace_with => $new_subseq' to replace the subseq returned
-            with $new_subseq in the sequence object (NYI)
-
-=end subseq
 
 #multi method subseq(Bio::Role::Location $loc, Bool :$nogap?,Str :$replace_with?) {
 #       my $seq = "";
@@ -506,3 +459,53 @@ method !find_orf($sequence is copy,
         return $sequence;
     }
 
+}
+
+=begin length
+
+ Title   : length
+ Usage   : $len = $seq.length();
+ Function: Get the length of the sequence in number of symbols (bases
+           or amino acids).
+
+           You can also set this attribute, even to a number that does
+           not match the length of the sequence string. This is useful
+           if you don''t want to set the sequence too, or if you want
+           to free up memory by unsetting the sequence. In the latter
+           case you could do e.g.
+
+               $seq.length($seq->length);
+               #todo will not be undef but Mu I believe
+               #$seq.seq(undef);
+
+           Note that if you set the sequence to a value other than
+           undef at any time, the length attribute will be
+           invalidated, and the length of the sequence string will be
+           reported again. Also, we won''t let you lie about the length.
+
+ Example :
+ Returns : integer representing the length of the sequence.
+ Args    : Optionally, the value on set
+
+=end length
+
+
+=begin subseq
+
+  Title   : subseq
+  Usage   : $substring = $obj.subseq(10,40);
+            $substring = $obj.subseq(10,40,True)
+            $substring = $obj.subseq(start=>10,end=>40,replace_with=>'tga')
+  Function: returns the subseq from start to end, where the first sequence
+            character has coordinate 1 number is inclusive, ie 1-2 are the 
+            first two characters of the sequence
+  Returns : a string
+  Args    : integer for start position
+            integer for end position
+                  OR
+            Bio::LocationI location for subseq (strand honored) (NYI)
+            Specify 'nogap => True' to return subseq with gap characters removed
+            Specify 'replace_with => $new_subseq' to replace the subseq returned
+            with $new_subseq in the sequence object (NYI)
+
+=end subseq
