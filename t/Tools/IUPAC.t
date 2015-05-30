@@ -4,8 +4,8 @@ use lib './lib';
 
 use Test;
 plan 10;
-eval_lives_ok 'use Bio::Tools::IUPAC', 'Can use Bio::Tools::IUPAC';
-eval_lives_ok 'use Bio::PrimarySeq', 'Can use Bio::PrimarySeq';
+eval-lives-ok 'use Bio::Tools::IUPAC', 'Can use Bio::Tools::IUPAC';
+eval-lives-ok 'use Bio::PrimarySeq', 'Can use Bio::PrimarySeq';
 
 use Bio::Tools::IUPAC;
 use Bio::PrimarySeq; 
@@ -88,13 +88,13 @@ my $stream  = Bio::Tools::IUPAC.new(seq => $ambiseq);
 is $stream.count(), 4;
 
 #this is pretty useless but still test it anyway. Probably get rid of this api later
-is_deeply($stream.iupac_iub(),%IUB,'Can access IUB hash from method call');
-is_deeply($stream.iupac_rev_iub(),%REV_IUB,'Can access REV_IUB hash from method call');
-is_deeply($stream.iupac_iup(),%IUP,'Can access IUP hash from method call');
+is-deeply($stream.iupac_iub(),%IUB,'Can access IUB hash from method call');
+is-deeply($stream.iupac_rev_iub(),%REV_IUB,'Can access REV_IUB hash from method call');
+is-deeply($stream.iupac_iup(),%IUP,'Can access IUP hash from method call');
 
-is_deeply(%Bio::Tools::IUPAC::IUB,%IUB,'Can access IUB hash as a class variable');
-is_deeply(%Bio::Tools::IUPAC::REV_IUB,%REV_IUB,'Can access REV_IUB hash as a class variable');
-is_deeply(%Bio::Tools::IUPAC::IUP,%IUP,'Can access IUP hash as a class variable');
+is-deeply(%Bio::Tools::IUPAC::IUB,%IUB,'Can access IUB hash as a class variable');
+is-deeply(%Bio::Tools::IUPAC::REV_IUB,%REV_IUB,'Can access REV_IUB hash as a class variable');
+is-deeply(%Bio::Tools::IUPAC::IUP,%IUP,'Can access IUP hash as a class variable');
 
 my $b = 1; 
 while (my $uniqueseq = $stream.next_seq()) {

@@ -70,7 +70,7 @@ for @spans -> $s {
 }
 
 ok(@ranges[0] ~~ Bio::Role::Range, 'Range role');
-isa_ok(@ranges[0], MyRange, 'MyRange class');
+isa-ok(@ranges[0], MyRange, 'MyRange class');
 ok(!@ranges[0].^isa(Bio::Role::Range), 'Role consumed by class');
 is(@ranges[0].start, 1);
 is(@ranges[0].end, 100);

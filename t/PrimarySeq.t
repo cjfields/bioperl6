@@ -4,7 +4,7 @@ use Test;
 
 use lib './lib';
 
-eval_lives_ok 'use Bio::PrimarySeq', 'Can use Bio::PrimarySeq';
+eval-lives-ok 'use Bio::PrimarySeq', 'Can use Bio::PrimarySeq';
 
 use Bio::PrimarySeq;
 

@@ -27,7 +27,7 @@ my ($tfh,$tfile);
 {
     ok my $obj = MyTemp.new();
     
-    isa_ok $obj, 'MyTemp';
+    isa-ok $obj, 'MyTemp';
     
     ok $obj ~~ Bio::Role::Temp;
     
@@ -35,7 +35,7 @@ my ($tfh,$tfile);
     ($tfile, $tfh) = $obj.tmpfile();
     
     # check write
-    isa_ok $tfh, 'IO::Handle';
+    isa-ok $tfh, 'IO::Handle';
     $tfh.print($TEST_STRING);
     $tfh.close;
 
@@ -76,7 +76,7 @@ my ($tfh,$tfile);
 {
     my $obj = MyTemp.new();
     ($tfile, $tfh) = $obj.tmpfile(:!unlink);
-    isa_ok $tfh, 'IO::Handle';
+    isa-ok $tfh, 'IO::Handle';
     $tfh.close;
     ok $tfile.IO ~~ :e, ':e' ;
     $obj = Nil; 
@@ -91,14 +91,14 @@ my ($tfh,$tfile);
     
     # check suffix is applied
     my ($tfile, $tfh) = $obj.tmpfile(:suffix<.bioperl>);
-    isa_ok $tfh, 'IO::Handle';
+    isa-ok $tfh, 'IO::Handle';
     #like $tfh, rx/\.bioperl$/, 'tempfile suffix';
     ok close $tfh;
     @cleaned.push: $tfile;
     
     ## check single return value mode of File::Temp
     #my $fh2 = $obj->tempfile;
-    #isa_ok $fh2, 'GLOB';
+    #isa-ok $fh2, 'GLOB';
     #ok $fh2, 'tempfile() in scalar context';
     #ok close $fh2;
     #}

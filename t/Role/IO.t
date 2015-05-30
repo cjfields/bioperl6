@@ -19,7 +19,7 @@ my $in = MyIO.new( file => $*SPEC.catfile('t','data','test.fasta'), :r);
 ok($in ~~ Bio::Role::IO, 'does Bio::Role::IO');
 is($in.file, $*SPEC.catfile('t','data','test.fasta')); # De-UNIX this
 
-isa_ok($in.fh, 'IO::Handle');
+isa-ok($in.fh, 'IO::Handle');
 
 todo('Mode NYI', 1);
 is($in.mode, 'r');
