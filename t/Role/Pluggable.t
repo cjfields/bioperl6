@@ -1,9 +1,8 @@
 use v6;
 
-use lib './lib';
+use lib ('./lib', 't/lib');
 
 # note this adds the path to @*INC to check for plugins
-use lib 't/lib';
 
 use Test;
 

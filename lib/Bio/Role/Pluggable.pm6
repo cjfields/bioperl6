@@ -4,41 +4,42 @@ use v6;
 # https://github.com/tony-o/perl6-pluggable/blob/master/lib/Pluggable.pm6
 # but parametric and shallow (no recursion)
 
-# TODO: Do we override the Pluggable role or use our own? Going with our own,
-# but it might be nice to use the role...
+# TODO: Do we override the Pluggable role or use our own? Going with our own
+# since we make this parameterizable, but it might be nice to use the role...
 
 role Bio::Role::Pluggable[Str $pd] # does Pluggable
 {
     has $!plugin-dir  = $pd;
     
-    method plugins(){
+    method plugins(:$module) {
         my @list;
-        my $class = "{::?CLASS.^name}";
+        # if a specific module is passed, check that namespace, otherwise use current class name    
+        my $class = "{$module:defined ?? $module !! ::?CLASS.^name}";
+        # convert to path, probably should use spec here
         $class   ~~ s:g/'::'/\//;
+        
         my $plugin = $!plugin-dir;
-        for (@*INC) -> $dir, {
+
+        # note this is searching all paths, not needed if a path is given
+        for (@*INC) -> $dir {
             my ($type, $path) = $dir.split('#', 2);
-            try {
-                my Str $start = "{$path.Str.IO.path}/$class/$plugin".IO.absolute;
-                for self!search($start, base => $start.chars + 1, baseclass => "{$class}::{$plugin}::") -> $t {
-                    when Failure {  # can't read directory for whatever reason
-                        ();
-                    }
-                    default {
-                        my $m = $t;
-                        $m ~~ s:g/\//::/;
-                        require ::("$m");
-                        @list.push($m);
-                    };
+            my Str $start = "{$path.Str.IO.path}/$class/$!plugin-dir".IO.absolute;
+            if $start.IO.d {
+                for self!search($start, base => $start.chars + 1, baseclass => "{$class}::{$!plugin-dir}::") -> $t {
+                    my $m = $t;
+                    $m ~~ s:g/\//::/;
+                    require ::("$m");
+                    @list.push($m);
                 }
             }
-        };
+        }
         return @list;
     }
   
     method !search(Str $dir, :$baseclass, :$base){ 
         my @r;
         for dir($dir) -> $f {
+        
             next unless $f.IO ~~ :f;
             my $modulename = $f.absolute.Str.\
                                 substr($base).\
