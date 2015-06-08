@@ -56,7 +56,7 @@ the next year.
 To run a single test:
 
 ```
-prove -e 'perl6' t/Root.
+prove -e 'perl6' t/Root.t
 ``` 
 
 I also have a simple `Makefile` that can be used to precompile some modules.
