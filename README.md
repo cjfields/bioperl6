@@ -57,14 +57,13 @@ To run a single test:
 
 ```
 prove -e 'perl6' t/Root.
-``` 
-
-I also have a simple `Makefile` that can be used to precompile some modules.
-This is essentially a legacy of the older method for testing code, back when
-tests would take a long time to run. This is less of an issue now, but
-precompilation **does** speed things up.
+```
 
 # Notes
 
 Perl 6 is a specification and thus can represent multiple implementations. More
 in the Perl 6 [synopses](http://feather.perl6.nl/syn/).
+
+# Related
+
+* [Matt Oates](http://blog.mattoates.co.uk) has some nice Perl6 bioinformatics code implemented in the [BioInfo project](https://github.com/MattOates/BioInfo) that demonstrates some of the power of Perl6, including slangs and concurrency.  
