@@ -12,7 +12,6 @@ use Bio::PrimarySeq;
 
 # test IUPAC
 
-
 my %IUB = ( 'A' => [< A >],
              'C' => [< C >],
              'G' => [< G >],
@@ -82,7 +81,7 @@ my %IUP = ('A' => [<A>],
 
 
 my $ambiseq = Bio::PrimarySeq.new(seq => 'ARTCGTTGR',
-				  alphabet => dna); 
+				  alphabet => dna);
 
 my $stream  = Bio::Tools::IUPAC.new(seq => $ambiseq);
 is $stream.count(), 4;

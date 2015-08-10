@@ -1,12 +1,7 @@
 use Bio::Type::Sequence;
 
 class Bio::Tools::IUPAC {
-    our %IUB;
-    our %REV_IUB;
-    our %IUP;
-    
-    INIT {     
-        our %IUB = ( 'A' => [< A >],
+    our %IUB = ( 'A' => [< A >],
                   'C' => [< C >],
                   'G' => [< G >],
                   'T' => [< T >],
@@ -73,40 +68,39 @@ class Bio::Tools::IUPAC {
               'Z' => [<E Q>],
               '*' => ['*']
               );
-    }
-    
-    has $.seqobj;
+
+    has $.seq;
     has @.alpha;
     has @.string;
 
     # should be BUILD?  
-    method new( :$seq ) {
+    submethod BUILD($self: :$!seq, :$alphabet ) {
         
         my @alpha;
         my @string;
         
-        given $seq.alphabet {
+        given $!seq.alphabet {
             when ( dna | rna ) {
-                @alpha =  map { %IUB{uc($_)} } , split('', $seq.seq);        
+                @!alpha =  map { %IUB{uc($_)} } , comb(/\S/, $!seq.seq);        
             }
             
             when (protein) {
-                @alpha =  map { %IUP{uc($_)} } , split('', $seq.seq);        
+                @!alpha =  map { %IUP{uc($_)} } , comb(/\S/, $!seq.seq);        
             }
             
             default {
                 die "No alphabet can be determine from seq object";
             }
         }
-        @string = 0 xx $seq.seq.chars;
+        @!string = 0 xx $!seq.seq.chars;
     
-        @string.elems == 0 && die "Sequence is length 0";
-        @string[0] = -1;
+        @!string.elems == 0 && die "Sequence is length 0";
+        @!string[0] = -1;
         
-        my $obj= self.bless(seqobj => $seq, alpha => @alpha , string => @string);
-        
-        return $obj;
     }
+    
+    # NOTE: Not really sure of the utility here, this class seems to be more a
+    # factory than anything else
     
     #being next_seq
     
@@ -134,8 +128,8 @@ class Bio::Tools::IUPAC {
             else {
                 @!string[$i]++;
                 my $j = -1;
-                $!seqobj.seq = join('', map { $j++; @!alpha[$j][$_]; } ,@!string);
-                my $desc = $!seqobj.description();
+                $!seq.seq = join('', map { $j++; @!alpha[$j][$_]; } ,@!string);
+                my $desc = $!seq.description();
                 if ( !defined $desc ) { $desc = ""; }
     
                 # no idea why this is needed. No tests are depend on it and seems to have no value to convert
@@ -145,7 +139,7 @@ class Bio::Tools::IUPAC {
                 # $desc =~ s/( \[Bio::Tools::IUPAC-generated\sunique sequence # [^\]]*\])|$/ \[Bio::Tools::IUPAC-generated unique sequence # $self->{'_num'}\]/;
                 # $self->{'_SeqObj'}->desc($desc);
                 # $self->{'_num'} =~ s/,//g;
-                return $!seqobj;
+                return $!seq;
             }
         }
     }
@@ -206,7 +200,7 @@ class Bio::Tools::IUPAC {
     
     method count {
         my $count = 1;
-        $count *= $_.elems() for @!alpha;
+        $count *= $_.elems for @!alpha;
         return $count;
     }
 
