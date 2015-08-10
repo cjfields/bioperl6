@@ -5,7 +5,7 @@ use Bio::Role::Temp;
 role Bio::Role::IO does Bio::Role::Temp {
     
     # TODO: not sure we need to curry everything here, but list of methods is a rakudo bug
-    has IO::Handle $.fh; # handles IO::Handle;
+    has IO::Handle $.fh;
 
     # At the moment we force all IO consumers to initialize-io if they have this
     # simple signature

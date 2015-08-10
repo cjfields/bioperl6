@@ -6,7 +6,7 @@ use Bio::Role::IO;
 
 class Bio::SeqIO does Bio::Role::Pluggable['SeqIO']
                  does Bio::Role::RecordFormat
-                 does Bio::Role::IO
+                 #does Bio::Role::IO
                  {
     
     has $!plugin handles <next-Seq write-Seq>;

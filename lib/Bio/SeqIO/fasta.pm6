@@ -1,6 +1,7 @@
 use v6;
 
 use Bio::Role::SeqStream;
+use Bio::Role::IO;
 use Bio::Grammar::Fasta;
 use Bio::PrimarySeq;
 
@@ -14,7 +15,7 @@ class Bio::Grammar::Fasta::Actions::PrimarySeq {
     }
 }
 
-class Bio::SeqIO::fasta does Bio::Role::SeqStream {
+class Bio::SeqIO::fasta does Bio::Role::SeqStream does Bio::Role::IO {
     has $.buffer  is rw;
     has $!actions = Bio::Grammar::Fasta::Actions::PrimarySeq.new();
     has $.width = 60;
@@ -30,9 +31,9 @@ class Bio::SeqIO::fasta does Bio::Role::SeqStream {
     # time; two future optimizations require implementation in Rakudo:
     # 1) Chunking in IO::Handle using nl => "\n>"
     # 2) Grammar parsing of a stream of data (e.g. Cat), which is now considered
-    # a close post-6.0 update
+    #    a post-6.0 update
     method !chunkify {
-        return if $.eof();
+        return if $.fh.eof();
         my $current_record;
         while $.fh.get -> $line {
             if $.buffer {
@@ -49,6 +50,7 @@ class Bio::SeqIO::fasta does Bio::Role::SeqStream {
             } else {
                 $current_record ~= $line;
             }
+            say "record: $current_record";
         }
         return $current_record;
     };
