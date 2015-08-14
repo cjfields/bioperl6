@@ -4,9 +4,7 @@ grammar Bio::Grammar::FTLocation {
     token TOP { <location> }
     
     #location ::= <absolute_location> | <feature_name> |  <functional_operator>(<location_list>)
-    token location {
-        <absolute_location> | <complex_location>
-         }
+    token location { <absolute_location> | <complex_location> }
     
     #absolute_location ::= <local_location> | <path> : <local_location>
     token absolute_location { <local_location> | <remote_location> }

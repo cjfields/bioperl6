@@ -13,12 +13,12 @@ ok(1);
 my $fh = open('t/data/location_data.txt', :r);
 
 my $ct = 0;
-while $fh.get -> $line {
+for $fh.lines -> $line {
     my ($locstr, *@rest) = split("\t", $line);
-    $parser.from-string($locstr);
-    last if $ct++ == 3;
-    #Bio::Grammar::FTLocation.parse($locstr, :actions(Test::Actions.new()));
-    #ok($/.defined, $locstr);    
+    my $ast = $parser.from-string($locstr);
+    #last if $ct++ == 10;
+    #Bio::Grammar::FTLocation.parse($locstr);
+    ok($ast.defined, 'yep: ' ~ $locstr);
 }
     
 $fh.close;
