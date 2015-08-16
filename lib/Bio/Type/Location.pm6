@@ -31,7 +31,7 @@ my %SYMBOL-TYPE =
     'UNCERTAIN' => '?'
 ;
 
-my %TYPE-SYMBOL = %SYMBOL-TYPE.invert;
+#my %TYPE-SYMBOL = %SYMBOL-TYPE.invert;
 
 # trait for start/end position type
 role doc {
