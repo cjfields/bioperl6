@@ -87,13 +87,16 @@ role Bio::Role::Range {
     method union (*@ranges, RangeTest :$test = 'ignore') {
         my $union_strand = self.strand;  # Strand for the union range object.
     
-        # beware the hyperoperator!
-        $union_strand = 0 if any(@ranges».strand) != $union_strand;
-    
-        @ranges.unshift(self);
-    
-        my $max = @ranges.max: { $^a.end <=> $^b.end };
-        my $min = @ranges.min: { $^a.start <=> $^b.start };
+        #$union_strand = 0 if any(@ranges».strand) != $union_strand;
+        for @ranges -> $range {
+            if $range.strand != $union_strand {
+                $union_strand = 0;
+                last;    
+            }
+        }
+        
+        my $max = (@ranges, self).flat.max: { $^a.end <=> $^b.end };
+        my $min = (@ranges, self).flat.min: { $^a.start <=> $^b.start };
     
         # what if the end is undef...
         return self.new(start  => $min.start,
