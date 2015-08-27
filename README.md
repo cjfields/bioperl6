@@ -56,8 +56,8 @@ the next year.
 To run a single test:
 
 ```
-prove -e 'perl6' t/Root.
-```
+prove -e 'perl6' t/Root.t
+``` 
 
 # Notes
 
