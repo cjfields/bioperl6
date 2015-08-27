@@ -12,27 +12,27 @@ role Bio::Role::Range {
     has Int $.strand              is rw;
     
     method length {
-        die "Must define both start and end" if !$!start.defined | !$!end.defined;
+        die "Must define both start and end" if !$.start.defined | !$.end.defined;
         die "End must be larger than start" if $!start > $!end;
-        return $!end - $!start + 1;
+        return $.end - $.start + 1;
     }
     
-    method overlaps (Bio::Role::Range $range, RangeTest :$test = 'ignore') {
+    method overlaps (Bio::Role::Range:D $range, RangeTest :$test = 'ignore') {
         (self!teststranded($range, test => $test) &&
             !(($!start > $range.end || $!end < $range.start)))
     }
     
-    method contains (Bio::Role::Range $range, RangeTest :$test = 'ignore') {
+    method contains (Bio::Role::Range:D $range, RangeTest :$test = 'ignore') {
         (self!teststranded($range, :$test) &&
             $range.start >= $!start && $range.end <= $!end)
     }
     
-    method equals (Bio::Role::Range $range, RangeTest :$test = 'ignore')  {
+    method equals (Bio::Role::Range:D $range, RangeTest :$test = 'ignore')  {
         (self!teststranded($range, :test($test)) &&
             ($!start == $range.start && $!end == $range.end))
     }
     
-    method !teststranded (Bio::Role::Range $self: Bio::Role::Range $r, RangeTest :$test) {
+    method !teststranded (Bio::Role::Range $self: Bio::Role::Range:D $r, RangeTest :$test) {
         my ($s1, $s2) = ($!strand, $r.strand);
         given $test {
             when 'ignore' {
@@ -83,6 +83,8 @@ role Bio::Role::Range {
         }
         return $intersect;
     }
+    
+    
     
     method union (*@ranges, RangeTest :$test = 'ignore') {
         my $union_strand = self.strand;  # Strand for the union range object.
