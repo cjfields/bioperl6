@@ -54,6 +54,9 @@ passed using comma notation or using Pairs:
 
 my $seqobj = Bio::PrimarySeq.new(seq => $rawseq, description => $desc, :alphabet<dna>);
 
+Note that this diverges from perl5-based BioPerl conventions, where named arguments are
+prefixed with a dash ('-') character.
+
 ==Getter/Setters==
 
 ==Class Methods==
