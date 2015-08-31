@@ -27,4 +27,4 @@ $simple.value = 0;
 is $simple.value, 0;
 is ~$simple, 'Value: 0';
 
-done();
+done-testing();

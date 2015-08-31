@@ -252,4 +252,4 @@ $seq = Bio::PrimarySeq.new( display_id => ~ 0, seq => 'GATC' );
 
 is($seq.display_id, 0, "Bug #2864");
 
-done();
+done-testing();

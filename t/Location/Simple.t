@@ -58,4 +58,4 @@ ok(!$loc.is-remote, 'is-remote');
 ok($loc.is-fuzzy, 'is-fuzzy');
 is($loc, '1..100>', 'Stringified');
 
-done();
+done-testing();

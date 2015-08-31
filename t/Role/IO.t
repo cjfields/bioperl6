@@ -49,7 +49,7 @@ is($in.mode, 'r');
 is(MyIO.catfile('a', 'b', 'c'), $*SPEC.catfile('a', 'b', 'c'), 'catfile');
 is(MyIO.catdir('a', 'b', 'c'), $*SPEC.catdir('a', 'b', 'c'), 'catdir');
 
-done();
+done-testing();
 
 END {
     unlink('hi.txt') if 'hi.txt'.IO:e;

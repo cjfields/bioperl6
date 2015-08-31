@@ -183,4 +183,4 @@ is $seq.translate.seq, 'M-K--N';
 #ok my $cut = $io.next_data();
 #is $myCodonTable.reverse_translate_best($seq,$cut), 'GCCTGCGACGAGTTCGGCCACATCAAGCTGATGAACCCCCAGCGCTCCACCGTGTGGTAC';
 
-done();
+done-testing();
