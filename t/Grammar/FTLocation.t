@@ -32,4 +32,4 @@ ok(Bio::Grammar::FTLocation ~~ Grammar);
     is($complex_ct, 121);
 }
 
-done();
+done-testing();

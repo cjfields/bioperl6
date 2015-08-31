@@ -257,4 +257,4 @@ for %subtract_tests.keys.sort -> $set {
     }
 }
 
-done();
+done-testing();

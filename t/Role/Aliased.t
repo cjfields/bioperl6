@@ -26,4 +26,4 @@ is($test.bar, 'Long time no see');
 
 # TODO: add role tests...
 
-done();
+done-testing();

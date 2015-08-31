@@ -6,35 +6,50 @@ use Bio::Type::Location;
 
 role Bio::Role::Location does Bio::Role::Range {
 
-    has Int $.start-offset          is rw = 0;
-    has Int $.end-offset            is rw = 0;
-    has $.seqid                     is rw;
-    has $!start-pos-type;
-    has $!end-pos-type;
+    has Int $.start-offset                  is rw = 0;
+    has Int $.end-offset                    is rw = 0;
+    has $.seqid                             is rw;
+    has Location-Pos-Type $.start-pos-type  is rw = EXACT-POS;
+    has Location-Pos-Type $.end-pos-type    is rw = EXACT-POS;
+    has Join-Type $.type                    is rw = EXACT;
     
-    # use enum here
-    has Simple-Location-Type $.type                      is rw = EXACT;
-    
-    method max-start { self.start + $!start-offset }
-    method min-start { self.start  }
-    method max-end { self.end + $!end-offset }
-    method min-end { self.end }
-    
-    # use enum here?
-    method start-pos-type {
-        
+    method max-start {
+        $.start + $.start-offset
     }
     
-    method end-pos-type {
-        
+    method min-start {
+        $.start
+    }
+    
+    method max-end {
+        $.end + $.end-offset
+    }
+    
+    method min-end {
+        $.end
     }
     
     # return Bool
-    method is-valid returns Bool { ?( self.start.defined && self.end.defined ) }
-    method is-remote returns Bool { ?( $!seqid.defined ) }
-    #method is-fuzzy { ... }
+    method is-valid returns Bool {
+        $.start.defined && $.end.defined
+        and
+        $.start-pos-type !~~ AFTER
+        and
+        $.end-pos-type !~~ BEFORE
+    }
     
-    # stringification?
-    #multi method WHICH { ... }
-
+    method is-remote returns Bool {
+        $!seqid.defined
+    }
+    
+    method is-fuzzy returns Bool {
+        $.type !~~ EXACT
+        or
+        $.start-pos-type !~~ EXACT-POS
+        or
+        $.end-pos-type !~~ EXACT-POS
+    }
+    
 }
+
+

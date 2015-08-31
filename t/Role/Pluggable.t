@@ -35,4 +35,4 @@ ok(1);
 
 MyTest.new.test();
 
-done();
+done-testing();

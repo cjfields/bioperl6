@@ -23,4 +23,4 @@ while $fh.get -> $line {
     
 $fh.close;
 
-done();
+done-testing();

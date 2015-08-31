@@ -55,4 +55,4 @@ is($/.to, 804);
 # TODO: use File::Spec-like path
 ok( Bio::Grammar::Fasta.parsefile( './t/data/test.fasta' ) );
 
-done();
+done-testing();

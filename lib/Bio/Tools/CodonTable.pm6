@@ -297,7 +297,7 @@ class Bio::Tools::CodonTable {
         }
         my $count =  %aas.keys.elems;
         if $count == 1  {
-            $aa = (%aas.keys)[0];
+            $aa = @(%aas.keys)[0];
         }
         elsif $count == 2 {
             if (%aas{'D'} and %aas{'N'}) {

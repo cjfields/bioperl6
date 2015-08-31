@@ -40,4 +40,4 @@ is($in.format-variant, 'old', 'variant');
 
 dies-ok {Bio::SeqIO.new(format  => "foo")}, 'dies with an unknown format';
 
-done();
+done-testing();
