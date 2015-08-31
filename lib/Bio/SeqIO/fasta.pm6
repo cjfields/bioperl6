@@ -50,7 +50,6 @@ class Bio::SeqIO::fasta does Bio::Role::SeqStream does Bio::Role::IO {
             } else {
                 $current_record ~= $line;
             }
-            say "record: $current_record";
         }
         return $current_record;
     };
