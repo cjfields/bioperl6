@@ -33,7 +33,6 @@ class Bio::Tools::CodonTable {
     
     #has $.CODONGAP = $GAP x CODONSIZE;
     has $.CODONGAP is rw = '---';
-    #constant NYI    
     constant CODONSIZE = 3 ;
     
     has $.id is rw = 1;
@@ -135,10 +134,11 @@ class Bio::Tools::CodonTable {
         my $protein = '';
     
         # special case most common scenario
-        if $seq ~~ /^^<[atgc]>+$$/ {
-            loop (my $i = 0; $i < ($seq.chars - (CODONSIZE - 1)); $i+=CODONSIZE) {
-                $protein ~= @!TABLES[self.id-1].substr(%codons{ substr($seq, $i, CODONSIZE).lc }, 1);
-            }
+        # TODO: This could definitely be optimized using hyper/race/etc.
+        if $seq ~~ m:i/^^<[atgc]>+$$/ {
+            $protein = $seq.comb(/.../).map({
+                @!TABLES[ self.id-1 ].substr( %codons{ $_.lc }, 1);
+                }).join('');
         } else {
             loop (my $i = 0; $i < ($seq.chars - (CODONSIZE - 1)); $i+=CODONSIZE) {
                 given substr($seq, $i, CODONSIZE).lc {
