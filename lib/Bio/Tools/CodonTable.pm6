@@ -134,11 +134,13 @@ class Bio::Tools::CodonTable {
         my $protein = '';
     
         # special case most common scenario
-        # TODO: This could definitely be optimized using hyper/race/etc.
         if $seq ~~ m:i/^^<[atgc]>+$$/ {
-            $protein = $seq.comb(/.../).map({
-                @!TABLES[ self.id-1 ].substr( %codons{ $_.lc }, 1);
-                }).join('');
+            my $aa = $seq.comb(/.../)>>.map(
+                {
+                    @!TABLES[ self.id-1 ].substr( %codons{ $_.lc }, 1);
+                }
+                );
+            $protein = $aa.join('');
         } else {
             loop (my $i = 0; $i < ($seq.chars - (CODONSIZE - 1)); $i+=CODONSIZE) {
                 given substr($seq, $i, CODONSIZE).lc {
