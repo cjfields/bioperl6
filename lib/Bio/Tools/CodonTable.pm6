@@ -148,7 +148,8 @@ class Bio::Tools::CodonTable {
         my $tbl = @TABLES[self.id - 1];
         
         my $protein = '';
-
+        
+        # 
         my $aa = $seq.comb(/.../)>>.map(
             {
                 my $codon = $_;
@@ -167,6 +168,7 @@ class Bio::Tools::CodonTable {
             }
             );
         $protein = $aa.join('');
+        
         # any leftover?  TODO: this doesn't account for possible gaps
         if $seq.chars % CODONSIZE == 2 {
             my $aa = self!translate_ambiguous_codon( $seq.substr(*-2, 2).lc ~ 'n' );

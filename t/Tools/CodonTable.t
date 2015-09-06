@@ -153,14 +153,13 @@ ok my $custct = Bio::Tools::CodonTable.new(table => @custom_table[0],
 
 is $custct.id, 24;
 is $myCodonTable.translate('atgaaraayacmacracwacka'), 'MKNTTTT';
-#ok ($myCodonTable.id =  $custct);
-is $myCodonTable.translate('atgaaraayacmacracwacka'), 'MKXXTTT';
+is $custct.translate('atgaaraayacmacracwacka'), 'MKXXTTT';
 
 # test doing this via Bio::PrimarySeq object
 
 ok $seq = Bio::PrimarySeq.new(seq=>'atgaaraayacmacracwacka', alphabet=> dna);
 is $seq.translate().seq, 'MKNTTTT','Bio::PrimarySeq translate';
-is $seq.translate(codonTable => $myCodonTable).seq, 'MKXXTTT';
+is $seq.translate(codonTable => $custct).seq, 'MKXXTTT';
 
 # test gapped translated
 ok $seq = Bio::PrimarySeq.new(seq      => 'atg---aar------aay',
