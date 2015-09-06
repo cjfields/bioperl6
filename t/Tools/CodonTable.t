@@ -151,8 +151,7 @@ my @custom_table = 'FFLLSSSSYY**CC*WLLLL**PPHHQQR*RRIIIMT*TT*NKKSSRRV*VVAA*ADDEE
 ok my $custct = Bio::Tools::CodonTable.new(table => @custom_table[0],
                                            table-name   => @custom_table[1]);
 
-note($custct);
-is $custct, 24;
+is $custct.id, 24;
 is $myCodonTable.translate('atgaaraayacmacracwacka'), 'MKNTTTT';
 #ok ($myCodonTable.id =  $custct);
 is $myCodonTable.translate('atgaaraayacmacracwacka'), 'MKXXTTT';

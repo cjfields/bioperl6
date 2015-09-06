@@ -111,7 +111,7 @@ class Bio::Tools::CodonTable {
     submethod BUILD(:$!id = 1, 
                     :$table?,
                     :$table-name = 'Custom' ~ @NAMES.elems +1,
-                    :$starts?,
+                    :$starts = @STARTS[1],
                     :$!gap = '-',
                     :$!terminator = '*'
                     )
@@ -120,9 +120,9 @@ class Bio::Tools::CodonTable {
             push @TABLES, $table;
             push @NAMES, $table-name;
             push @STARTS, $starts;
-            # overrides id
+            # overrides id for custom tables
             $!id = @NAMES.elems;
-        } 
+        }
     }
     
     method name() {
@@ -158,7 +158,8 @@ class Bio::Tools::CodonTable {
                 );
             $protein = $aa.join('');
         } else {
-            loop (my $i = 0; $i < ($seq.chars - (CODONSIZE - 1)); $i+=CODONSIZE) {
+            my $seq-len = $seq.chars;
+            loop (my $i = 0; $i < ($seq-len - (CODONSIZE - 1)); $i+=CODONSIZE) {
                 given substr($seq, $i, CODONSIZE).lc {
                     when $.CODONGAP {
                         $protein ~= '-';
