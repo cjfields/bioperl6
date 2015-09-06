@@ -148,32 +148,25 @@ class Bio::Tools::CodonTable {
         my $tbl = @TABLES[self.id - 1];
         
         my $protein = '';
-    
-        # special case most common scenario
-        if $seq ~~ m:i/^^<[atgc]>+$$/ {
-            my $aa = $seq.comb(/.../)>>.map(
-                {
-                    @TABLES[ self.id-1 ].substr( %codons{ $_.lc }, 1);
-                }
-                );
-            $protein = $aa.join('');
-        } else {
-            my $seq-len = $seq.chars;
-            loop (my $i = 0; $i < ($seq-len - (CODONSIZE - 1)); $i+=CODONSIZE) {
-                given substr($seq, $i, CODONSIZE).lc {
+
+        my $aa = $seq.comb(/.../)>>.map(
+            {
+                my $codon = $_;
+                given $codon.lc {
                     when $.CODONGAP {
-                        $protein ~= '-';
+                        '-';
                     }
                     when /<-[ATUGCatugc]>/ {
                         # TODO: rewrite this to be more consistent
-                        $protein ~= self!translate_ambiguous_codon($_);
+                        self!translate_ambiguous_codon($_);
                     }
                     default {
-                        $protein ~= @TABLES[self.id-1].substr(%codons{$_}, 1);
+                        @TABLES[self.id-1].substr(%codons{$_}, 1);
                     }
                 }
             }
-        }
+            );
+        $protein = $aa.join('');
         # any leftover?  TODO: this doesn't account for possible gaps
         if $seq.chars % CODONSIZE == 2 {
             my $aa = self!translate_ambiguous_codon( $seq.substr(*-2, 2).lc ~ 'n' );
