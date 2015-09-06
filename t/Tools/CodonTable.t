@@ -19,8 +19,11 @@ ok($myCodonTable ~~ Bio::Tools::CodonTable, 'Bio::Tools::CodonTable object');
 $myCodonTable = Bio::Tools::CodonTable.new();
 is $myCodonTable.id(), 1, '.id';
 
+# CodonTable is now immutable, can't change attributes
+dies-ok { $myCodonTable.id = 10 };
+
 # change codon table
-$myCodonTable.id = 10;
+$myCodonTable = Bio::Tools::CodonTable.new( id => 10);
 is $myCodonTable.id, 10, 'change .id';
 is $myCodonTable.name(), 'Euplotid Nuclear';
 
@@ -36,7 +39,7 @@ is %table{11}, qw<"Bacterial">;
 # is %table{23}, 'Thraustochytrium Mitochondrial';
 
 # translate codons
-$myCodonTable.id = 1;
+$myCodonTable = Bio::Tools::CodonTable.new(id => 1);
 
 is $myCodonTable.translate(''), '', 'Empty sequence translate';
 
@@ -118,8 +121,6 @@ for 0..@ii.end() -> $i {
 ok $test;
 
 #  boolean tests
-$myCodonTable.id =1;
-
 ok $myCodonTable.is_start_codon('ATG');  
 is $myCodonTable.is_start_codon('GGH'), 0;
 ok $myCodonTable.is_start_codon('HTG');
@@ -137,24 +138,23 @@ is $myCodonTable.is_unknown_codon('UAG'), 0;
 
 is $myCodonTable.translate_strict('ATG'), 'M';
 
-
-
 #
 # adding a custom codon table
 #
 
-my @custom_table =
-    ( 
-      'FFLLSSSSYY**CC*WLLLL**PPHHQQR*RRIIIMT*TT*NKKSSRRV*VVAA*ADDEE*GGG',
-      'test1'
-    );
+my @custom_table = 'FFLLSSSSYY**CC*WLLLL**PPHHQQR*RRIIIMT*TT*NKKSSRRV*VVAA*ADDEE*GGG',
+      'test1';
 
 #changed inferface from p5 version. Since cannot have require parameter after optional, going to have pass the table first,
 #so we can have optional table name and starts
-ok my $custct = $myCodonTable.add_table(@custom_table[0],@custom_table[1]);
+
+ok my $custct = Bio::Tools::CodonTable.new(table => @custom_table[0],
+                                           table-name   => @custom_table[1]);
+
+note($custct);
 is $custct, 24;
 is $myCodonTable.translate('atgaaraayacmacracwacka'), 'MKNTTTT';
-ok ($myCodonTable.id= $custct);
+#ok ($myCodonTable.id =  $custct);
 is $myCodonTable.translate('atgaaraayacmacracwacka'), 'MKXXTTT';
 
 # test doing this via Bio::PrimarySeq object
