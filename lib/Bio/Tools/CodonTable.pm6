@@ -13,6 +13,8 @@ class Bio::Tools::CodonTable {
 
     constant CODONSIZE = 3 ;
     
+    has $!codon-table;
+    
     INIT {
         my @nucs = <t c a g>;
         my $x = 0;
@@ -123,6 +125,9 @@ class Bio::Tools::CodonTable {
             # overrides id for custom tables
             $!id = @NAMES.elems;
         }
+        for %codons.kv -> $codon, $aa {
+            $!codon-table{ $codon } = @TABLES[self.id-1].substr(%codons{$codon}, 1)
+        }
     }
     
     method name() {
@@ -147,27 +152,27 @@ class Bio::Tools::CodonTable {
     
         my $tbl = @TABLES[self.id - 1];
         
-        my $protein = '';
-        
-        # 
-        my $aa = $seq.comb(/.../)>>.map(
+        my $aa = (0..^($seq.chars / 3).floor)>>.map(
             {
-                my $codon = $_;
+                my $codon = substr($seq, $_ * 3, CODONSIZE);
+                my $res;
                 given $codon.lc {
                     when $.CODONGAP {
-                        '-';
+                        $res = '-';
                     }
                     when /<-[ATUGCatugc]>/ {
-                        # TODO: rewrite this to be more consistent
-                        self!translate_ambiguous_codon($_);
+                        # TODO: rewrite this to be more consistent?
+                        $res = self!translate_ambiguous_codon($_);
                     }
                     default {
-                        @TABLES[self.id-1].substr(%codons{$_}, 1);
+                        $res = $!codon-table{ $_ };
                     }
                 }
+                $res;
             }
             );
-        $protein = $aa.join('');
+        
+        my $protein = $aa.join('');
         
         # any leftover?  TODO: this doesn't account for possible gaps
         if $seq.chars % CODONSIZE == 2 {
@@ -284,18 +289,6 @@ class Bio::Tools::CodonTable {
            return substr(@TABLES[$id-1],%codons{$value},1);
        }    
     }
-    
-    #method add_table($table where $table.chars == 64,
-    #                 $name? = 'Custom' ~ @!NAMES.elems +1 ,
-    #                 $starts? where $starts.length == 64 = @!STARTS[0] )  {
-    #    #some reason getting a syntax error when adding where clause
-    #
-    #     push @!NAMES, $name;
-    #     push @!TABLES, $table;
-    #     push @!STARTS, $starts;
-    #
-    #    return @!NAMES.elems;    
-    #}
     
     method reverse_translate_all(*@params) {
         return 'NYI';
