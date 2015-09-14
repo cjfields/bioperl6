@@ -5,10 +5,10 @@ use lib './lib';
 use Test;
 
 # TODO: these should probably become enums
-subset SeqAlphabet where .lc ~~ any <dna rna protein>;
-subset SeqStrandInt where any <-1 0 1>;
-subset SeqStrandChar where any <- . +>;
-subset SeqStrand where { $_ ~~ SeqStrandChar || $_ ~~ SeqStrandInt};
+subset SeqAlphabet of Str where .lc ~~ any <dna rna protein>;
+subset SeqStrandInt of Int where any < -1 0 1 >;
+subset SeqStrandChar of Str where any < - . + >;
+subset SeqStrand where any(SeqStrandChar, SeqStrandInt);
 
 for -2..2 -> $a {
     if -1 <= $a <= 1 {
