@@ -25,11 +25,13 @@ class Bio::SeqIO does Bio::Role::Pluggable['SeqIO']
         my $plugin = "Bio::SeqIO::" ~ $!format;
         
         try {
-            require $plugin;
+            require ::($plugin);
         };
         
         if ::($plugin) ~~ Failure {
+            #note(@*INC.join("\t"));
             die "Can't load $plugin: $!";
+            
         } else {
             $!plugin = ::($plugin).new(|%args);
         }
