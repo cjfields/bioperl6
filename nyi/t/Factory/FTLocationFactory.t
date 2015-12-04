@@ -1,9 +1,5 @@
 use v6;
-
-BEGIN {
-    @*INC.push('./lib');
-}
-
+use lib 'lib';
 use Test;
 plan 268;
 eval_lives_ok 'use Bio::Factory::FTLocationFactory', 'Can use Bio::Factory::FTLocationFactory';
