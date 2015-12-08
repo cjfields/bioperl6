@@ -14,7 +14,7 @@ role Bio::Role::Pluggable[Str $pd] # does Pluggable
     method plugins(:$module) {
         my @list;
         # if a specific module is passed, check that namespace, otherwise use current class name    
-        my $class = "{$module:defined ?? $module !! ::?CLASS.^name}";
+        my $class = "{$module.defined ?? $module !! ::?CLASS.^name}";
         # convert to path, probably should use spec here
         $class   ~~ s:g/'::'/\//;
         
