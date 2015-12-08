@@ -19,7 +19,7 @@ my (@cleaned, @kept);
 
 
 ##################
-#   tmpfile
+#   tempfile
 ##################
 
 my ($tfh,$tfile);
@@ -32,7 +32,7 @@ my ($tfh,$tfile);
     ok $obj ~~ Bio::Role::Temp;
     
     my $TEST_STRING = "Bioperl rocks!\n";
-    ($tfile, $tfh) = $obj.tmpfile();
+    ($tfile, $tfh) = $obj.tempfile();
     
     # check write
     isa-ok $tfh, 'IO::Handle';
@@ -53,15 +53,15 @@ my ($tfh,$tfile);
 }
 
 ##################
-#   tmpdir
+#   tempdir
 ##################
 
 {
     my $obj = MyTemp.new();
     
-    my $tdir = $obj.tmpdir(CLEANUP=>1);
+    my $tdir = $obj.tempdir(CLEANUP=>1);
     ok $tdir.IO ~~ :d;
-    ($tfile, $tfh) = $obj.tmpfile(:dir<$tdir>);
+    ($tfile, $tfh) = $obj.tempfile(:tempdir($tdir));
     $tfh.close;
     ok $tfile.IO ~~ :e;
     @cleaned.push: $tfile;
@@ -69,13 +69,13 @@ my ($tfh,$tfile);
 
 
 ##################
-#   tmpfile
+#   tempfile
 #   Unlink = 0
 ##################
 
 {
     my $obj = MyTemp.new();
-    ($tfile, $tfh) = $obj.tmpfile(:!unlink);
+    ($tfile, $tfh) = $obj.tempfile(:!unlink);
     isa-ok $tfh, 'IO::Handle';
     $tfh.close;
     ok $tfile.IO ~~ :e, ':e' ;
@@ -90,7 +90,7 @@ my ($tfh,$tfile);
     my $obj = MyTemp.new();
     
     # check suffix is applied
-    my ($tfile, $tfh) = $obj.tmpfile(:suffix<.bioperl>);
+    my ($tfile, $tfh) = $obj.tempfile(:suffix<.bioperl>);
     isa-ok $tfh, 'IO::Handle';
     #like $tfh, rx/\.bioperl$/, 'tempfile suffix';
     ok close $tfh;
