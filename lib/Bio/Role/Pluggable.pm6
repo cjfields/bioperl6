@@ -21,9 +21,8 @@ role Bio::Role::Pluggable[Str $pd] # does Pluggable
         my $plugin = $!plugin-dir;
 
         # note this is searching all paths, not needed if a path is given
-        for (@*INC) -> $dir {
-            my ($type, $path) = $dir.split('#', 2);
-            my Str $start = "{$path.Str.IO.path}/$class/$!plugin-dir".IO.absolute;
+        for ($*REPO) -> $dir {
+            my Str $start = "{$dir.Str}/$class/$!plugin-dir";
             if $start.IO.d {
                 for self!search($start, base => $start.chars + 1, baseclass => "{$class}::{$!plugin-dir}::") -> $t {
                     my $m = $t;
