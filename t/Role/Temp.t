@@ -6,8 +6,6 @@ use Test;
 
 use Bio::Role::Temp;
 
-use File::Temp;
-
 ok(1);
 
 my (@cleaned, @kept);
