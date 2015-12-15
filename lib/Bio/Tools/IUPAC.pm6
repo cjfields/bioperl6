@@ -1,8 +1,5 @@
 use Bio::Type::Sequence;
 
-# temporary, seeing odd precomp issues
-no precompilation;
-
 class Bio::Tools::IUPAC {
     our %IUB = ( 'A' => [< A >],
                   'C' => [< C >],
