@@ -3,7 +3,7 @@ use v6;
 use lib './lib';
 
 use Test;
-plan 10;
+
 eval-lives-ok 'use Bio::Tools::IUPAC', 'Can use Bio::Tools::IUPAC';
 eval-lives-ok 'use Bio::PrimarySeq', 'Can use Bio::PrimarySeq';
 
@@ -103,3 +103,5 @@ while (my $uniqueseq = $stream.next_seq()) {
     }
 }
 ok $b;
+
+done-testing();
