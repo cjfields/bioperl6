@@ -11,3 +11,4 @@ blib*
 MYMETA.yml
 *.moarvm
 *.pir
+*.precomp
