@@ -26,13 +26,13 @@ role Bio::Role::Identifiable {
     }
     
     # these latter two methods may be obsoleted
-    method lsid_string returns Str {
+    method lsid_string() returns Str {
       return join(':',  ~self.authority,
                         ~self.namespace,
                         ~self.accession || ~self.id || '');
     }
     
-    method namespace_string returns Str {
+    method namespace_string() returns Str {
       return join(':', ~self.namespace,
                   (~self.accession || ~self.id || '') ~ (~(defined(self.version()) ?? "." ~ self.version !! '')));
     }
