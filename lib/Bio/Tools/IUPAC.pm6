@@ -113,7 +113,7 @@ class Bio::Tools::IUPAC {
    
     #end
     
-    method next_seq {
+    method next_seq() {
     
         for 0..@!string.end() -> $i {
             next unless @!string[$i] || @!alpha[$i] > 1;
@@ -154,7 +154,7 @@ class Bio::Tools::IUPAC {
     
     #end
     
-    method iupac_iup {
+    method iupac_iup() {
        return %IUP;
     }
     
@@ -168,7 +168,7 @@ class Bio::Tools::IUPAC {
     
     #end
     
-    method iupac_iub {
+    method iupac_iub() {
        return %IUB;
     }
     
@@ -183,7 +183,7 @@ class Bio::Tools::IUPAC {
     
     #end
     
-    method iupac_rev_iub {
+    method iupac_rev_iub() {
        return %REV_IUB;
     }
     
@@ -198,7 +198,7 @@ class Bio::Tools::IUPAC {
     
     #end
     
-    method count {
+    method count() {
         my $count = 1;
         $count *= $_.elems for @!alpha;
         return $count;
