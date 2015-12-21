@@ -20,28 +20,27 @@ ok($in ~~ Bio::Role::IO, 'does Bio::Role::IO');
 is($in.file, $*SPEC.catfile('t','data','test.fasta')); # De-UNIX this
 
 isa-ok($in.fh, 'IO::Handle');
-
-todo('Mode NYI', 1);
 is($in.mode, 'r');
 
 # simple file output
 my $out = MyIO.new( file => $*SPEC.catfile('hi.txt'), :w);
 
 is($out.file, 'hi.txt');
-todo('Mode NYI', 1);
-is($in.mode, 'w');
+is($out.mode, 'w');
 
 # rw
 my $inout = MyIO.new( file => $*SPEC.catfile('hi.txt'), :rw );
+is($inout.mode, 'rw');
 
-is($in.mode, 'rw');
+# also works with :r :w
+$inout = MyIO.new( file => $*SPEC.catfile('hi.txt'), :r, :w );
+is($inout.mode, 'rw');
 
 # from a file handle
 my $fh = $*SPEC.catfile('t','data','test.fasta').IO.open: :r;
 
 $in = MyIO.new( fh => $fh );
-
-todo('Mode NYI', 1);
+todo('Mode from a file handle NYI', 1);
 is($in.mode, 'r');
 
 # if you really really have to use IO instead of SPEC for catfile, a'la old

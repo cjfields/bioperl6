@@ -6,6 +6,7 @@ role Bio::Role::IO does Bio::Role::Temp {
     
     # TODO: not sure we need to curry everything here, but list of methods is a rakudo bug
     has IO::Handle $.fh;
+    has $.mode;
 
     # At the moment we force all IO consumers to initialize-io if they have this
     # simple signature
@@ -19,6 +20,13 @@ role Bio::Role::IO does Bio::Role::Temp {
 
     multi method initialize-io(:$fh?, :$file?, *%args) {
         if $file {
+            for <r w rw> -> $m {
+                if %args{ $m }:exists and so %args{ $m } {
+                    $!mode ~= $m;
+                }
+            }
+            $!mode //= 'r';
+
             # TODO: may want to send explicit list of args to IO (not flattened list of everything)
             $!fh = $file.IO.open(|%args) orelse die "Can't open file: $!";
         }
@@ -33,22 +41,22 @@ role Bio::Role::IO does Bio::Role::Temp {
     # only a method that checks the statuus of the IO::Handle; not completely
     # implemented but should be soon
     
-    method mode {
-        my $mode;
-        given $!fh {
-            when .r  {
-                $mode ~= 'r';
-                proceed;
-            }
-            when .w {
-                $mode ~= 'w';
-            }
-            default {
-                $mode //= '?';
-            }
-        }
-        $mode;
-    }
+    #method mode {
+    #    my $mode;
+    #    given $!fh {
+    #        when .r  {
+    #            $mode ~= 'r';
+    #            proceed;
+    #        }
+    #        when .w {
+    #            $mode ~= 'w';
+    #        }
+    #        default {
+    #            $mode //= '?';
+    #        }
+    #    }
+    #    $mode;
+    #}
     
     # basically delegates to File::Spec if present, so likely obsolete
     method catfile(*@path) {
