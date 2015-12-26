@@ -1,4 +1,4 @@
-# BioPerl 6 
+# BioPerl 6
 
 The experimental classes in this directory are test implementations for Perl 6.
 Most of these are similar to perl5-based BioPerl with simple Perl 6
@@ -20,19 +20,20 @@ happy to have help.  The more the better!
 
 # Targeting
 
-Currently, I am targeting [Rakudo Perl 6](https://github.com/rakudo/rakudo)
+Currently, I target [Rakudo Perl 6](https://github.com/rakudo/rakudo)
 (specifically using the MoarVM backend) off the `nom` branch. We may switch at
 some point to a targeted Rakudo Star version for more stability, but since the
 latest branch code has seen dramatic improvements (as of Aug. 2014) we aim to
-stay consistent with that.
+stay consistent with that.  
 
-We also will try to support other backends where feasible (namely meaning that
-changes will not require working around features not implemented in said
-backend).
+Note, as of Dec. 25, 2015, Rakudo is now targeting the newly-released Perl 6
+official specification (6.c), therefore syntax is expected to have stabilized
+and focus will be fixing bugs, improving performance, and working out corners of
+the specification that need further clarification.
 
 # Implemented
 
-* `Bio::PrimarySeq` - this includes required modules for transcription and
+* `Bio::PrimarySeq` - this includes required basic modules for transcription and
   translation.
 * `Bio::Range` - simple biological range operations (don't confuse this with the
   Perl 6 Range class)
@@ -46,7 +47,7 @@ Basically, one can do this:
 
 ```
 prove -e 'perl6' -r t
-``` 
+```
 
 which will run all tests. **This will certainly fail at this stage!** Most
 current tests are ports from the original BioPerl distribution, and the current
@@ -57,7 +58,7 @@ To run a single test:
 
 ```
 prove -e 'perl6' t/Root.t
-``` 
+```
 
 # Notes
 
