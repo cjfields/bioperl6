@@ -10,7 +10,7 @@ use Bio::PrimarySeq;
 
 my $seq = Bio::PrimarySeq.new(
     seq                     => 'TTGGTGGCGTCAACT',
-    display_id              => 'new-id',
+    display-id              => 'new-id',
     alphabet                => dna,
     accession        => 'X677667',
     description             => 'Sample Bio::Seq object'
@@ -22,14 +22,14 @@ ok($seq ~~ Bio::PrimarySeq, 'Bio::PrimarySeq object');
 is($seq.accession(), 'X677667','Retrieving accession number');
 
 is($seq.seq(),'TTGGTGGCGTCAACT','Retrieving sequence');
-is($seq.display_id,'new-id','Retrieving display_id');
+is($seq.display-id,'new-id','Retrieving display_id');
 
 is($seq.alphabet,dna,'Retrieving alphabet');
 is($seq.alphabet.perl, 'SequenceType::dna', 'Alphabet is enum');
 
-is($seq.is_circular, False,'Determining if circular');
-$seq.is_circular=True;
-is($seq.is_circular, True,'Setting circular to True');
+is($seq.is-circular, False,'Determining if circular');
+$seq.is-circular=True;
+is($seq.is-circular, True,'Setting circular to True');
 
 # check IdentifiableI and DescribableI interfaces
 ok($seq ~~ Bio::Role::Identifiable,'Has a Bio::Role::Identifiable');
@@ -40,13 +40,13 @@ is(($seq.authority="bioperl.org") , "bioperl.org",'Setting authority');
 is(($seq.namespace='t'),'t','Setting namespace');
 is($seq.namespace, "t",'Retrieving namespace');
 is(($seq.version=0), 0,'Setting version number');
-is($seq.lsid_string(), "bioperl.org:t:X677667",'Retrieving lsid_string');
-is($seq.namespace_string(), "t:X677667.0",'Retrieving namespace_string');
+is($seq.lsid-string(), "bioperl.org:t:X677667",'Retrieving lsid_string');
+is($seq.namespace-string(), "t:X677667.0",'Retrieving namespace_string');
 $seq.version=47;
 is($seq.version(), 47,'Retrieving version number');
-is($seq.namespace_string(), "t:X677667.47",'Retrieving namespace_string');
+is($seq.namespace-string(), "t:X677667.47",'Retrieving namespace_string');
 is($seq.description(), 'Sample Bio::Seq object','Has correct description');
-is($seq.display_name(), "new-id",'Has correct display_name');
+is($seq.display-name(), "new-id",'Has correct display_name');
 
 #
 # length (gapless)
@@ -63,13 +63,13 @@ ok($rev ~~ Bio::PrimarySeq, 'Bio::PrimarySeq object');
 
 is($rev.seq(), 'AGTTGACGCCACCAA', 'revcom() failed, was ' ~ $rev.seq());
 
-is($rev.display_id, 'new-id');
+is($rev.display-id, 'new-id');
 is( $rev.alphabet(),    dna, 'alphabet copied through revcom' );
 
 is( $rev.namespace, 't', 'namespace copied through revcom' );
-is( $rev.namespace_string(),
+is( $rev.namespace-string(),
     "t:X677667.47", 'namespace_string copied through revcom' );
-is( $rev.is_circular, True,     'is_circular copied through revcom' );
+is( $rev.is-circular, True,     'is_circular copied through revcom' );
 
 # subseq
 is( $seq.subseq(start => 2, end => 5, strand => 1), 'TGGT', 'subseq normal');
@@ -231,25 +231,25 @@ $seq = Bio::PrimarySeq.new(
 );
 is( $seq.description, 'Alias desc' );
 is( $seq.desc('new desc'), 'new desc' );
-is( $seq.display_id,  'aliasid' );
+is( $seq.display-id,  'aliasid' );
 
 # test that x's are ignored and n's are assumed to be dna no longer true!
 # See Bug 2438. There are protein sequences floating about which are all 'X'
 # (unknown aa)
 
 $seq.seq = 'atgxxxxxx';
-$seq.set_alphabet;
+$seq.set-alphabet;
 is( $seq.alphabet, 'protein' );
 
 $seq.seq = 'atgnnnnnn';
-$seq.set_alphabet;
+$seq.set-alphabet;
 is( $seq.alphabet, dna );
 
 ## Bug #2864:
 
 # Note this is now type-checked as a string, so we need to stringify Ints
-$seq = Bio::PrimarySeq.new( display_id => ~ 0, seq => 'GATC' );
+$seq = Bio::PrimarySeq.new( display-id => ~ 0, seq => 'GATC' );
 
-is($seq.display_id, 0, "Bug #2864");
+is($seq.display-id, 0, "Bug #2864");
 
 done-testing();

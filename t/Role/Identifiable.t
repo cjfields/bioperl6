@@ -14,25 +14,25 @@ my $s = Id.new(accession   => 'Foo',
 
 ok($s ~~ Bio::Role::Identifiable,'Has a Bio::Role::Identifiable');
 
-is($s.object_id, 'Foo');
+is($s.object-id, 'Foo');
 is($s.accession, 'Foo');
 is($s.authority, 'BioPerl6');
 is($s.version, 12);
 is($s.namespace, 'GenBank');
 
-is($s.lsid_string, 'BioPerl6:GenBank:Foo');
-is($s.namespace_string, 'GenBank:Foo.12');
+is($s.lsid-string, 'BioPerl6:GenBank:Foo');
+is($s.namespace-string, 'GenBank:Foo.12');
 
 $s = Id.new(accession   => 'Foo',
             authority   => 'BioPerl6',
             namespace   => 'GenBank');
 
-is($s.object_id, 'Foo');
+is($s.object-id, 'Foo');
 is($s.authority, 'BioPerl6');
 ok(!$s.version);
 is($s.namespace, 'GenBank');
 
-is($s.lsid_string, 'BioPerl6:GenBank:Foo');
-is($s.namespace_string, 'GenBank:Foo');
+is($s.lsid-string, 'BioPerl6:GenBank:Foo');
+is($s.namespace-string, 'GenBank:Foo');
 
 done-testing();

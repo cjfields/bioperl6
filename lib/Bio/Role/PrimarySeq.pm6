@@ -6,16 +6,16 @@ role Bio::Role::PrimarySeq {
 # below is intended to disambiguate seq (raw sequence) from # needs some type-checking, just simple for now
 has Str $.seq                   is rw;
 has SequenceType $.alphabet     is rw = dna;
-has Bool $.is_circular          is rw = False;
+has Bool $.is-circular          is rw = False;
 
-# this is mainly to deal with display_id being an alias for 'id', and 'desc' being shorthand for 'description'
+# this is mainly to deal with display-id being an alias for 'id', and 'desc' being shorthand for 'description'
 # This probabky should be re-thought, at least until we can create an 'is aliased' trait again
 
 method new(*%args) {
-    #allow for both 'id' and 'display_id' to initialize $!id attributes
-    if (%args{'display_id'}:exists) {
-        %args{'id'}= %args{'display_id'};
-        %args{'display_id'}:delete;
+    #allow for both 'id' and 'display-id' to initialize $!id attributes
+    if (%args{'display-id'}:exists) {
+        %args{'id'}= %args{'display-id'};
+        %args{'display-id'}:delete;
     }
 
     #allow for both 'desc' and 'description' to initalize $.description attributes
@@ -28,11 +28,11 @@ method new(*%args) {
 
 # TODO: lazily set the alphabet; left here until we decide on proper semantics, but
 # the default 'always guess' is not really great for performance
-method set_alphabet() {
+method set-alphabet() {
    my $type;
 
    my $str = $.seq;
-   
+
    # Remove char's that clearly denote ambiguity
    $str ~~ s:g/<[\-\.\?]>//;
    #::g emacs syntax
@@ -53,7 +53,7 @@ method set_alphabet() {
    # also be Asparagine
    my $atgc = $str.chars - $str.trans('A' => '' ,'T' => '','G'=> '','C'=> '','N'=> '','a'=> '',
                          't'=> '','g'=> '','c'=> '','n' => '' ).chars;
-   
+
    if ( ($atgc / $total) > 0.85 ) {
        $type = dna;
    } elsif ( (($atgc + $u) / $total) > 0.85 ) {
@@ -73,7 +73,7 @@ method set_alphabet() {
 #   #         $obj->throw("Attempting to set the sequence to [$value] ".
 #   #      						"which does not look healthy");
 #   #      	}
-#    
+#
 #    # if a sequence was already set we make sure that we re-adjust the
 #    # alphabet, otherwise we skip guessing if alphabet is already set
 #    # note: if the new seq is empty or undef, we don't consider that a
@@ -81,7 +81,7 @@ method set_alphabet() {
 #    my $is_changed_seq =
 #        defined $!seq && $value.chars > 0;
 #    $!seq = $value;
-#    
+#
 #    # new alphabet overridden by arguments?
 #    if (defined $alphabet) {
 #        # yes, set it no matter what
@@ -94,7 +94,7 @@ method set_alphabet() {
 #        # we need to guess the (possibly new) alphabet
 #        self!guess_alphabet();
 #    }
-#    
+#
 #    # else (seq not changed and alphabet was defined) do nothing
 #    # if the seq is changed, make sure we unset a possibly set length
 #    #    self.length(undef) if $is_changed_seq || $!seq;
@@ -116,7 +116,7 @@ multi method length() {
 ##  Args    : Two integers denoting first and last base of the sub-sequence.
 #
 #
-## end trunc 
+## end trunc
 #
 #multi method trunc( $location ) {
 #    my Str $str;
@@ -131,12 +131,12 @@ multi method length() {
 #    # }
 #
 #    my $out = Bio::PrimarySeq.new( seq => $str,
-#                                   display_id  => self.display_id,
+#                                   display-id  => self.display-id,
 #                                   accession_number => self.accession_number,
 #                                   alphabet => self.alphabet,
 #                                   description => self.description(),
 #                               );
-#    
+#
 #   return $out;
 #}
 #
@@ -155,13 +155,13 @@ multi method length() {
 #
 #    # my $out = $seqclass->new( seq => $str,
 #    my $out = Bio::PrimarySeq.new( seq => $str,
-#                                   display_id  => self.display_id,
+#                                   display-id  => self.display-id,
 #                                   accession_number => self.accession_number,
 #                                   alphabet => self.alphabet,
 #                                   description => self.description(),
 #                                   #verbose => self.verbose
 #                               );
-#    
+#
 #   return $out;
 #}
 
@@ -172,13 +172,13 @@ multi method length() {
 #       my $seq = "";
 #       for $loc.each_Location() -> $subloc {
 #           my $piece = self.subseq(start=>$subloc.start(),
-#                                   end=>$subloc.end(), 
+#                                   end=>$subloc.end(),
 #                                   replace_with=>$replace_with,
 #                                   nogap=>$nogap
 #                                 );
 #           #todo please add uncomment this line one day.
 #   #        $piece ~~ s:g/$GAP_SYMBOLS// if $nogap;
-#           
+#
 #           if ($subloc.strand() < 0) {
 #               $piece = Bio::PrimarySeq.new(seq => $piece).revcom().seq();
 #           }
@@ -195,30 +195,30 @@ multi method subseq(Int :$start is copy,
                     Str :$replace_with?
 where { defined $start && defined $end && $end < self.length && $start < $end }
 ) {
-   
+
     # if $replace_wtih is specified, have the constructor validate it as seq
     my $dummy =  Bio::PrimarySeq.new(seq=>$replace_with, alphabet=>self.alphabet) if defined($replace_with);
- 
- 
+
+
     # remove one from start, and then length is end-start
     $start--;
-    
+
     my $seqstr =  substr(self.seq,$start, ($end-$start));
-    
+
     #       $seqstr ~~ s:g/$GAP_SYMBOLS//g if ($nogap);
     # :g :g remove later, added so I can have emacs syntax highlighting and indents
-            
+
     #no idea why they did it this way in p5 code.....
     #probably a good reason why
     #     my @ss_args = map { eval "defined $_"  ? $_ : () } qw( $self->{seq} $start $end-$start $replace);
     #     my $seqstr = eval join( '', "substr(", join(',',@ss_args), ")");
     #     $seqstr =~ s/[$GAP_SYMBOLS]//g if ($nogap);
-   
+
     if $strand == -1 {
         $seqstr .= trans('acgtrymkswhbvdnxACGTRYMKSWHBVDNX' => 'tgcayrkmswdvbhnxTGCAYRKMSWDVBHNX');
     }
-   
-   
+
+
     return $seqstr;
 }
 
@@ -254,12 +254,12 @@ method revcom() {
 
     # check the type is good first.
     my $t = self.alphabet;
-    
+
     if  $t eq protein  {
     #todo throw error
     #$self->throw("Sequence is a protein. Cannot revcom");
     }
- 
+
     #if $t ~~ protein {
     #     if( $self->can('warn') ) {
     #         $self->warn("Sequence is not dna or rna, but [$t]. ".
@@ -269,28 +269,28 @@ method revcom() {
     #      	"Attempting to revcom, but unsure if this is right");
     #     }
     #}
- 
+
     # yank out the sequence string
- 
+
     my $str = self.seq;
- 
+
     # if is RNA - map to DNA then map back
- 
+
     if  $t eq rna  {
         $str .= trans('u' => 't' , 'U' => 'T');
     }
- 
+
     # revcom etc...
- 
+
     # old p5 tr function
     $str .= trans('acgtrymkswhbvdnxACGTRYMKSWHBVDNX' => 'tgcayrkmswdvbhnxTGCAYRKMSWDVBHNX');
 
     my $revseq =  $str.flip;
- 
+
     if $t eq rna  {
         $revseq.=trans('t' => 'u', 'T' => 'U');
     }
- 
+
     # will need in future
     # my $seqclass;
     # if($self->can_call_new()) {
@@ -299,9 +299,9 @@ method revcom() {
     #     $seqclass = 'Bio::PrimarySeq';
     #     $self->_attempt_to_load_Seq();
     # }
-        
+
     my $out = self.clone( seq   => $revseq );
-    
+
     return $out;
 }
 
@@ -314,7 +314,7 @@ method translate(:$terminator = '*',
                  Bio::Tools::CodonTable :$codonTable = Bio::Tools::CodonTable.new( id => 1 ),
                  Bool :$orf = False,
                  :start($start_codon)? is copy,
-                 :$throw is copy, 
+                 :$throw is copy,
                  # TODO: decide whether offset is really needed or not (I think
                  # we added this due to GFF3 phase, so maybe it should be phase
                  # instead?)
@@ -323,7 +323,7 @@ method translate(:$terminator = '*',
 
     # TODO:
     # EMBOSS and others use a frame of 1-3, not 0-2.  Maybe change this?
-    
+
     # TODO:
     # A CodonTable is probably an object attribute, not an argument; same could
     # be said for terminator and unknown strings (in fact, those probably belong
@@ -353,33 +353,33 @@ method translate(:$terminator = '*',
 #           my ($start, $end) = ($offset, self.length);
 #           ($seq) = self.subseq($start, $end);
 #    } else {
-        
+
     my $seq = self.seq();
 
 #   }
-    
-    
+
+
     # ignore frame if an ORF is supposed to be found
     if ($orf) {
         $seq = self!find_orf($seq,$codonTable,$start_codon);
     } else {
         $seq = substr($seq, $frame);
     }
-    
+
 
     ## Translate it
     my $output = $codonTable.translate($seq);
-    
-    
+
+
     # TODO: this is redundant and should be done in the CodonTable step
     # Use user-input terminator/unknown
     $output ~~ s:g/\*/$terminator/;
     $output ~~ s:g/X/$unknown/;
-    
+
     # :g comment
     ## Only if we are expecting to translate a complete coding region
     if ($complete) {
-        my $id = self.display_id;
+        my $id = self.display-id;
         # remove the terminator character
         if ( substr($output, *-1, 1) eq $terminator ) {
             $output =$output.chop;
@@ -405,12 +405,12 @@ method translate(:$terminator = '*',
     }
 
     my $out = self.new( seq => $output,
-                        display_id  => self.display_id,
+                        display-id  => self.display-id,
                         accession => self.accession,
                         alphabet => protein,
                         description => self.description()
                     );
-    
+
     return $out
 }
 
@@ -434,7 +434,7 @@ method !find_orf($sequence is copy,
     while ($sequence) {
         my $codon = substr($sequence,0,3);
         if ($start_codon) {
-            last if ( $codon ~~ m:i/$start_codon/ ); # : 
+            last if ( $codon ~~ m:i/$start_codon/ ); # :
         }
         else {
             last if ($codonTable.is_start_codon($codon));
@@ -497,7 +497,7 @@ method !find_orf($sequence is copy,
             $substring = $obj.subseq(10,40,True)
             $substring = $obj.subseq(start=>10,end=>40,replace_with=>'tga')
   Function: returns the subseq from start to end, where the first sequence
-            character has coordinate 1 number is inclusive, ie 1-2 are the 
+            character has coordinate 1 number is inclusive, ie 1-2 are the
             first two characters of the sequence
   Returns : a string
   Args    : integer for start position
