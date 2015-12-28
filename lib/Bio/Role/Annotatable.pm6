@@ -1,7 +1,7 @@
+use v6;
+
 role Bio::Role::Annotatable {
 
-    method hash-tree {...}
-    
-    method tag-name {...}
+    has $.annotation-collection;
 
 }
