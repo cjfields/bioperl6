@@ -1,19 +1,19 @@
 use v6;
 
-use Bio::Role::Annotatable;
+use Bio::Role::Annotation;
 
-class Bio::Annotation::SimpleValue does Bio::Role::Annotatable {
+class Bio::Annotation::SimpleValue does Bio::Role::Annotation {
 
-    has $.tag-name is rw;
     has $.value is rw;
-    has $.tag-term is rw;
-    
+
+    # TODO: This is supposed to return a structured format (YAML/JSON/XML), but
+    # maybe we need a factory for this?
     method hash-tree(){
          return ('value' => self.value);
     }
-    
+
     method Str() {
-        return "Value: " ~ self.value;    
+        return "Value: " ~ self.value;
     }
 
 }
