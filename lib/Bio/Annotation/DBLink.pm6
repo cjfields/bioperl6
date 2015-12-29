@@ -4,7 +4,7 @@ use Bio::Role::Annotation;
 use Bio::Role::Identifiable;
 
 class Bio::Annotation::DBLink does Bio::Role::Annotation
-                                 does Bio::Role::Identifiable  {
+                              does Bio::Role::Identifiable  {
 
     has Str $.database is rw;
 
@@ -26,10 +26,10 @@ class Bio::Annotation::DBLink does Bio::Role::Annotation
     method hash-tree(){ ... }
 
     method Str() {
-        return "Direct database link to " ~ .$.primary-id
-               ~ ($.version ?? "." ~ $.version !! "" )
-               ~ ($.optional-id ?? " (" ~ $.optional-id ~ ")" !! "" )
-               ~ " in database " ~ $.database;
+        return "Direct database link to "  ~ $.primary-id
+                ~ ($.version ?? "." ~ $.version !! "" )
+                ~ ($.optional-id ?? " (" ~ $.optional-id ~ ")" !! "" )
+                ~ " in database " ~ $.database;
     }
 
 }
