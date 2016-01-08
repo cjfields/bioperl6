@@ -6,6 +6,9 @@
     "depends" : [ "File::Temp" ],
     "provides" : {
         "Bio::Annotation::SimpleValue"      : "lib/Bio/Annotation/SimpleValue.pm6",
+        "Bio::Annotation::DBLink"           : "lib/Bio/Annotation/DBLink.pm6",
+        "Bio::Annotation::Reference"        : "lib/Bio/Annotation/Reference.pm6",
+        "Bio::Annotation::Comment"          : "lib/Bio/Annotation/Comment.pm6",
         "Bio::Grammar::Actions::Default"    : "lib/Bio/Grammar/Actions/Default.pm6",
         "Bio::Grammar::Actions::Fasta"      : "lib/Bio/Grammar/Actions/Fasta.pm6",
         "Bio::Grammar::Actions::SeqDumper"  : "lib/Bio/Grammar/Actions/SeqDumper.pm6",
@@ -17,6 +20,7 @@
         "Bio::PrimarySeq"                   : "lib/Bio/PrimarySeq.pm6",
         "Bio::Role::Aliased"                : "lib/Bio/Role/Aliased.pm6",
         "Bio::Role::Annotatable"            : "lib/Bio/Role/Annotatable.pm6",
+        "Bio::Role::Annotation"             : "lib/Bio/Role/Annotation.pm6",
         "Bio::Role::Describable"            : "lib/Bio/Role/Describable.pm6",
         "Bio::Role::Identifiable"           : "lib/Bio/Role/Identifiable.pm6",
         "Bio::Role::IO"                     : "lib/Bio/Role/IO.pm6",
@@ -34,7 +38,7 @@
         "Bio::Tools::FTLocationParser"      : "lib/Bio/Tools/FTLocationParser.pm6",
         "Bio::Tools::IUPAC"                 : "lib/Bio/Tools/IUPAC.pm6",
         "Bio::Type::Location"               : "lib/Bio/Type/Location.pm6",
-        "Bio::Type::Sequence"               : "lib/Bio/Type/Sequence.pm6"    
+        "Bio::Type::Sequence"               : "lib/Bio/Type/Sequence.pm6"
     },
     "source-type" : "git",
     "source-url" : "git://github.com/cjfields/bioperl6.git"
