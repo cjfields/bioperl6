@@ -5,7 +5,9 @@ constant AUTHOR = ?%*ENV<TEST_AUTHOR>;
 
 if AUTHOR {
     require Test::META <&meta-ok>;
-    plan 1;
     meta-ok;
     done-testing;
-}
+} else {
+    ok(1);
+    done-testing;
+} 
