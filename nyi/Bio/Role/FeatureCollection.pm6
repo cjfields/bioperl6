@@ -10,7 +10,7 @@ role Bio::Role::FeatureCollection {
     # Would be nice to have iterative methods. Built-in support for Iterators and
     # laziness are planned for perl6 (Iterators are to be a built-in Role):
 
-    # http://feather.perl6.nl/syn/S07.html
+    # http://design.perl6.org/S07.html
 
     # Also note that having Grammars that we can attach various Actions to may
     # help this quite a bit.  We'll see as the spec develops...

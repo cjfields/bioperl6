@@ -63,7 +63,7 @@ prove -e 'perl6' t/Root.t
 # Notes
 
 Perl 6 is a specification and thus can represent multiple implementations. More
-in the Perl 6 [synopses](http://feather.perl6.nl/syn/).
+in the Perl 6 [synopses](http://design.perl6.org/).
 
 # Related
 

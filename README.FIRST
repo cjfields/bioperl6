@@ -9,7 +9,7 @@ translations. Hear thar be dragoons.
 Perl 6 is a specification and thus can represent multiple implementations. We
 recommend strictly following the Perl6 spec, defined in a series of synopses:
 
-http://feather.perl6.nl/syn/
+http://design.perl6.org/
 
 Note that much of the specification is still in flux or is unfinished; much of
 this is due to changes from experimenting with several preliminary Perl 6
