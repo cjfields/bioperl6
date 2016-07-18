@@ -8,18 +8,13 @@ role Bio::Role::Identifiable {
 
     # Do we need other IDs here? Or should we use a simple key-value store with
     # custom ID types allowed?
-    has Str $.id                        is rw;
+
+    has Str $.display-id                is rw;
     has Str $.primary-id                is rw;
     has Int $.version                   is rw;
     has Str $.authority                 is rw;
     has Str $.namespace                 is rw;
     has Str $.accession                 is rw;
-
-    # 'display_id' is an alias of 'id'
-    method display-id($id?) {
-        $.id = $id if $id;
-        $.id
-    }
 
     method object-id() {
         self.accession || ~self
@@ -39,14 +34,24 @@ role Bio::Role::Identifiable {
 
 }
 
-=begin object_id
+=begin display-id
 
- Title   : object_id
- Usage   : $string    = $obj.object_id()
+ Title   : display-id
+ Usage   : $string    = $obj.display-id()
+ Function: 
+ Returns : A scalar Str
+ Status  : Virtual
+
+=end display-id
+
+=begin object-id
+
+ Title   : object-id
+ Usage   : $string    = $obj.object-id()
  Function: a string which represents the stable primary identifier
            in this namespace of this object. For DNA sequences this
            is its accession, similarly for protein sequences
  Returns : A scalar
  Status  : Virtual
 
-=end object_id
+=end object-id

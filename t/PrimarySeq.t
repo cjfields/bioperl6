@@ -12,7 +12,7 @@ my $seq = Bio::PrimarySeq.new(
     seq                     => 'TTGGTGGCGTCAACT',
     display-id              => 'new-id',
     alphabet                => dna,
-    accession        => 'X677667',
+    accession               => 'X677667',
     description             => 'Sample Bio::Seq object'
 );
 
@@ -223,15 +223,6 @@ $seq.seq = 'TTGGTGGCG?CAACT';
 
 # test for character '?' in the sequence string
 is($seq.seq, 'TTGGTGGCG?CAACT');
-
-# test for some aliases
-$seq = Bio::PrimarySeq.new(
-    id          => 'aliasid' ,
-    description => 'Alias desc'
-);
-is( $seq.description, 'Alias desc' );
-is( $seq.desc('new desc'), 'new desc' );
-is( $seq.display-id,  'aliasid' );
 
 # test that x's are ignored and n's are assumed to be dna no longer true!
 # See Bug 2438. There are protein sequences floating about which are all 'X'

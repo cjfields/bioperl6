@@ -3,28 +3,14 @@ use Bio::Tools::CodonTable;
 
 role Bio::Role::PrimarySeq {
 
-# below is intended to disambiguate seq (raw sequence) from # needs some type-checking, just simple for now
+# below is intended to disambiguate seq (raw sequence) from
+# needs some type-checking, just simple for now
 has Str $.seq                   is rw;
 has SequenceType $.alphabet     is rw = dna;
 has Bool $.is-circular          is rw = False;
 
 # this is mainly to deal with display-id being an alias for 'id', and 'desc' being shorthand for 'description'
 # This probabky should be re-thought, at least until we can create an 'is aliased' trait again
-
-method new(*%args) {
-    #allow for both 'id' and 'display-id' to initialize $!id attributes
-    if (%args{'display-id'}:exists) {
-        %args{'id'}= %args{'display-id'};
-        %args{'display-id'}:delete;
-    }
-
-    #allow for both 'desc' and 'description' to initalize $.description attributes
-    if (%args{'desc'}:exists) {
-        %args{'description'} = %args{'desc'};
-        %args{'desc'}:delete;
-    }
-    return self.bless(|%args);
-}
 
 # TODO: lazily set the alphabet; left here until we decide on proper semantics, but
 # the default 'always guess' is not really great for performance
