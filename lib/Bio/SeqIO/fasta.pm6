@@ -21,37 +21,24 @@ class Bio::SeqIO::fasta does Bio::Role::SeqStream does Bio::Role::IO {
     has $.width = 60;
     has $.block = $!width;  # NYI
     
-    # Note multi method signature
     multi method initialize-io(:$!width?, :$fh?, :$file?, *%args) {
-        nextsame;
-        #callwith(:nl("\n>"), :$fh, :$file, |%args);
+        # we reset the input record sep here
+        callwith(:nl-in("\n>"), :$fh, :$file, |%args);
     }
     
     # TODO: this is a temporary iterator to return one sequence record at a
-    # time; two future optimizations require implementation in Rakudo:
-    # 1) Chunking in IO::Handle using nl => "\n>"
-    # 2) Grammar parsing of a stream of data (e.g. Cat), which is now considered
+    # time; one key future optimization requires implementation in Rakudo:
+    # 1) Grammar parsing of a stream of data (e.g. Cat), which is now considered
     #    a post-6.0 update
+    
     method !chunkify {
         return if $.fh.eof();
-        my $current_record;
-        while $.fh.get -> $line {
-            if $.buffer {
-                $current_record = $.buffer;
-                $.buffer = Nil;
+        while $.fh.get -> $chunk {
+            if $chunk !~~ /^^\>/ {
+                return ">$chunk";
             }
-            if $line ~~ /^^\>/ {
-                if $current_record.defined {
-                    $.buffer = "$line\n";
-                    last;
-                } else {
-                    $current_record = "$line\n";
-                }
-            } else {
-                $current_record ~= $line;
-            }
+            return $chunk;
         }
-        return $current_record;
     };
     
     method next-Seq {
