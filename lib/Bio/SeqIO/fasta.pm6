@@ -31,21 +31,15 @@ class Bio::SeqIO::fasta does Bio::Role::SeqStream does Bio::Role::IO {
     # 1) Grammar parsing of a stream of data (e.g. Cat), which is now considered
     #    a post-6.0 update
     
-    method !chunkify {
+    method next-Seq {
         return if $.fh.eof();
         while $.fh.get -> $chunk {
             if $chunk !~~ /^^\>/ {
-                return ">$chunk";
+                return Bio::Grammar::Fasta.subparse( ">$chunk", actions => $!actions, rule => 'record').ast;
+            } else {
+                return Bio::Grammar::Fasta.subparse( "$chunk", actions => $!actions, rule => 'record').ast;
             }
-            return $chunk;
         }
-    };
-    
-    method next-Seq {
-        my $chunk = self!chunkify;
-        return if !?$chunk.defined;
-        my $t = Bio::Grammar::Fasta.subparse($chunk, actions => $!actions, rule => 'record').ast;
-        return $t;
     }
     
     method write-Seq(Bio::PrimarySeq $seq) {
