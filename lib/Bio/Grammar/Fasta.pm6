@@ -13,28 +13,28 @@ grammar Bio::Grammar::Fasta {
         ^<record>*
     }
     token record {
-        <description_line> <sequence> 
+        <description_line> <sequence>
     }
     
     token description_line    {
         ^^\> <id> <.ws> <description> \n
     }
     token id           {
-        | <identifier>     
-        | <generic_id>    
+        | <identifier>
+        | <generic_id>
     }
     token identifier   {
         #assume we going to parse NCBI specific id for reference number and gi numbers
-        \S+ 
+        \S+
     }    
     token generic_id {
         \S+
     }    
     
     token description  {
-        \N+      
+        \N+
     }
     token sequence     {
-        <-[>]>+  
+        <-[>]>+
     }
 }
