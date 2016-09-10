@@ -26,8 +26,7 @@ class Bio::SeqIO::fasta does Bio::Role::SeqStream does Bio::Role::IO {
         callwith(:nl-in("\n>"), :$fh, :$file, |%args);
     }
     
-    # TODO: this is a temporary iterator to return one sequence record at a
-    # time; one key future optimization requires implementation in Rakudo:
+    # TODO: one key future optimization requires implementation in Rakudo:
     # 1) Grammar parsing of a stream of data (e.g. Cat), which is now considered
     #    a post-6.0 update
     
