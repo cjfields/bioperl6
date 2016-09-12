@@ -15,22 +15,16 @@ grammar Bio::Grammar::Fasta {
     token record {
         <description_line> <sequence>
     }
-    
     token description_line    {
-        ^^\> <id> <.ws> <description> \n
+        ^^\> <id> <description>? \n
     }
     token id           {
-        | <identifier>
-        | <generic_id>
+        <identifier>
     }
     token identifier   {
         #assume we going to parse NCBI specific id for reference number and gi numbers
         \S+
     }    
-    token generic_id {
-        \S+
-    }    
-    
     token description  {
         \N+
     }

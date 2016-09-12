@@ -9,7 +9,7 @@ class Bio::Grammar::Fasta::Actions::PrimarySeq {
     method record($/) {
         make Bio::PrimarySeq.new(
             seq             => ~$<sequence>,
-            description     => ~$<description_line><description>,
+            description     => $<description_line><description> ?? ~$<description_line><description> !! '',
             display_id      => ~$<description_line><id>
         );
     }
