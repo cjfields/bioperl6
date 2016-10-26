@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "BioPerl6",
     "version" : "0.0.1",
     "description" : "Collection of Bioinformatics classes, roles, and modules",
