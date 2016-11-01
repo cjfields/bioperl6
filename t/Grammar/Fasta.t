@@ -53,6 +53,6 @@ is($/.to, 804);
 
 # parse file
 # TODO: use File::Spec-like path
-ok( Bio::Grammar::Fasta.parsefile( './t/data/test.fasta' ) );
+ok( Bio::Grammar::Fasta.parsefile($*SPEC.catfile(<t data test.fasta> ) ));
 
 done-testing();

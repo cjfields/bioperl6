@@ -16,7 +16,7 @@ ok(Bio::Grammar::FTLocation ~~ Grammar);
         method complex_location($/) { $complex_ct++ }
     };
     
-    my $fh = open('t/data/location_data.txt', :r);
+    my $fh = open($*SPEC.catfile(<t data location_data.txt>, :r));
 
     # sorting is to keep the order constant from one run to the next
     while $fh.get -> $line {
