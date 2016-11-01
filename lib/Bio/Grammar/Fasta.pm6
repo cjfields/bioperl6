@@ -16,10 +16,7 @@ grammar Bio::Grammar::Fasta {
         <description_line> <sequence>
     }
     token description_line    {
-        ^^\> <id> <description>? \n
-    }
-    token id           {
-        <identifier>
+        ^^\> <identifier> <description>? \n
     }
     token identifier   {
         #assume we going to parse NCBI specific id for reference number and gi numbers
