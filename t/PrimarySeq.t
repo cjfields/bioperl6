@@ -7,6 +7,7 @@ use lib './lib';
 eval-lives-ok 'use Bio::PrimarySeq', 'Can use Bio::PrimarySeq';
 
 use Bio::PrimarySeq;
+use Bio::Type::Sequence;
 
 my $seq = Bio::PrimarySeq.new(
     seq                     => 'TTGGTGGCGTCAACT',
