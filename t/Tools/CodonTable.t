@@ -7,6 +7,7 @@ use Test;
 #eval_lives_ok 'use Bio::Tools::CodonTable', 'Can use Bio::Tools::CodonTable';
 
 use Bio::PrimarySeq;
+use Bio::Type::Sequence;
 
 # create a table object by giving an ID
 # my $DEBUG = test_debug();
@@ -66,7 +67,7 @@ cktcytcstcvtchtcdtcbtcxtgyttrttytramgamggmgrracratrayytaytgytrsaasagsartaa";
 
 $seq ~~ s:g/\s+//;
 #so can have syntax highlighting and tabbing in emacs ::g
-    
+
 @ii = $seq.comb(/. ** 3/);
 
 #print join (' ', @ii), "\n" if( $DEBUG);
@@ -77,7 +78,7 @@ GGGGGGGGVVVVVVVVVVV*YSSSSSSSSSSSCLF*RRRBBBLLLZZZ*";
 
 $prot ~~ s:g/\s//;
 #so can have syntax highlighting and tabbing in emacs ::g
-    
+
 @res = $prot.comb();
 
 # print join (' ', @res), "\n" if( $DEBUG );
@@ -86,7 +87,7 @@ for @ii Z @res -> ($dna,$aa) {
     is($myCodonTable.translate($dna), $aa, "$dna: $aa");
 }
 
-## reverse translate amino acids 
+## reverse translate amino acids
 
 is $myCodonTable.revtranslate('U'), ();
 is $myCodonTable.revtranslate('O'), ();
@@ -112,7 +113,7 @@ for 0..@ii.end() -> $i {
          for 0..@codonres.end() -> $j {
 	     if (@codonres[$j] ne @res[$i][$j]) {
 		 $test = 0;
-# 		 print $ii[$i], ': ', $codonres[$j], " ne ", 
+# 		 print $ii[$i], ': ', $codonres[$j], " ne ",
 # 		 $res[$i][$j], "\n" if( $DEBUG);
  		 last;
  	     }
@@ -121,7 +122,7 @@ for 0..@ii.end() -> $i {
 ok $test;
 
 #  boolean tests
-ok $myCodonTable.is_start_codon('ATG');  
+ok $myCodonTable.is_start_codon('ATG');
 is $myCodonTable.is_start_codon('GGH'), 0;
 ok $myCodonTable.is_start_codon('HTG');
 is $myCodonTable.is_start_codon('CCC'), 0;
@@ -174,7 +175,7 @@ is $seq.translate.seq, 'M-K--N';
 
 #
 # test reverse_translate_best(), requires a Bio::CodonUsage::Table object
-# 
+#
 #	use_ok('Bio::CodonUsage::IO');
 #ok $seq = Bio::PrimarySeq.new(seq =>'ACDEFGHIKLMNPQRSTVWY');
 #ok my $io = Bio::CodonUsage::IO.new(-file => test_input_file('MmCT'));

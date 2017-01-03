@@ -8,7 +8,8 @@ eval-lives-ok 'use Bio::Tools::IUPAC', 'Can use Bio::Tools::IUPAC';
 eval-lives-ok 'use Bio::PrimarySeq', 'Can use Bio::PrimarySeq';
 
 use Bio::Tools::IUPAC;
-use Bio::PrimarySeq; 
+use Bio::PrimarySeq;
+use Bio::Type::Sequence;  # pull in types
 
 # test IUPAC
 
@@ -95,7 +96,7 @@ is-deeply(%Bio::Tools::IUPAC::IUB,%IUB,'Can access IUB hash as a class variable'
 is-deeply(%Bio::Tools::IUPAC::REV_IUB,%REV_IUB,'Can access REV_IUB hash as a class variable');
 is-deeply(%Bio::Tools::IUPAC::IUP,%IUP,'Can access IUP hash as a class variable');
 
-my $b = 1; 
+my $b = 1;
 while (my $uniqueseq = $stream.next_seq()) {
     if ( ! $uniqueseq ~~ Bio::PrimarySeq ) {
         $b = 0;
