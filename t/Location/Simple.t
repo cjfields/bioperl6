@@ -5,6 +5,7 @@ use lib './lib';
 use Test;
 
 use Bio::Location::Simple;
+use Bio::Type::Location;
 
 # set explicitly
 my $loc = Bio::Location::Simple.new(start   => 1, end => 100, strand    => -1);
