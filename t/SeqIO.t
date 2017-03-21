@@ -5,7 +5,6 @@ use lib './lib';
 use Test;
 
 use Bio::SeqIO;
-use Bio::SeqIO::fasta;
 
 ok(1);
 
