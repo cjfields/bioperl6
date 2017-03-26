@@ -15,17 +15,17 @@ grammar Bio::Grammar::Fasta {
     token record {
         <description_line> <sequence>
     }
-    token description_line    {
-        ^^\> <identifier> <description>? \n
+    rule description_line    {
+        ^^\><identifier><.ws><description>?\n
     }
     token identifier   {
         #assume we going to parse NCBI specific id for reference number and gi numbers
         \S+
-    }    
+    }
     token description  {
         \N+
     }
-    token sequence     {
+    rule sequence     {
         <-[>]>+
     }
 }
