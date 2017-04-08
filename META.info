@@ -1,5 +1,6 @@
 {
-    "perl" : "6.*",
+    "tags" : [ "Bio", "Biology", "Science", "Bioinformatics", "Grammar" ],
+    "perl" : "6.c",
     "name" : "BioPerl6",
     "version" : "0.0.1",
     "description" : "Collection of Bioinformatics classes, roles, and modules",
