@@ -10,9 +10,9 @@ class MyAction {
     method record ($/) { * }
     method description_line ($/) { * }
     method id ($/) { * }
-    method identifier ($/) { say $/ }
+    method identifier ($/) { * }
     method generic_id ($/) { * }
-    method description ($/) { say $/ }
+    method description ($/) { * }
     method sequence ($/) { * }
 }
 
@@ -47,7 +47,7 @@ is($/.from, 0);
 is($/.to, 411);
 
 # TODO: not working, likely :pos is NYI in Rakudo
-ok( Bio::Grammar::Fasta.subparse( $fasta, :rule<record>, :p($/.to)));
+ok( Bio::Grammar::Fasta.subparse( $fasta, :rule<record>, :pos($/.to)));
 is($/.from, 411);
 is($/.to, 804);
 
