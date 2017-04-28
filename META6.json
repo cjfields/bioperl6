@@ -2,6 +2,7 @@
     "tags" : [ "Bio", "Biology", "Science", "Bioinformatics", "Grammar" ],
     "perl" : "6.c",
     "name" : "BioPerl6",
+    "license" : "Artistic-2.0",
     "version" : "0.0.1",
     "description" : "Collection of Bioinformatics classes, roles, and modules",
     "authors" : "git:cjfields",
