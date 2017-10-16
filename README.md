@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/cjfields/bioperl6.svg?branch=master)](https://travis-ci.org/cjfields/bioperl6)
+
 # BioPerl 6
 
 The experimental classes in this directory are test implementations for Perl 6.
