@@ -8,12 +8,13 @@ use-ok 'Bio::SeqIO', 'Can use Bio::SeqIO';
 
 # TODO: the use-ok above does not actually load module in, so we do it here.
 use Bio::SeqIO;
+use Bio::PrimarySeq;
 
 my $format = 'fasta';
 my $seqio_obj = Bio::SeqIO.new(file   => $*SPEC.catfile(<t data test.fasta>),
                                format => $format);
 
-isa-ok($seqio_obj, 'Bio::SeqIO');
+isa-ok($seqio_obj, Bio::SeqIO);
 
 my @methods = <next-Seq write-Seq>;
 for @methods -> $method {
@@ -23,7 +24,7 @@ for @methods -> $method {
 
 # checking the first sequence object
 my $seq_obj = $seqio_obj.next-Seq();
-isa-ok($seq_obj, 'Bio::PrimarySeq');
+isa-ok($seq_obj, Bio::PrimarySeq);
 my %expected = 'seq'         => 'MVNSNQNQNGNSNGHDDDFPQDSITEPEHMRKLFIGGL' ~
                                  'DYRTTDENLKAHEKWGNIVDVVVMKDPRTKRSRGFGFI' ~
                                  'TYSHSSMIDEAQKSRPHKIDGRVEPKRAVPRQDIDSPN' ~
@@ -46,7 +47,7 @@ like($seq_obj.description(), %expected{'description'}, 'description');
 
 # checking the second sequence object
 my $seq_obj2  = $seqio_obj.next-Seq();
-isa-ok($seq_obj2, 'Bio::PrimarySeq');
+isa-ok($seq_obj2, Bio::PrimarySeq);
 my %expected2 = ('seq'         => 'MVNSNQNQNGNSNGHDDDFPQDSITEPEHMRKLFIGGL' ~
                                   'DYRTTDENLKAHEKWGNIVDVVVMKDPTSTSTSTSTST' ~
                                   'STSTSTMIDEAQKSRPHKIDGRVEPKRAVPRQDIDSPN' ~
@@ -92,7 +93,7 @@ like($seq_obj2.description(), %expected2{'description'}, 'description');
 #    my @dataout = map { $_."\n"} split(/\n/, $$strref );
 #    my @diffs = &diff( \@datain, \@dataout);
 #    is(@diffs, 0, "$format format can round-trip");
-#    
+#
 #    if(@diffs && $verbose) {
 #        foreach my $d ( @diffs ) {
 #            foreach my $diff ( @$d ) {
